@@ -1,0 +1,103 @@
+# Project CRC Cards
+
+### User
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Sign into app | LoginManager |
+| Hold user permissions (Entrant, Organizer, Admin)| |
+| Provide device information | LoginManager |
+| Store entrant personal information| Entrant|
+| Update personal information | Entrant |
+| Store user image | ImageManager |
+
+### Entrant
+|Responsibilities | Collaborators |
+|:---             | :---          |
+|View the state of events |ListManager |
+|Join/leave a waiting list of event |ListManager |
+|Provide/update personal information: name, email, optional phone number | User |
+|Upload/remove profile picture | User |
+|Opt in/out of notifications from organizers and admin | NotificationManager |
+|Recieve notifications from organizers | NotificationManager |
+|Accept/decline event invitations | List Manager |
+|Scan QR code to register/navigate to event | QRManager|
+
+### Organizer
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Create event | Event |
+| Edit event | |
+| Create QR code | QRManager |
+| Upload event image | ImageManager|
+| View event waiting list| ListManager |
+| Trigger system to sample event Entrants | ListManager |
+| Optionally limit the number of entrants | ListManager |
+| View invited list | ListManager|
+| View accepted list | ListManager|
+| View cancelled list | ListManager|
+| Cancel entrants that declined and trigger a replacement |ListManager|
+| Send notifications entrants (on waiting list, accepted, cancelled) | NotificationManager |
+| View map showing where entrants joined | Map |
+
+### Admin
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Remove events | Event |
+| Browse events|Event |
+| Remove profiles | User |
+| Browse profiles |User |
+| Remove images | ImageManager |
+| Browse images |ImageManager |
+| Remove hashed QR code data | QRManager |
+| Remove facilities | Organizer |
+
+### LoginManager
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Identify user based on device | User |
+| Access database to manage users (add/remove) | |
+
+### Event
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Stores event details (time, city, etc.) | |
+| Holds ListManager (waitlist, acceptedlist, cancelledlist)| ListManager |
+| Links to QR code | QRManager |
+| Holds event poster | |
+
+### ListManager
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Holds and tracks wait list, manages limits | Event |
+| Holds and tracks invited list | |
+| Holds and tracks accepted list| |
+| Holds and tracks cancelled list| |
+| Samples Entrants from waiting list to be added to invite list| Organizer |
+| Moves entrants between lists | Entrant |
+| Triggers a notification | NotificationManager|
+
+### NotificationManager
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Send non-automated in-app notifications to entrants| ListManager |
+| Recieve in-app notifications | Entrant |
+| Handle notification preferences |  |
+
+### ImageManager
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle profile pic upload and storage | User |
+| Handle event pic upload and storage| Event |
+
+### QRManager
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Generate QR code for event | Organizer |
+| Store hashed data | Event |
+| Scan QR code and navigate to event| User / Event |
+
+### Map
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display where entrants join the waitlist from | Organizer|
+| Store user locations | |
