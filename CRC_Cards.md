@@ -101,3 +101,73 @@
 |:---             | :---          |
 | Display where entrants join the waitlist from | Organizer|
 | Store user locations | |
+
+### EventDetailsActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display the event details | Event|
+| Allow sign up to event | Event, Entrant |
+
+### EventDetailsController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle event sign-up button click | EventDetailsActivity, Event, Entrant |
+| Handle leave waiting list button click | EventDetailsActivity, Event, Entrant |
+| Handle delete event button click | EventDetailsActivity, Event, Admin |
+| Handle edit event button click | EventDetailsActivity, Event, Organizer |
+
+### MainPageActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display list of events | Event |
+
+### MainPageController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle event click | MainPageActivity, Event|
+| handle search bar click | MainPageActivity, Event |
+
+### UpdateProfileActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display profile details | User |
+| Allow profile details to be edited |  User |
+
+### UpdateProfileController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle save changes click | UpdateProfileActivity, Event|
+| Handle update profile picture click | MainPageActivity, Event |
+
+### SignUpActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display sign up page | |
+| Allow user to sign with profile information |  |
+
+### SignUpController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle sign up click | User, LoginManager |
+
+### WaitListActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display event waitlist | Event, Organizer |
+| Display status of entrants in waitlist | Event, Entrant |
+
+### WaitListController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle cancel user click | WaitListActivity, Event, Entrant, Organizer |
+| Handle menu button click | WaitListActivity, Organizer |
+
+### SendInviteFragment
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Interface to send invites to entrants in waitlist | |
+
+### SendInviteController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle send invite | Event, Entrant, Organizer |
