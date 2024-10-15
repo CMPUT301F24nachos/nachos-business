@@ -81,3 +81,67 @@ Once opening an event through the admin view, the admin can remove the image, QR
 ![](ui-mockups/AdminRemoveProfileImages.png?raw=true)
 
 Once opening a user profile through the admin view, the admin can remove the profile image and user.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerFacility.png?raw=true)
+
+Allow the Organizer to create/edit Facilities.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerNewEvent.png?raw=true)
+
+Allow the Organizer to create a new event, specify event details, add a poster, and optionally limit the number of Entrants who can join the Wait List.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerWaitList.png?raw=true)
+
+The organizer can see all Entrants who have joined the Waiting List.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerWaitListOptions.png?raw=true)
+
+The organizer can choose to notify the Entrants from this screen, or send out the Invites.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerSendInvites.png?raw=true)
+
+The Organizer can set the number of invites they want to send out for the lottery system to select Entrants to be invited.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerInviteList.png?raw=true)
+
+The Organizer can view the Entrants who have been invited, including their status (Accepted, Declined or Not Replied).
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerInviteListFilteredAccepted.png?raw=true)
+
+![](ui-mockups/OrganizerInviteListFilteredDeclined.png?raw=true)
+
+![](ui-mockups/OrganizerInviteListFilteredNotReplied.png?raw=true)
+
+The Organizer can filter the invite list to easily view the invited Entrants and their status.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerInviteListRedraw.png?raw=true)
+
+The Organizer can select to remove Entrants who have Declined and redraw Entrants who are still on the waiting list to get an invitation.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/OrganizerInviteListNotifyOptions.png?raw=true)
+
+![](ui-mockups/OrganizerInviteListNotifySelectedEntrant.png?raw=true)
+
+![](ui-mockups/OrganizerSendNotification.png?raw=true)
+
+The Organizer can message Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
+
+-----------------------------------------------------------------------------------------
