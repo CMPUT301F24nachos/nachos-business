@@ -116,17 +116,6 @@
 | Handle delete event button click | EventDetailsActivity, Event, Admin |
 | Handle edit event button click | EventDetailsActivity, Event, Organizer |
 
-### MainPageActivity
-|Responsibilities | Collaborators |
-|:---             | :---          |
-| Display list of events | Event |
-
-### MainPageController
-|Responsibilities | Collaborators |
-|:---             | :---          |
-| Handle event click | MainPageActivity, Event|
-| handle search bar click | MainPageActivity, Event |
-
 ### UpdateProfileActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
@@ -144,7 +133,6 @@
 |:---             | :---          |
 | Display sign up page | |
 | Allow user to sign with profile information |  |
-
 ### SignUpController
 |Responsibilities | Collaborators |
 |:---             | :---          |
@@ -171,3 +159,115 @@
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Handle send invite | Event, Entrant, Organizer |
+
+### NotificationActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display notifications | Entrant |
+| Allow responses to invites |  User |
+
+### NotificationController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle accept invitation click | NotificationActivity, Event, Entrant |
+| Handle reject invitation click | NotificationActivity, Event, Entrant |
+| Handle claim chosen for lottery | NotificationActivity, Event, Entrant |
+| Handle reject chosen for lottery | NotificationActivity, Event, Entrant |
+
+### EditFacilityActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display and edit facility information | Organizer |
+
+### EditFacilityController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle save changes | Organizer |
+
+### EntrantDashboardActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display list of signed up events | Entrant, event |
+| Navigation to profile and events |  |
+
+### EntrantDashboardController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle notification toggle | Entrant, NotificationManager |
+| Handle profile click | |
+| Handle event click | Event |
+| Handle event update click | |
+| Handle join events click | |
+
+### OrganizerDashboardActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Allow navigation to owned events | |
+| Allow navigation to facility information | |
+
+### OrganizerDashboardController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle navigation to owned events | |
+| Handle navigation to facility information | |
+
+### MapActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display where entrants joined event | Event, Entrant, Organizer |
+
+### EventBrowseActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display list of events | Event, Admin |
+
+### EventBrowseController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle event click | EventBrowseActivity, Event|
+| Handle search bar click | EventBrowseActivity |
+| Handle browse profiles | EventBrowseActivity |
+| Handle browse events | EventBrowseActivity |
+
+### EventEditActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display event information | Event, Admin |
+
+### EventEditController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle remove event | EventEditActivity, Event |
+| Handle remove event image | EventEditActivity, Event |
+| Handle remove event QR code | EventEditActivity, Event |
+
+### ProfileBrowseActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display list of profiles | User, Admin |
+
+### ProfileBrowseController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle profile click | ProfileBrowseActivity, User |
+
+### ProfileEditActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display profile information | User, Admin |
+
+### ProfileEditController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle delete profile | ProfileEditActivity, User |
+| Handle delete profile image | ProfileEditActivity, User |
+
+### AddEventActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Allow creation of new event | Event, Organizer |
+
+### AddEventController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle event creation | AddEventActivity, Event, Organizer |
