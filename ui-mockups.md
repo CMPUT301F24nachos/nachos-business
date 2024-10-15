@@ -58,4 +58,26 @@ The user can change their profile details and uploading/delete their profile pho
 
 Only shows when the user first opens the application. Username and email must be input to sign up. All future logins are done through device identification
 
+-----------------------------------------------------------------------------------------
 
+![](ui-mockups/AdminViewEvents.png?raw=true)
+
+Shows all existing events to admins. 
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/AdminBrowseEventsandProfiles.png?raw=true)
+
+Admins can swap between viewing events and profiles
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/AdminRemoveEventsImages.png?raw=true)
+
+Once opening an event through the admin view, the admin can remove the image, QR code, and event itself.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/RemoveProfileImages.png?raw=true)
+
+Once opening a user profile through the admin view, the admin can remove the profile image and user.
