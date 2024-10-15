@@ -107,6 +107,7 @@
 |:---             | :---          |
 | Display the event details | Event|
 | Allow sign up to event | Event, Entrant |
+| Allow accept/decline event | |
 
 ### EventDetailsController
 |Responsibilities | Collaborators |
@@ -115,6 +116,8 @@
 | Handle leave waiting list button click | EventDetailsActivity, Event, Entrant |
 | Handle delete event button click | EventDetailsActivity, Event, Admin |
 | Handle edit event button click | EventDetailsActivity, Event, Organizer |
+| Handle accept button click | EventDetailsActivity, Event, Entrant |
+| Handle decline button click | EventDetailsActivity, Event, Entrant |
 
 ### UpdateProfileActivity
 |Responsibilities | Collaborators |
@@ -125,37 +128,40 @@
 ### UpdateProfileController
 |Responsibilities | Collaborators |
 |:---             | :---          |
-| Handle save changes click | UpdateProfileActivity, Event|
-| Handle update profile picture click | MainPageActivity, Event |
+| Handle save changes click | UpdateProfileActivity, User |
+| Handle update profile picture click | UpdateProfileActivity, User, ImageManager |
 
 ### SignUpActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Display sign up page | |
 | Allow user to sign with profile information |  |
+
 ### SignUpController
 |Responsibilities | Collaborators |
 |:---             | :---          |
-| Handle sign up click | User, LoginManager |
+| Handle sign up click | SignUpActivity, User, LoginManager, ImageManager |
 
 ### WaitListActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Display event waitlist | Event, Organizer |
 | Display status of entrants in waitlist | Event, Entrant |
+| Option to send notifications to users | |
 
 ### WaitListController
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Handle cancel user click | WaitListActivity, Event, Entrant, Organizer |
 | Handle menu button click | WaitListActivity, Organizer |
+| Handle mail button click | WaitListActivity, Organizer, SendNotificationActivity |
 
-### SendInviteFragment
+### SendNotificationActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
-| Interface to send invites to entrants in waitlist | |
+| Interface to send notifications to entrants in waitlist | |
 
-### SendInviteController
+### SendNotificationController
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Handle send invite | Event, Entrant, Organizer |
@@ -194,22 +200,32 @@
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Handle notification toggle | Entrant, NotificationManager |
-| Handle profile click | |
+| Handle profile click | User, ProfileEditActivity |
 | Handle event click | Event |
-| Handle event update click | |
+| Handle event update click | NotificationActivity |
 | Handle join events click | |
 
 ### OrganizerDashboardActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
-| Allow navigation to owned events | |
+| Allow navigation to owned event | |
 | Allow navigation to facility information | |
 
 ### OrganizerDashboardController
 |Responsibilities | Collaborators |
 |:---             | :---          |
-| Handle navigation to owned events | |
-| Handle navigation to facility information | |
+| Handle navigation to owned event | OrganizerDashboardActivity, Event |
+| Handle navigation to facility information | OrganizerDashboardActivity, EditFacilityActivity |
+
+### AdminDashboardActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Allow navigation to browse events and profiles | |
+
+### AdminDashboardController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle navigation to browse events and profiles | AdminDashboardActivity, EventBrowseActivity |
 
 ### MapActivity
 |Responsibilities | Collaborators |
@@ -220,6 +236,7 @@
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Display list of events | Event, Admin |
+| Navigation to browse users | |
 
 ### EventBrowseController
 |Responsibilities | Collaborators |
@@ -228,11 +245,28 @@
 | Handle search bar click | EventBrowseActivity |
 | Handle browse profiles | EventBrowseActivity |
 | Handle browse events | EventBrowseActivity |
+| Handle navigation to browse users | EventBrowseActivity, UserBrowseActivity |
+
+### UserBrowseActivity
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Display list of users | User, Admin |
+| Navigation to event browse | |
+
+### UserBrowseController
+|Responsibilities | Collaborators |
+|:---             | :---          |
+| Handle user click | EventBrowseActivity, Event|
+| Handle search bar click | EventBrowseActivity |
+| Handle browse profiles | EventBrowseActivity |
+| Handle browse events | EventBrowseActivity |
+| Handle navigation to browse profiles | EventBrowseActivity |
 
 ### EventEditActivity
 |Responsibilities | Collaborators |
 |:---             | :---          |
 | Display event information | Event, Admin |
+|Allow removal of event and event components | |
 
 ### EventEditController
 |Responsibilities | Collaborators |
