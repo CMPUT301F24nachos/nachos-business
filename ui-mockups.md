@@ -78,6 +78,6 @@ Once opening an event through the admin view, the admin can remove the image, QR
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/RemoveProfileImages.png?raw=true)
+![](ui-mockups/AdminRemoveProfileImages.png?raw=true)
 
 Once opening a user profile through the admin view, the admin can remove the profile image and user.
