@@ -66,6 +66,12 @@ Shows all existing events to admins.
 
 -----------------------------------------------------------------------------------------
 
+![](ui-mockups/AdminBrowseProfiles.png?raw=true)
+
+Shows all existing users to admins. 
+
+-----------------------------------------------------------------------------------------
+
 ![](ui-mockups/AdminBrowseEventsandProfiles.png?raw=true)
 
 Admins can swap between viewing events and profiles
@@ -143,5 +149,11 @@ The Organizer can select to remove Entrants who have Declined and redraw Entrant
 ![](ui-mockups/OrganizerSendNotification.png?raw=true)
 
 The Organizer can message Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/Map.png?raw=true)
+
+Organizer can view map of where entrants joined the event from.
 
 -----------------------------------------------------------------------------------------
