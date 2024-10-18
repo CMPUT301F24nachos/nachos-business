@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Nachos Business</string>
+     <!--dashboard strings-->
+    <string name="enable_notifs">Enable Organizer and Admin notification?</string>
+    <string name="profile_hello">Hi, </string>
+    <string name="profile_events_header">Events you\'re signed up for</string>
+    <string name="profile_button">Profile</string>
+    <string name="profile_event_updates">Event Updates</string>
+    <string name="profile_join_events">Join Events</string>
+    <string name="profile_organizer_events">Your Events</string>
+    <string name="profile_admin_browse">Browse</string>
+    <string name="profile_organizer_facility">Facility</string>
 </resources>
