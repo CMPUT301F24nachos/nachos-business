@@ -1,5 +1,6 @@
 package com.example.nachosbusiness;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -52,7 +53,8 @@ public class Dashboard extends AppCompatActivity {
 
         browseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "browse click!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Dashboard.this, Browse.class);
+                startActivity(intent);
             }
         });
 
