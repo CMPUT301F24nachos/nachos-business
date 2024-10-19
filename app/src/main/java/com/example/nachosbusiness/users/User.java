@@ -4,9 +4,9 @@ public class User {
     private String android_id;
     private String username;
     private String email;
-    private int phone;
+    private String phone;
 
-    public User(String android_id, String username, String email, int phone)
+    public User(String android_id, String username, String email, String phone)
     {
         this.android_id = android_id;
         this.username = username;
@@ -19,7 +19,7 @@ public class User {
         this.android_id = android_id;
         this.username = username;
         this.email = email;
-        this.phone = -1;
+        this.phone = "";
     }
 
 
@@ -47,11 +47,11 @@ public class User {
         this.email = email;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 }
