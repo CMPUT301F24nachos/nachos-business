@@ -10,4 +10,12 @@
     <string name="profile_organizer_events">Your Events</string>
     <string name="profile_admin_browse">Browse</string>
     <string name="profile_organizer_facility">Facility</string>
+    <!--update profile strings-->
+    <string name="update_profile">Update Profile</string>
+    <string name="john_doe">John Doe</string>
+    <string name="john_doe_gm">john.doe@gmail.com</string>
+    <string name="some_id">+1 (123)-456-7890</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="profile_picture">Profile Picture</string>
 </resources>
