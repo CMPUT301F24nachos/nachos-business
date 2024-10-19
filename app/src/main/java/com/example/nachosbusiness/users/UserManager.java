@@ -1,10 +1,5 @@
 package com.example.nachosbusiness.users;
 
-import android.content.Context;
-import android.content.ContentResolver;
-
-import android.provider.Settings.Secure;
-
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,29 +9,44 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class UserManager {
 
     private FirebaseFirestore db;
 
+    public UserManager()
+    {
+        this.db = FirebaseFirestore.getInstance();
+    }
+
     /**
      * Creates a new user and adds the new user to the db
      */
-    public void registerUser(String android_id, String username, String email, int phone)
+    public void registerUser(String android_id, String username, String email, String phone)
     {
         User user = new User(android_id, username, email, phone);
         addUser(user);
     }
 
     /**
+     * No phone number overload
+     * Create a new user and adds the new user to the db
+     * @param android_id
+     * @param username
+     * @param email
+     */
+    public void registerUser(String android_id, String username, String email)
+    {
+        User user = new User(android_id, username, email);
+        addUser(user);
+    }
+
+    /**
      * Adds user to the firestore database
-     * @param user
+     * @param user user to add
      */
     public void addUser(User user)
     {
-        db = FirebaseFirestore.getInstance();
-
         CollectionReference usersRef = db.collection("users");
 
         usersRef.add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -54,12 +64,10 @@ public class UserManager {
 
     /**
      * Removes user from the firestore database
-     * @param user
+     * @param user user to delete
      */
     public void deleteUser(User user)
     {
-        db = FirebaseFirestore.getInstance();
-
         db.collection("users")
                 .document(user.getAndroid_id())
                 .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
