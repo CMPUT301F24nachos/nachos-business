@@ -15,9 +15,9 @@ public class UpdateProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_update);
 
-        TextView userName = findViewById(R.id.john_doe);
-        TextView email = findViewById(R.id.john_doe_gm);
-        TextView phoneNumber = findViewById(R.id.some_id);
+        TextView userName = findViewById(R.id.user_name);
+        TextView email = findViewById(R.id.user_email);
+        TextView phoneNumber = findViewById(R.id.user_phone);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
 
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -28,8 +28,12 @@ public class UpdateProfile extends AppCompatActivity {
             }
         });
 
-//        userName.setText("John Doe");
-//        email.setText("john.doe@gmail.com");
-//        phoneNumber.setText("+1 (123)-456-7890");
+        String defaultUserName = "Name not set";
+        String defaultEmail = "Email not set";
+        String defaultPhone = "Phone number not set";
+
+        userName.setText(defaultUserName);
+        email.setText(defaultEmail);
+        phoneNumber.setText(defaultPhone);
     }
 }
