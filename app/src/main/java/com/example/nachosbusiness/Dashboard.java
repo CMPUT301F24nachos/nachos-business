@@ -1,5 +1,6 @@
 package com.example.nachosbusiness;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -58,7 +59,8 @@ public class Dashboard extends AppCompatActivity {
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "facility click!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Dashboard.this, FacilityActivity.class);
+                startActivity(intent);
             }
         });
 

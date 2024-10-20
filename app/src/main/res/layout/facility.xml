@@ -32,7 +32,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/facility_title"
             android:textSize="34sp"
-            app:layout_constraintBottom_toTopOf="@+id/text_input_name_layer"
+            app:layout_constraintBottom_toTopOf="@+id/text_facility_input_name_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,10 +44,10 @@
             android:layout_marginStart="16dp"
             android:text="@string/facility_location"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_location_layer" />
+            app:layout_constraintTop_toBottomOf="@+id/text_facility_input_location_container" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_name_layer"
+            android:id="@+id/text_facility_input_name_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -60,8 +60,12 @@
             app:layout_constraintTop_toBottomOf="@id/facility_title">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_facility_input_name"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:maxLength="50"
+                android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -71,11 +75,11 @@
             android:layout_marginStart="16dp"
             android:text="@string/facility_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_name_layer" />
+            app:layout_constraintTop_toBottomOf="@+id/text_facility_input_name_container" />
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_location_layer"
+            android:id="@+id/text_facility_input_location_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -88,15 +92,17 @@
             app:layout_constraintTop_toBottomOf="@+id/text_facility_name">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_facility_input_location"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout_editor_absoluteX="17dp"
-                tools:layout_editor_absoluteY="155dp" />
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:maxLength="50" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_desc_layer"
+            android:id="@+id/text_facility_input_desc_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
@@ -110,8 +116,13 @@
             app:layout_constraintTop_toBottomOf="@id/text_facility_location">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/text_facility_input_desc"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:maxLength="200"
+                android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -136,14 +147,13 @@
         app:layout_constraintTop_toBottomOf="@id/facility_body_const">
 
         <Button
-            android:id="@+id/button_save"
+            android:id="@+id/facility_button_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:text="@string/facility_button_save"
-            android:textColor="@color/black"
             app:backgroundTint="@color/greenButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +161,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button_cancel"
+            android:id="@+id/facility_button_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -159,12 +169,11 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
             android:text="@string/facility_button_cancel"
-            android:textColor="@color/black"
             app:backgroundTint="@color/redButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_save" />
+            app:layout_constraintTop_toBottomOf="@+id/facility_button_save" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
