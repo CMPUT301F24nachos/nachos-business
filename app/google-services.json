@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "31196767087",
+    "project_id": "nachos-business-3d9ba",
+    "storage_bucket": "nachos-business-3d9ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31196767087:android:2c082fc1cd63755fa4be9a",
+        "android_client_info": {
+          "package_name": "com.example.nachosbusiness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuka926sDGyG2icbFIw3XNMA2sS3DG_iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

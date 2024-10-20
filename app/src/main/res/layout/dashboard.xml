@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/facility_header_const"
+        android:id="@+id/dashboard_header_const"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/header"
@@ -48,7 +48,7 @@
         app:layout_constraintBottom_toTopOf="@id/dashboard_button_const"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/facility_header_const">
+        app:layout_constraintTop_toBottomOf="@id/dashboard_header_const">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dashboard_body_header"
