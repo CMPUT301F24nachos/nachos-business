@@ -47,7 +47,7 @@ public class UserManager {
      */
     public void addUser(User user)
     {
-        CollectionReference usersRef = db.collection("users");
+        CollectionReference usersRef = db.collection("entrants");
 
         usersRef.add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
@@ -68,7 +68,7 @@ public class UserManager {
      */
     public void deleteUser(User user)
     {
-        db.collection("users")
+        db.collection("entrants")
                 .document(user.getAndroid_id())
                 .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
