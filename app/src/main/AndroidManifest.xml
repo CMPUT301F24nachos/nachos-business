@@ -26,10 +26,6 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".FacilityActivity"
-            android:exported="true">
-        </activity>
-        <activity
             android:name=".UpdateProfile"
             android:exported="true">
         </activity>

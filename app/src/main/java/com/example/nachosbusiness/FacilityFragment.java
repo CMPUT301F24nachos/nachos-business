@@ -1,29 +1,40 @@
 package com.example.nachosbusiness;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
 //TODO: need to check if organizer has a facility, update texts if there is one.
-public class FacilityActivity extends AppCompatActivity {
+public class FacilityFragment extends Fragment {
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.facility);
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
+    ) {
+        return inflater.inflate(R.layout.facility, container, false);
+    }
 
-        Button saveButton = findViewById(R.id.facility_button_save);
-        Button cancelButton = findViewById(R.id.facility_button_cancel);
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        TextInputEditText facilityName = findViewById(R.id.text_facility_input_name);
-        TextInputEditText facilityLocation = findViewById(R.id.text_facility_input_location);
-        TextInputEditText facilityDescription = findViewById(R.id.text_facility_input_desc);
+        Button saveButton = view.findViewById(R.id.facility_button_save);
+        Button cancelButton = view.findViewById(R.id.facility_button_cancel);
+
+        TextInputEditText facilityName = view.findViewById(R.id.text_facility_input_name);
+        TextInputEditText facilityLocation = view.findViewById(R.id.text_facility_input_location);
+        TextInputEditText facilityDescription = view.findViewById(R.id.text_facility_input_desc);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +45,7 @@ public class FacilityActivity extends AppCompatActivity {
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
                     saveFacility(facilityName, facilityLocation, facilityDescription);
-                    finish();
+                    requireActivity().getSupportFragmentManager().popBackStack();
                 }
             }
         });
@@ -42,7 +53,7 @@ public class FacilityActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
     }
@@ -56,7 +67,7 @@ public class FacilityActivity extends AppCompatActivity {
     private boolean validateInput(TextInputEditText inputText, String e){
         String text = Objects.requireNonNull(inputText.getText()).toString().trim();
         if (text.isEmpty()) {
-            Toast.makeText(getApplicationContext(), e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), e, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
