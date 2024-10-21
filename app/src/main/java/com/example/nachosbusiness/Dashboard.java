@@ -2,6 +2,7 @@ package com.example.nachosbusiness;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,12 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.users.RegistrationActivity;
+
 public class Dashboard extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+
+        String android_id = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
@@ -51,7 +56,11 @@ public class Dashboard extends AppCompatActivity {
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                loadFragment(new FacilityFragment());
+                Bundle bundle = new Bundle();
+                bundle.putString("androidID", android_id);
+                FacilityFragment facilityObj = new FacilityFragment();
+                facilityObj.setArguments(bundle);
+                loadFragment(facilityObj);
             }
         });
 

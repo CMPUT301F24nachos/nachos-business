@@ -1,9 +1,11 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.facilities;
 
 public class Facility {
+    private String android_id;
     private String name;
     private String location;
     private String info;
+
 
     /**
      * Constructor for a facility, no inputs
@@ -12,15 +14,33 @@ public class Facility {
     }
 
     /**
-     * Facility constructor
-     * @param name name of the facility
-     * @param location location name
-     * @param info provided description
+     * constructor for facility, android_id is primary key
+     * @param android_id
+     * @param name
+     * @param location
+     * @param info
      */
-    public Facility(String name, String location, String info) {
+    public Facility(String android_id, String name, String location, String info) {
+        this.android_id = android_id;
         this.name = name;
         this.location = location;
         this.info = info;
+    }
+
+    /**
+     * getter for android_id
+     * @return android_id of facility owner
+     */
+    public String getAndroid_id() {
+        return android_id;
+    }
+
+    /**
+     * setter for facility owner
+     * @param android_id set the facility owner
+     */
+    public void setAndroid_id(String android_id) {
+        this.android_id = android_id;
     }
 
     /**

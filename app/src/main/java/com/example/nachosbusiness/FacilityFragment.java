@@ -1,6 +1,7 @@
 package com.example.nachosbusiness;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.nachosbusiness.facilities.Facility;
+import com.example.nachosbusiness.facilities.FacilityManager;
+import com.example.nachosbusiness.users.RegistrationActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -18,11 +21,18 @@ import java.util.Objects;
 //TODO: need to check if organizer has a facility, update texts if there is one.
 public class FacilityFragment extends Fragment {
 
+    private FacilityManager facilityManager;
+    private String androidID;
+    private boolean hasFacility;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        facilityManager = new FacilityManager(androidID);
+        androidID = getArguments().getString("androidID");
+        //hasFacility = facilityManager.hasFacility();
         return inflater.inflate(R.layout.facility, container, false);
     }
 
@@ -44,7 +54,8 @@ public class FacilityFragment extends Fragment {
                 boolean isDescriptionValid = validateInput(facilityDescription, "Facility Description is Required!");
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
-                    saveFacility(facilityName, facilityLocation, facilityDescription);
+                    if (hasFacility){updateFacility();}
+                    else {saveFacility(androidID, facilityName, facilityLocation, facilityDescription);}
                     requireActivity().getSupportFragmentManager().popBackStack();
                 }
             }
@@ -73,13 +84,20 @@ public class FacilityFragment extends Fragment {
         return true;
     }
 
-//TODO: Implement firebase code to either update or create a new record
-    private void saveFacility(TextInputEditText facilityName,
+
+    private void updateFacility(){
+
+    }
+
+    private void saveFacility(String androidID,
+                              TextInputEditText facilityName,
                               TextInputEditText facilityLocation,
                               TextInputEditText facilityDescription){
-        Facility facility = new Facility();
-        facility.setName(facilityName.getText().toString());
-        facility.setLocation(facilityLocation.getText().toString());
-        facility.setInfo(facilityDescription.getText().toString());
+        Facility facility = new Facility(androidID,
+                facilityName.getText().toString(),
+                facilityLocation.getText().toString(),
+                facilityDescription.getText().toString()
+                );
+        facilityManager.addNewFacility(facility);
     }
 }
