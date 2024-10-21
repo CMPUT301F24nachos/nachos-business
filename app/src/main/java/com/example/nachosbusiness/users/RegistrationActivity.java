@@ -35,7 +35,7 @@ public class RegistrationActivity extends AppCompatActivity {
         return Pattern.compile(regexPattern).matcher(email).matches();
     }
 
-    // Altered code from https://www.geeksforgeeks.org/how-to-select-an-image-from-gallery-in-android/
+    // Altered some code from https://www.geeksforgeeks.org/how-to-select-an-image-from-gallery-in-android/
     ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -86,6 +86,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageChooser();
+            }
+        });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 imageChooser();
