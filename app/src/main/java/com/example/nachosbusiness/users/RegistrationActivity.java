@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 public class RegistrationActivity extends AppCompatActivity {
     private UserManager userManager;
     private ImageView imageView;
+    private ImageButton closeButton;
 
     // Using OWASP email validation: https://www.baeldung.com/java-email-validation-regex
     private boolean isValidEmail(String email) {
@@ -47,8 +48,10 @@ public class RegistrationActivity extends AppCompatActivity {
                             Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(
                                     this.getContentResolver(), selectedImageUri);
 
-                            imageView.setImageBitmap(selectedImageBitmap); // Set image to ImageView
-                            imageView.setVisibility(View.VISIBLE); // Make ImageView visible
+                            imageView.setImageBitmap(selectedImageBitmap);
+                            imageView.setVisibility(View.VISIBLE);
+                            closeButton.setVisibility(View.VISIBLE);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                             Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
@@ -79,6 +82,7 @@ public class RegistrationActivity extends AppCompatActivity {
         EditText editPhone = findViewById(R.id.editTextPhone);
         ImageButton profileButton = findViewById(R.id.imageButton);
         Button signUpButton = findViewById(R.id.signUpButton);
+        closeButton = findViewById(R.id.closeButton);
 
 
         profileButton.setOnClickListener(view -> imageChooser());
@@ -98,6 +102,14 @@ public class RegistrationActivity extends AppCompatActivity {
                 imageChooser();
             }
         });
+
+        closeButton.setOnClickListener(view -> {
+            imageView.setVisibility(View.GONE);
+            closeButton.setVisibility(View.GONE);
+            Toast.makeText(this, "Image removed", Toast.LENGTH_SHORT).show();
+        });
+
+
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
