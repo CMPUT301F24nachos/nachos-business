@@ -9,6 +9,7 @@ public class User {
     private String email;
     private String phone;
     private boolean admin;
+    private String profileImage;
     private List<String> events;
 
     public User(String android_id, String username, String email, String phone)
