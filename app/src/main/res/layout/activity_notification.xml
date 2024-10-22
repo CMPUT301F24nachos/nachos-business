@@ -46,11 +46,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -148,11 +149,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -231,11 +233,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -333,11 +336,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -435,11 +439,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -516,11 +521,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#7EC7F5"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
                 android:padding="10dp"
                 android:layout_marginBottom="10dp"
                 android:elevation="2dp"
-                android:cornerRadius="10dp">
+                >
 
                 <RelativeLayout
                     android:layout_width="match_parent"
