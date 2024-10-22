@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.users;
 
+
 import android.net.Uri;
 
 import java.net.URI;
@@ -11,6 +12,7 @@ public class User {
     private String username;
     private String email;
     private String phone;
+
     private boolean admin;
     private Uri profileImage;
     private List<String> events;
@@ -41,7 +43,6 @@ public class User {
     public void setEvents(List<String> events) {
         this.events = events;
     }
-
 
 
     public String getAndroid_id() {

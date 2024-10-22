@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.users;
 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.telephony.PhoneNumberUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,13 +22,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
-    private UserManager userManager;
+    private DBManager dbManager;
     private ImageView imageView;
     private ImageButton closeButton;
     private Uri selectedImageUri;
@@ -75,12 +78,14 @@ public class RegistrationActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registration);
 
-        userManager = new UserManager();
+        dbManager = new DBManager("entrants");
+
         imageView = findViewById(R.id.imageView);
 
         EditText editUsername = findViewById(R.id.editTextText);
         EditText editEmail = findViewById(R.id.editTextTextEmailAddress);
         EditText editPhone = findViewById(R.id.editTextPhone);
+
         ImageButton profileButton = findViewById(R.id.imageButton);
         Button signUpButton = findViewById(R.id.signUpButton);
         closeButton = findViewById(R.id.closeButton);
@@ -112,14 +117,23 @@ public class RegistrationActivity extends AppCompatActivity {
         });
 
 
-
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String username  = editUsername.getText().toString();
                 String email = editEmail.getText().toString();
-                String rawPhone = editPhone.getText().toString().trim();
-                String phone = PhoneNumberUtils.formatNumber(rawPhone, "+1");
+                String phone = "";
+
+                if (!editPhone.getText().toString().isEmpty())
+                {
+                    phone = PhoneNumberUtils.formatNumber(editPhone.getText().toString(), "CA");
+                    if (phone == null)
+                    {
+                        Toast.makeText(RegistrationActivity.this, "Invalid phone number", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+
                 String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                 if (username.isEmpty() || email.isEmpty()) {
@@ -127,7 +141,8 @@ public class RegistrationActivity extends AppCompatActivity {
                 } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
-                    userManager.registerUser(android_id, username, email, phone, selectedImageUri);
+                    User user = new User(android_id, username, email, phone, selectedImageUri);
+                    dbManager.addEntry(user);
                     Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                 }
             }
