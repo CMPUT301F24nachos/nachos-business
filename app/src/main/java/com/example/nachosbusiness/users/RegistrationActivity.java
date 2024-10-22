@@ -13,9 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class RegistrationActivity extends AppCompatActivity {
-    private DBManager dbManager;
-
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
