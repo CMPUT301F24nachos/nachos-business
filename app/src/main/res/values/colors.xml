@@ -5,4 +5,6 @@
     <color name="header">#47ABEA</color>
     <color name="darkButton">#9F6DE2</color>
     <color name="lightButton">#C3A4EB</color>
+    <color name="greenButton">#5ED381</color>
+    <color name="redButton">#DF1A55</color>
 </resources>
