@@ -1,5 +1,7 @@
 package com.example.nachosbusiness.users;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,24 +24,14 @@ public class UserManager {
     /**
      * Creates a new user and adds the new user to the db
      */
-    public void registerUser(String android_id, String username, String email, String phone)
-    {
-        User user = new User(android_id, username, email, phone);
+    public void registerUser(String android_id, String username, String email, String phone, Uri profileImage) {
+        User user = new User(android_id, username, email, phone, profileImage);
         addUser(user);
     }
 
-    /**
-     * No phone number overload
-     * Create a new user and adds the new user to the db
-     * @param android_id
-     * @param username
-     * @param email
-     */
-    public void registerUser(String android_id, String username, String email)
-    {
-        User user = new User(android_id, username, email);
-        addUser(user);
-    }
+
+
+
 
     /**
      * Adds user to the firestore database
