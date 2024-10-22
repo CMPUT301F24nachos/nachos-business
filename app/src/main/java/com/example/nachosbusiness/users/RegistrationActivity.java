@@ -36,13 +36,23 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String username  = editUsername.getText().toString();
                 String email = editEmail.getText().toString();
-                String phone = PhoneNumberUtils.formatNumber(editPhone.getText().toString(), "+1");
+                String phone = "";
+
+                if (editPhone.getText().toString().isEmpty())
+                {
+                    phone = PhoneNumberUtils.formatNumber(editPhone.getText().toString(), "CA");
+                    if (phone == null)
+                    {
+                        Toast.makeText(RegistrationActivity.this, "Invalid phone number", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
 
                 if (username.isEmpty() || email.isEmpty())
                 {
                     Toast.makeText(RegistrationActivity.this, "Please fill out username and email", Toast.LENGTH_LONG).show();
                 }
-                else if (phone == null || phone.isEmpty())
+                else if (phone.isEmpty())
                 {
                     String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
                     User user = new User(android_id, username, email);
