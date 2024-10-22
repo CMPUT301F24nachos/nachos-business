@@ -11,10 +11,11 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
 
 public class RegistrationActivity extends AppCompatActivity {
-    private UserManager userManager;
+    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,7 @@ public class RegistrationActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registration);
 
-        userManager = new UserManager();
+        dbManager = new DBManager("entrants");
 
         EditText editUsername = findViewById(R.id.editTextText);
         EditText editEmail = findViewById(R.id.editTextTextEmailAddress);
@@ -44,12 +45,14 @@ public class RegistrationActivity extends AppCompatActivity {
                 else if (phone == null || phone.isEmpty())
                 {
                     String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    userManager.registerUser(android_id, username, email);
+                    User user = new User(android_id, username, email);
+                    dbManager.addEntry(user);
                 }
                 else
                 {
                     String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    userManager.registerUser(android_id, username, email, phone);
+                    User user = new User(android_id, username, email, phone);
+                    dbManager.addEntry(user);
                 }
             }
         });
