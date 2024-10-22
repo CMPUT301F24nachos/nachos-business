@@ -1,0 +1,602 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ADD8E6">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="#ADD8E6">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="Back"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:background="#ADD8E6">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/notification_item_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have been chosen!"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You have been chosen from the waiting list! Claim your spot before 2023-01-16 at 1:00 pm."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2023-01-15 12:01 AM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp">
+
+                        <Button
+                            android:id="@+id/claim_button_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Claim"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#4CAF50"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/rounded_button" />
+
+                        <Button
+                            android:id="@+id/reject_button_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reject"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:backgroundTint="#F44336"
+                            android:background="@drawable/rounded_button" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_item_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Complete your sign up!"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You're almost there! Finish your sign up to register in a waiting list."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2020-04-20 4:20 PM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <Button
+                        android:id="@+id/signup_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign up"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#1E88E5"
+                        android:textStyle="bold"
+                        android:background="@drawable/rounded_button" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_item_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="A spot has opened up for you!"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You have been chosen from the waiting list! Claim your spot before 2024-10-15 at 1:00 pm."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2024-10-12 9:41 AM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp">
+
+                        <Button
+                            android:id="@+id/claim_button_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Claim"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#4CAF50"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/rounded_button" />
+
+                        <Button
+                            android:id="@+id/reject_button_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reject"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:backgroundTint="#F44336"
+                            android:background="@drawable/rounded_button" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_item_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have been invited!"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You ahve been selected for the Piano Lesson Event at the Stratchona Community Center!"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2024-02-14 11:11 PM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp">
+
+                        <Button
+                            android:id="@+id/claim_button_4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Claim"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#4CAF50"
+                            android:textStyle="bold"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/rounded_button" />
+
+                        <Button
+                            android:id="@+id/reject_button_4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reject"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:backgroundTint="#F44336"
+                            android:background="@drawable/rounded_button" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_item_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have not been chosen."
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hey, unfortunately you have did not make it for the waitlist."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2024-10-13 1:44 PM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp">
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_item_6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/notification_border"
+                android:backgroundTint="#7EC7F5"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/close_button_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_delete"
+                        android:contentDescription="Close"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/info_button_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_menu_info_details"
+                        android:contentDescription="Info"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginTop="0dp" />
+
+                    <TextView
+                        android:id="@+id/notification_title_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You have not been selected."
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="4dp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/notification_message_6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hey, unfortunately you have not been selected for the Piano Lesson Event at the Strathcona Community Center."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/notification_date_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2022-10-10 6:35 AM"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp">
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
