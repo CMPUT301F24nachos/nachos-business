@@ -14,6 +14,9 @@ public class Facility {
         this.info = info;
     }
 
+
+    dummy{};
+
     public String getName() {
         return name;
     }
