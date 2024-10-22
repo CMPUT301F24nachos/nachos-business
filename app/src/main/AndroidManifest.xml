@@ -26,11 +26,17 @@
             android:exported="true">
         </activity>
         <activity
-            android:name="Browse"
+            android:name=".users.RegistrationActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".UpdateProfile"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Browse"
             android:exported="true">
         </activity>
 
-
     </application>
-
 </manifest>

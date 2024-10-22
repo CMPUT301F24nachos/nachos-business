@@ -10,4 +10,20 @@
     <string name="profile_organizer_events">Your Events</string>
     <string name="profile_admin_browse">Browse</string>
     <string name="profile_organizer_facility">Facility</string>
+    <!--update profile strings-->
+    <string name="update_profile">Update Profile</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="profile_picture">Profile Picture</string>
+
+    <!--facility strings-->
+    <string name="facility_title">Add/Edit Your Facility</string>
+    <string name="facility_name_hint">Enter Your Facility Name (Required)</string>
+    <string name="facility_name">Facility Name</string>
+    <string name="facility_location_hint">Enter Your Facility Location (Required)</string>
+    <string name="facility_location">Location</string>
+    <string name="facility_description_hint">Enter a Description (Required)</string>
+    <string name="facility_description">Description</string>
+    <string name="facility_button_save">Save Changes</string>
+    <string name="facility_button_cancel">Cancel Changes</string>
 </resources>
