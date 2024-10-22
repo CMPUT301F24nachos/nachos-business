@@ -141,7 +141,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
-                    User user = new User(android_id, username, email, selectedImageUri);
+                    User user = new User(android_id, username, email, phone, selectedImageUri);
                     dbManager.addEntry(user);
                     Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                 }
