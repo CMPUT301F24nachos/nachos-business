@@ -29,6 +29,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private UserManager userManager;
     private ImageView imageView;
     private ImageButton closeButton;
+    private Uri selectedImageUri;
 
     // Using OWASP email validation: https://www.baeldung.com/java-email-validation-regex
     private boolean isValidEmail(String email) {
@@ -43,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null && data.getData() != null) {
-                        Uri selectedImageUri = data.getData();
+                        selectedImageUri = data.getData();
                         try {
                             Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(
                                     this.getContentResolver(), selectedImageUri);
@@ -60,11 +61,11 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             });
 
+    // Encapsulates image upload logic
     private void imageChooser() {
         Intent i = new Intent();
         i.setType("image/*");
         i.setAction(Intent.ACTION_GET_CONTENT);
-
         launchSomeActivity.launch(i);
     }
 
@@ -106,6 +107,7 @@ public class RegistrationActivity extends AppCompatActivity {
         closeButton.setOnClickListener(view -> {
             imageView.setVisibility(View.GONE);
             closeButton.setVisibility(View.GONE);
+            selectedImageUri = null;
             Toast.makeText(this, "Image removed", Toast.LENGTH_SHORT).show();
         });
 
@@ -116,24 +118,17 @@ public class RegistrationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String username  = editUsername.getText().toString();
                 String email = editEmail.getText().toString();
-                String phone = PhoneNumberUtils.formatNumber(editPhone.getText().toString(), "+1");
+                String rawPhone = editPhone.getText().toString().trim();
+                String phone = PhoneNumberUtils.formatNumber(rawPhone, "+1");
+                String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-                if (username.isEmpty() || email.isEmpty())
-                {
+                if (username.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegistrationActivity.this, "Please fill out username and email", Toast.LENGTH_LONG).show();
-                }
-                else if (!isValidEmail(email)) {
+                } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
-                }
-                else if (phone == null || phone.isEmpty())
-                {
-                    String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    userManager.registerUser(android_id, username, email);
-                }
-                else
-                {
-                    String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    userManager.registerUser(android_id, username, email, phone);
+                } else {
+                    userManager.registerUser(android_id, username, email, phone, selectedImageUri);
+                    Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
