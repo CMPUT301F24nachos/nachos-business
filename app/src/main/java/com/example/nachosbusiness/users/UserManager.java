@@ -1,6 +1,9 @@
 package com.example.nachosbusiness.users;
 
+import android.content.Context;
 import android.net.Uri;
+import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +14,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.function.BiConsumer;
 
 public class UserManager {
 
@@ -76,4 +85,34 @@ public class UserManager {
                     }
                 });
     }
+
+    public interface UserCallback {
+        void onUserRetrieved(String name, String email, String phone);
+        void onUserNotFound();
+        void onError(String error);
+    }
+
+    public void getUser(String android_id, UserCallback callback) {
+        Query query = db.collection("entrants").whereEqualTo("android_id", android_id).limit(1);
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                    String name = document.getString("name");
+                    String email = document.getString("email");
+                    String phone = document.getString("phone");
+
+                    callback.onUserRetrieved(name, email, phone);
+                } else {
+                    callback.onUserNotFound();
+                }
+            } else {
+                // Handle the error
+                callback.onError(task.getException() != null ? task.getException().getMessage() : "Unknown error");
+            }
+        });
+    }
+
 }
