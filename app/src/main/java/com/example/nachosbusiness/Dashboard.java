@@ -63,17 +63,12 @@ public class Dashboard extends AppCompatActivity {
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Facility facility = new Facility();
-                String documentID = null;
-                if (facilityManager.getHasFacility()){
-                     facility = facilityManager.getFacility();
-                     documentID = facilityManager.getDocId();
+                if (!facilityManager.getHasFacility()){
+                    Facility facility = new Facility();
+                    facilityManager.setFacility(facility);
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("androidID", android_id);
-                bundle.putString("documentID", documentID);
-                bundle.putBoolean("hasFacility", facilityManager.getHasFacility());
-                bundle.putSerializable("facility", facility);
                 bundle.putSerializable("facilityManager", facilityManager);
                 FacilityFragment facilityObj = new FacilityFragment();
                 facilityObj.setArguments(bundle);

@@ -17,7 +17,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
-//TODO: need to check if organizer has a facility, update texts if there is one.
 public class FacilityFragment extends Fragment {
 
     private FacilityDBManager facilityManager;
@@ -34,9 +33,9 @@ public class FacilityFragment extends Fragment {
     ) {
         facilityManager = (FacilityDBManager) getArguments().getSerializable("facilityManager");
         androidID = getArguments().getString("androidID");
-        facility = (Facility) getArguments().getSerializable("facility");
-        hasFacility = getArguments().getBoolean("hasFacility");
-        documentID = getArguments().getString("documentID");
+        facility = facilityManager.getFacility();
+        hasFacility = facilityManager.getHasFacility();
+        documentID = facilityManager.getDocId();
         return inflater.inflate(R.layout.facility, container, false);
     }
 
