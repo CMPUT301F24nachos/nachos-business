@@ -2,6 +2,7 @@ package com.example.nachosbusiness;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,12 +14,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.facilities.Facility;
+import com.example.nachosbusiness.facilities.FacilityDBManager;
+
+import java.io.Serializable;
+
 public class Dashboard extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+
+        String android_id = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // User must have a facility before creating a new event. FacilityDBManager holds the facility if one exists.
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(android_id);
 
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
@@ -51,7 +63,21 @@ public class Dashboard extends AppCompatActivity {
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                loadFragment(new FacilityFragment());
+                Facility facility = new Facility();
+                String documentID = null;
+                if (facilityManager.getHasFacility()){
+                     facility = facilityManager.getFacility();
+                     documentID = facilityManager.getDocId();
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("androidID", android_id);
+                bundle.putString("documentID", documentID);
+                bundle.putBoolean("hasFacility", facilityManager.getHasFacility());
+                bundle.putSerializable("facility", facility);
+                bundle.putSerializable("facilityManager", facilityManager);
+                FacilityFragment facilityObj = new FacilityFragment();
+                facilityObj.setArguments(bundle);
+                loadFragment(facilityObj);
             }
         });
 
