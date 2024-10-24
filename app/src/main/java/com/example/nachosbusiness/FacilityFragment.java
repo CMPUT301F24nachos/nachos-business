@@ -18,14 +18,13 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.Objects;
-
 public class FacilityFragment extends Fragment {
 
     private FacilityDBManager facilityManager;
     private String androidID;
-    private Facility facility;
+    private Facility existingFacility;
     private String documentID;
+    Facility editFacility = new Facility();
     private static final String TAG = "FACILITY";
 
     @Override
@@ -35,7 +34,7 @@ public class FacilityFragment extends Fragment {
     ) {
         facilityManager = (FacilityDBManager) getArguments().getSerializable("facilityManager");
         androidID = getArguments().getString("androidID");
-        facility = facilityManager.getFacility();
+        existingFacility = facilityManager.getFacility();
         documentID = facilityManager.getDocId();
         return inflater.inflate(R.layout.facility, container, false);
     }
@@ -54,9 +53,9 @@ public class FacilityFragment extends Fragment {
         TextInputEditText facilityLocation = view.findViewById(R.id.text_facility_input_location);
         TextInputEditText facilityDescription = view.findViewById(R.id.text_facility_input_desc);
 
-        facilityName.setText(facility.getName());
-        facilityLocation.setText(facility.getLocation());
-        facilityDescription.setText(facility.getInfo());
+        facilityName.setText(existingFacility.getName());
+        facilityLocation.setText(existingFacility.getLocation());
+        facilityDescription.setText(existingFacility.getInfo());
 
         addTextWatcher(facilityName, facilityNameLayout, "Facility Name is Required!");
         addTextWatcher(facilityLocation, facilityLocationLayout, "Facility Location is Required!");
@@ -72,17 +71,18 @@ public class FacilityFragment extends Fragment {
                 boolean isDescriptionValid = validateField(facilityDescription, facilityDescriptionLayout, "Facility Description is Required!");
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
-                    facility.setAndroid_id(androidID);
-                    facility.setName(facilityName.getText().toString());
-                    facility.setLocation((facilityLocation.getText().toString()));
-                    facility.setInfo(facilityDescription.getText().toString());
+                    editFacility.setAndroid_id(androidID);
+                    editFacility.setName(facilityName.getText().toString());
+                    editFacility.setLocation((facilityLocation.getText().toString()));
+                    editFacility.setInfo(facilityDescription.getText().toString());
 
-                    if (facilityManager.hasFacility()){
-                        facilityManager.setEntry(documentID, facility, "facilities");
+                    // if existing record, then update else create new facility
+                    if (facilityManager.hasFacility() && facilityManager.getFacility().getAndroid_id()!=null){
+                        facilityManager.setEntry(documentID, editFacility, "facilities");
                         Toast.makeText(requireContext(),"Saved Changes!", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        facilityManager.addEntry(facility);
+                        facilityManager.addEntry(editFacility);
                         Toast.makeText(requireContext(),"New Facility Added!", Toast.LENGTH_SHORT).show();
                     }
                     facilityManager.queryOrganizerFacility(androidID);
