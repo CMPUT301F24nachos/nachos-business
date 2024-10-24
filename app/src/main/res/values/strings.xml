@@ -26,4 +26,6 @@
     <string name="facility_description">Description</string>
     <string name="facility_button_save">Save Changes</string>
     <string name="facility_button_cancel">Cancel Changes</string>
+    <string name="event_button_save">Create Event</string>
+    <string name="event_button_cancel">Cancel Event Creation</string>
 </resources>
