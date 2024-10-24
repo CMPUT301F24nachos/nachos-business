@@ -25,7 +25,6 @@ public class FacilityFragment extends Fragment {
     private FacilityDBManager facilityManager;
     private String androidID;
     private Facility facility;
-    private Boolean hasFacility;
     private String documentID;
     private static final String TAG = "FACILITY";
 
@@ -37,7 +36,6 @@ public class FacilityFragment extends Fragment {
         facilityManager = (FacilityDBManager) getArguments().getSerializable("facilityManager");
         androidID = getArguments().getString("androidID");
         facility = facilityManager.getFacility();
-        hasFacility = facilityManager.getHasFacility();
         documentID = facilityManager.getDocId();
         return inflater.inflate(R.layout.facility, container, false);
     }
@@ -79,7 +77,7 @@ public class FacilityFragment extends Fragment {
                     facility.setLocation((facilityLocation.getText().toString()));
                     facility.setInfo(facilityDescription.getText().toString());
 
-                    if (hasFacility){
+                    if (facilityManager.hasFacility()){
                         facilityManager.setEntry(documentID, facility, "facilities");
                         Toast.makeText(requireContext(),"Saved Changes!", Toast.LENGTH_SHORT).show();
                     }

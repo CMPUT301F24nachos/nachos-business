@@ -18,7 +18,6 @@ import java.io.Serializable;
 public class FacilityDBManager extends DBManager implements Serializable{
 
     Facility facility;
-    Boolean hasFacility = false;
     String docId;
     private static final String TAG = "FacilityDBManager";
 
@@ -50,16 +49,8 @@ public class FacilityDBManager extends DBManager implements Serializable{
      * Checks if the user associated with an AndroidID has an existing facility in the db
      * @return True if exists
      */
-    public Boolean getHasFacility() {
-        return hasFacility;
-    }
-
-    /**
-     * Sets if the user associated with an AndroidID has an existing facility in the db
-     * @param hasFacility True if exists
-     */
-    public void setHasFacility(Boolean hasFacility) {
-        this.hasFacility = hasFacility;
+    public Boolean hasFacility() {
+        return this.facility != null;
     }
 
     /**
@@ -97,7 +88,6 @@ public class FacilityDBManager extends DBManager implements Serializable{
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
                                 setFacility(document.toObject(Facility.class));
-                                setHasFacility(true);
                                 setDocId(document.getId());
                                 Log.i(TAG, "Cached document data: " + document.getData());
                             }

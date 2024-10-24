@@ -63,7 +63,7 @@ public class Dashboard extends AppCompatActivity {
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (!facilityManager.getHasFacility()){
+                if (!facilityManager.hasFacility()){
                     Facility facility = new Facility();
                     facilityManager.setFacility(facility);
                 }
