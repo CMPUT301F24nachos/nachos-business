@@ -18,6 +18,8 @@
 
     <!--facility strings-->
     <string name="facility_title">Add/Edit Your Facility</string>
+    <string name="add_facility">Add a New Facility</string>
+    <string name="edit_facility">Edit Your Facility</string>
     <string name="facility_name_hint">Enter Your Facility Name (Required)</string>
     <string name="facility_name">Facility Name</string>
     <string name="facility_location_hint">Enter Your Facility Location (Required)</string>

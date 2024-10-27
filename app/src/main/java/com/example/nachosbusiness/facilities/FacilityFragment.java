@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.facilities;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.nachosbusiness.facilities.Facility;
-import com.example.nachosbusiness.facilities.FacilityDBManager;
+import com.example.nachosbusiness.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,9 +23,8 @@ public class FacilityFragment extends Fragment {
     private FacilityDBManager facilityManager;
     private String androidID;
     private Facility existingFacility;
-    private String documentID;
     Facility editFacility = new Facility();
-    private static final String TAG = "FACILITY";
+    private static final String TAG = "FacilityFragment";
 
     @Override
     public View onCreateView(
@@ -35,12 +34,20 @@ public class FacilityFragment extends Fragment {
         facilityManager = (FacilityDBManager) getArguments().getSerializable("facilityManager");
         androidID = getArguments().getString("androidID");
         existingFacility = facilityManager.getFacility();
-        documentID = facilityManager.getDocId();
         return inflater.inflate(R.layout.facility, container, false);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        TextView title = view.findViewById(R.id.facility_title);
+
+        if (facilityManager.getFacility().getName()!=null){
+            title.setText(R.string.edit_facility);
+        }
+        else {
+            title.setText(R.string.add_facility);
+        }
 
         Button saveButton = view.findViewById(R.id.facility_button_save);
         Button cancelButton = view.findViewById(R.id.facility_button_cancel);
@@ -55,13 +62,13 @@ public class FacilityFragment extends Fragment {
 
         facilityName.setText(existingFacility.getName());
         facilityLocation.setText(existingFacility.getLocation());
-        facilityDescription.setText(existingFacility.getInfo());
+        facilityDescription.setText(existingFacility.getDesc());
 
         addTextWatcher(facilityName, facilityNameLayout, "Facility Name is Required!");
         addTextWatcher(facilityLocation, facilityLocationLayout, "Facility Location is Required!");
         addTextWatcher(facilityDescription, facilityDescriptionLayout, "Facility Description is Required!");
 
-        Log.d("FacilityFragment", "onViewCreated: View is created");
+        Log.d(TAG, "onViewCreated: View is created");
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,20 +78,17 @@ public class FacilityFragment extends Fragment {
                 boolean isDescriptionValid = validateField(facilityDescription, facilityDescriptionLayout, "Facility Description is Required!");
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
-                    editFacility.setAndroid_id(androidID);
                     editFacility.setName(facilityName.getText().toString());
                     editFacility.setLocation((facilityLocation.getText().toString()));
-                    editFacility.setInfo(facilityDescription.getText().toString());
+                    editFacility.setDesc(facilityDescription.getText().toString());
 
-                    // if existing record, then update else create new facility
-                    if (facilityManager.hasFacility() && facilityManager.getFacility().getAndroid_id()!=null){
-                        facilityManager.setEntry(documentID, editFacility, "facilities");
+                    if (facilityManager.getFacility().getName()!=null){
                         Toast.makeText(requireContext(),"Saved Changes!", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        facilityManager.addEntry(editFacility);
                         Toast.makeText(requireContext(),"New Facility Added!", Toast.LENGTH_SHORT).show();
                     }
+                    facilityManager.setEntry(androidID, editFacility, "facilities");
                     facilityManager.queryOrganizerFacility(androidID);
                     requireActivity().getSupportFragmentManager().popBackStack();
                 }

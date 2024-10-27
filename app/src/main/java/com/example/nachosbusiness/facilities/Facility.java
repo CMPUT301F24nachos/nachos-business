@@ -3,10 +3,9 @@ package com.example.nachosbusiness.facilities;
 import java.io.Serializable;
 
 public class Facility implements Serializable{
-    private String android_id;
     private String name;
     private String location;
-    private String info;
+    private String desc;
 
 
     /**
@@ -17,32 +16,14 @@ public class Facility implements Serializable{
 
     /**
      * constructor for facility, android_id is primary key
-     * @param android_id android device id
      * @param name name of facility
      * @param location location of facility
-     * @param info facility description
+     * @param desc facility description
      */
-    public Facility(String android_id, String name, String location, String info) {
-        this.android_id = android_id;
+    public Facility(String name, String location, String desc) {
         this.name = name;
         this.location = location;
-        this.info = info;
-    }
-
-    /**
-     * getter for android_id
-     * @return android_id of facility owner
-     */
-    public String getAndroid_id() {
-        return android_id;
-    }
-
-    /**
-     * setter for facility owner
-     * @param android_id set the facility owner
-     */
-    public void setAndroid_id(String android_id) {
-        this.android_id = android_id;
+        this.desc = desc;
     }
 
     /**
@@ -81,15 +62,15 @@ public class Facility implements Serializable{
      * getter for facility description
      * @return facility desciption string
      */
-    public String getInfo() {
-        return info;
+    public String getDesc() {
+        return desc;
     }
 
     /**
      * set facility description
-     * @param info description of facility
+     * @param desc description of facility
      */
-    public void setInfo(String info) {
-        this.info = info;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }
