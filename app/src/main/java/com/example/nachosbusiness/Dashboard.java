@@ -62,7 +62,9 @@ public class Dashboard extends AppCompatActivity {
         });
 
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) { loadFragment(new CreateEventFragment()); }
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "make event click!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         joinEventsButton.setOnClickListener(new View.OnClickListener() {
