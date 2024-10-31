@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
+
 public class Dashboard extends AppCompatActivity {
 
     @Override
@@ -38,9 +40,9 @@ public class Dashboard extends AppCompatActivity {
         });
 
         yourEventsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "your events click!", Toast.LENGTH_SHORT).show();
-            }
+                public void onClick(View v) {
+                    loadFragment(new OrganizerEventsFragment());
+                }
         });
 
         browseButton.setOnClickListener(new View.OnClickListener() {
