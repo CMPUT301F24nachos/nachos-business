@@ -28,4 +28,10 @@
     <string name="facility_description">Description</string>
     <string name="facility_button_save">Save Changes</string>
     <string name="facility_button_cancel">Cancel Changes</string>
+
+    <!--org events strings-->
+    <string name="org_event_title">Your Organized Events</string>
+
+    <!--event waitlist strings-->
+    <string name="waitlist_title">Waitlist</string>
 </resources>
