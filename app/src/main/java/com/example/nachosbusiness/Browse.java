@@ -17,6 +17,7 @@ public class Browse extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.browse_home);
 
+
         ImageButton profileViewButton = findViewById(R.id.profileview);
         profileViewButton.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
