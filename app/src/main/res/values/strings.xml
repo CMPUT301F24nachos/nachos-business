@@ -18,6 +18,8 @@
 
     <!--facility strings-->
     <string name="facility_title">Add/Edit Your Facility</string>
+    <string name="add_facility">Add a New Facility</string>
+    <string name="edit_facility">Edit Your Facility</string>
     <string name="facility_name_hint">Enter Your Facility Name (Required)</string>
     <string name="facility_name">Facility Name</string>
     <string name="facility_location_hint">Enter Your Facility Location (Required)</string>
@@ -26,6 +28,10 @@
     <string name="facility_description">Description</string>
     <string name="facility_button_save">Save Changes</string>
     <string name="facility_button_cancel">Cancel Changes</string>
-    <string name="event_button_save">Create Event</string>
-    <string name="event_button_cancel">Cancel Event Creation</string>
+
+    <!--org events strings-->
+    <string name="org_event_title">Your Organized Events</string>
+
+    <!--event waitlist strings-->
+    <string name="waitlist_title">Waitlist</string>
 </resources>
