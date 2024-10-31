@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
+import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -68,7 +69,11 @@ public class Dashboard extends AppCompatActivity {
                             .show();
                 }
                 else{
-                Toast.makeText(getApplicationContext(), "your events click!", Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("androidID", androidID);
+                    OrganizerEventsFragment orgEventsFragment = new OrganizerEventsFragment();
+                    orgEventsFragment.setArguments(bundle);
+                    loadFragment(orgEventsFragment);
                 }
             }
         });
