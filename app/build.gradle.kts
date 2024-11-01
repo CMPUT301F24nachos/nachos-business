@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:3.+")
+    implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }

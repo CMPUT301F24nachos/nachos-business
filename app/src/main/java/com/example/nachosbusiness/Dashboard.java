@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -111,7 +112,10 @@ public class Dashboard extends AppCompatActivity {
 
         joinEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "open QR scanner click!", Toast.LENGTH_SHORT).show();
+                IntentIntegrator intentIntegrator = new IntentIntegrator(Dashboard.this);
+                intentIntegrator.setPrompt("Scan a barcode or QR Code");
+                intentIntegrator.setOrientationLocked(true);
+                intentIntegrator.initiateScan();
             }
         });
     }
