@@ -1,6 +1,7 @@
 package com.example.nachosbusiness;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -68,8 +70,7 @@ public class Dashboard extends AppCompatActivity {
                             .setNegativeButton("Cancel", null)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
-                }
-                else{
+                } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("androidID", androidID);
                     OrganizerEventsFragment orgEventsFragment = new OrganizerEventsFragment();
@@ -105,7 +106,9 @@ public class Dashboard extends AppCompatActivity {
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 {
-                    Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
+                    QRGenTest qrObj = new QRGenTest();
+                    loadFragment(qrObj);
+                    //Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -120,18 +123,34 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
+    /**
+     * Utilize the in-app scanner to navigate to the event registration page
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     *  Reference: https://stackoverflow.com/questions/20114485/use-onactivityresult-android
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+                String scannedData = result.getContents();
+                Intent intent = new Intent(Dashboard.this, EventRegistration.class);
+                intent.putExtra("scanned_data", scannedData);
+                startActivity(intent);
+            }
+        }
 
     /**
      * Open the specified fragment from the activity
      * @param fragment fragment to open
      * Reference: https://developer.android.com/guide/fragments/transactions
      */
-    private void loadFragment(Fragment fragment) {
+    void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         fragmentTransaction.replace(R.id.dashboard_fragment_container, fragment);
-
         fragmentTransaction.addToBackStack(null);
 
         fragmentTransaction.commit();

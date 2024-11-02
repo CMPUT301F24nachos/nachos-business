@@ -1,12 +1,16 @@
 package com.example.nachosbusiness;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,11 +18,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+
+        //TODO: Add logic to check if user is signed up
+
+        if (data != null && "nachos-business".equals(data.getScheme()) && "event".equals(data.getHost())) {
+            String eventId = data.getLastPathSegment();
+            if (eventId != null) {
+                Intent eventIntent = new Intent(this, EventRegistration.class);
+                eventIntent.putExtra("eventID", eventId);
+                eventIntent.putExtra("androidID", androidID);
+                startActivity(eventIntent);
+            }
+        }
+
     }
+
 }
