@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -21,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
-        android:text="Create Event"
+        android:text="@string/create_event"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="Event Description:"
+        android:text="@string/event_description"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +54,7 @@
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="Verify where users will join the waiting list from? (Optional)"
+        android:text="@string/verify_where_users_will_join_the_waiting_list_from_optional"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +66,7 @@
         android:layout_height="15dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="Max number of attendees (Optional)"
+        android:text="@string/max_number_of_attendees_optional"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:text="Date"
+        android:text="@string/date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
@@ -89,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:text="Date"
+        android:text="@string/date"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,9 +102,12 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/register_input_fields"
         android:ems="10"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:maxLines="5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
 
     <TextView
         android:id="@+id/textView7"
@@ -113,16 +115,16 @@
         android:layout_height="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Upload a poster (Optional)"
+        android:text="@string/upload_a_poster_optional"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editPrice" />
 
-    <RadioButton
+    <CheckBox
         android:id="@+id/editGeolocation"
-        android:layout_width="33dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +136,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:text="Event Name"
+        android:text="@string/event_name"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -146,7 +148,7 @@
         android:layout_height="15dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Price (Optional)"
+        android:text="@string/price_optional"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -157,7 +159,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Start Time"
+        android:text="@string/start_time"
         app:layout_constraintEnd_toStartOf="@+id/editEndTime"
         app:layout_constraintStart_toEndOf="@+id/editDate"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
@@ -168,7 +170,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="200dp"
         android:layout_marginTop="10dp"
-        android:text="Event Time"
+        android:text="@string/event_time"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/textView12"
@@ -194,6 +196,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
+        android:contentDescription="@string/add_a_poster_for_this_event"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
@@ -203,7 +206,7 @@
         android:layout_height="49dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:text="End Time"
+        android:text="@string/end_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
@@ -226,7 +229,7 @@
         android:layout_height="17dp"
         android:layout_marginTop="420dp"
         android:layout_marginEnd="10dp"
-        android:text="Event Frequency"
+        android:text="@string/event_frequency"
         android:textColor="#98525252"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -240,7 +243,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/register_input_fields"
         android:ems="10"
-        android:hint="Event name"
+        android:hint="@string/event_name"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -252,7 +255,7 @@
         android:layout_height="23dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:text="Not set"
+        android:text="@string/not_set"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editDate" />
@@ -263,7 +266,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:text="Not set"
+        android:text="@string/not_set"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/textViewSelectedEndTime"
         app:layout_constraintHorizontal_bias="0.367"
@@ -276,7 +279,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="44dp"
-        android:text="Not Set"
+        android:text="@string/not_set"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editEndTime" />
