@@ -44,7 +44,7 @@
         </activity>
 
         <activity
-            android:name=".EventRegistration"
+            android:name=".events.EventRegistration"
             android:exported="true">
         </activity>
 

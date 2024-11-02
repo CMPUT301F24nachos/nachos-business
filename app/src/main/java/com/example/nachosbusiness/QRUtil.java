@@ -62,7 +62,7 @@ public class QRUtil {
      * @param eventId EventID that will be linked to in the hash value
      * @return hashed value using SHA-256 encryption
      */
-    public static String hashQRCodeData(String eventId) {
+    public String hashQRCodeData(String eventId) {
         String deepLinkUrl = "nachos-business://event/" + eventId;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

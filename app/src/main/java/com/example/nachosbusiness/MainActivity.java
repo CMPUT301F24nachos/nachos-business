@@ -7,9 +7,8 @@ import android.provider.Settings;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
+import com.example.nachosbusiness.events.EventRegistration;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(eventIntent);
             }
         }
-
     }
 
 }

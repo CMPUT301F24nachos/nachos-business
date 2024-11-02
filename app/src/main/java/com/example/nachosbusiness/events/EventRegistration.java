@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.events;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.nachosbusiness.facilities.Facility;
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 
 public class EventRegistration extends AppCompatActivity {
@@ -28,6 +30,7 @@ public class EventRegistration extends AppCompatActivity {
         QRUtil qrUtil = new QRUtil();
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
 
+        //TODO
         // need to get event info
         // need to get waitlist info
 
@@ -47,13 +50,14 @@ public class EventRegistration extends AppCompatActivity {
         TextView eventDesc = findViewById(R.id.textview_event_reg_event_desc);
         ImageView qrCode = findViewById(R.id.textview_event_reg_qr_image);
 
-        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
-            @Override
-            public void onFacilityReceived(Facility facility) {
-                facilityName.setText(facility.getName());
-                facilityLocation.setText(facility.getLocation());
-            }
-        });
+        //TODO: change this to use the organizer androidID
+//        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+//            @Override
+//            public void onFacilityReceived(Facility facility) {
+//                facilityName.setText(facility.getName());
+//                facilityLocation.setText(facility.getLocation());
+//            }
+//        });
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

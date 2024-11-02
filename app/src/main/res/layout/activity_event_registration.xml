@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:backgroundTint="@color/white"
-    tools:context=".EventRegistration">
+    tools:context=".events.EventRegistration">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

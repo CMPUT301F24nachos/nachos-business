@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
@@ -113,9 +114,7 @@ public class Dashboard extends AppCompatActivity {
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 {
-                    QRGenTest qrObj = new QRGenTest();
-                    loadFragment(qrObj);
-                    //Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -141,13 +140,19 @@ public class Dashboard extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
+        if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
                 String scannedData = result.getContents();
                 Intent intent = new Intent(Dashboard.this, EventRegistration.class);
                 intent.putExtra("eventID", scannedData);
                 intent.putExtra("androidID", androidID);
                 startActivity(intent);
             }
+        else{
+            Intent intent = new Intent(Dashboard.this, Dashboard.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
         }
 
     /**
@@ -155,7 +160,7 @@ public class Dashboard extends AppCompatActivity {
      * @param fragment fragment to open
      * Reference: https://developer.android.com/guide/fragments/transactions
      */
-    void loadFragment(Fragment fragment) {
+    public void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.dashboard_fragment_container, fragment);
