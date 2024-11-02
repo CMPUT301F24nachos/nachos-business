@@ -89,7 +89,11 @@ public class FacilityFragment extends Fragment {
                         Toast.makeText(requireContext(),"New Facility Added!", Toast.LENGTH_SHORT).show();
                     }
                     facilityManager.setEntry(androidID, editFacility, "facilities");
-                    facilityManager.queryOrganizerFacility(androidID);
+                    facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+                        @Override
+                        public void onFacilityReceived(Facility facility) {
+                        }
+                    });
                     requireActivity().getSupportFragmentManager().popBackStack();
                 }
             }
