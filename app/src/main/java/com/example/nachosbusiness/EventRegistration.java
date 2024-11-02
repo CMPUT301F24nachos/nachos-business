@@ -3,6 +3,7 @@ package com.example.nachosbusiness;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
-import com.example.nachosbusiness.facilities.FacilityFragment;
 
 public class EventRegistration extends AppCompatActivity {
 
@@ -26,10 +27,11 @@ public class EventRegistration extends AppCompatActivity {
 
         QRUtil qrUtil = new QRUtil();
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        facilityManager.queryOrganizerFacility(androidID);
 
         // need to get event info
+        // need to get waitlist info
 
+        Button signUpButton = findViewById(R.id.button_event_register);
         ImageButton buttonHome = findViewById(R.id.button_event_home);
         TextView eventTitle = findViewById(R.id.textview_event_reg_title);
         TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
@@ -45,19 +47,19 @@ public class EventRegistration extends AppCompatActivity {
         TextView eventDesc = findViewById(R.id.textview_event_reg_event_desc);
         ImageView qrCode = findViewById(R.id.textview_event_reg_qr_image);
 
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility) {
+                facilityName.setText(facility.getName());
+                facilityLocation.setText(facility.getLocation());
+            }
+        });
+
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
                 startActivity(dashboardIntent);
             }
         });
-
-
-
-
-        facilityName.setText(facilityManager.getFacility().getName());
-        facilityLocation.setText(facilityManager.getFacility().getLocation());
-
-
     }
 }

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
@@ -24,15 +25,21 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class Dashboard extends AppCompatActivity {
 
+    private String androidID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
 
-        String androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        facilityManager.queryOrganizerFacility(androidID);
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility) {
+            }
+        });
 
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
@@ -137,7 +144,8 @@ public class Dashboard extends AppCompatActivity {
         if (result != null) {
                 String scannedData = result.getContents();
                 Intent intent = new Intent(Dashboard.this, EventRegistration.class);
-                intent.putExtra("scanned_data", scannedData);
+                intent.putExtra("eventID", scannedData);
+                intent.putExtra("androidID", androidID);
                 startActivity(intent);
             }
         }
