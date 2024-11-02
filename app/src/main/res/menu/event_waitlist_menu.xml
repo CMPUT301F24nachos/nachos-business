@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_nav_event"
+        android:title="Go To Event Details" />
+    <item
+        android:id="@+id/action_nav_map"
+        android:title="View Map of Entrants" />
+    <item
+        android:id="@+id/action_send_invites"
+        android:title="Send the Invites" />
+</menu>

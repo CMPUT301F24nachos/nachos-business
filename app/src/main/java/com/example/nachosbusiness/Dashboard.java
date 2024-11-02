@@ -1,17 +1,23 @@
 package com.example.nachosbusiness;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.nachosbusiness.facilities.FacilityDBManager;
+import com.example.nachosbusiness.facilities.FacilityFragment;
+import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -19,6 +25,11 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+
+        String androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(androidID);
 
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
@@ -39,20 +50,48 @@ public class Dashboard extends AppCompatActivity {
 
         yourEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "your events click!", Toast.LENGTH_SHORT).show();
+                if (!facilityManager.hasFacility()) {
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("No Facility Found")
+                            .setMessage("You must create a facility before creating an event.")
+                            .setPositiveButton("Create new Facility", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("androidID", androidID);
+                                    bundle.putSerializable("facilityManager", facilityManager);
+                                    FacilityFragment facilityObj = new FacilityFragment();
+                                    facilityObj.setArguments(bundle);
+                                    loadFragment(facilityObj);
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+                else{
+                    Bundle bundle = new Bundle();
+                    bundle.putString("androidID", androidID);
+                    OrganizerEventsFragment orgEventsFragment = new OrganizerEventsFragment();
+                    orgEventsFragment.setArguments(bundle);
+                    loadFragment(orgEventsFragment);
+                }
             }
         });
 
         browseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, Browse.class);
-                startActivity(intent);
+                Toast.makeText(getApplicationContext(), "browse click!", Toast.LENGTH_SHORT).show();
             }
         });
 
         facilityButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                loadFragment(new FacilityFragment());
+                Bundle bundle = new Bundle();
+                bundle.putString("androidID", androidID);
+                bundle.putSerializable("facilityManager", facilityManager);
+                FacilityFragment facilityObj = new FacilityFragment();
+                facilityObj.setArguments(bundle);
+                loadFragment(facilityObj);
             }
         });
 
@@ -64,7 +103,9 @@ public class Dashboard extends AppCompatActivity {
 
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "make event click!", Toast.LENGTH_SHORT).show();
+                {
+                    Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
