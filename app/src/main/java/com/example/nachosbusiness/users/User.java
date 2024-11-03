@@ -12,12 +12,12 @@ public class User {
     private String username;
     private String email;
     private String phone;
-
+    private List<Double> coordinates;
     private boolean admin;
     private Uri profileImage;
     private List<String> events;
 
-    public User(String android_id, String username, String email, String phone, Uri profileImage) {
+    public User(String android_id, String username, String email, String phone, Uri profileImage, List<Double> coordinates) {
         this.android_id = android_id;
         this.username = username;
         this.email = email;
@@ -25,6 +25,7 @@ public class User {
         this.admin = false;
         this.profileImage = profileImage != null ? profileImage : Uri.parse(""); // Set default value if null
         this.events = new ArrayList<>();
+        this.coordinates = (coordinates != null) ? coordinates : new ArrayList<>();
     }
 
 
@@ -83,5 +84,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<Double> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
     }
 }

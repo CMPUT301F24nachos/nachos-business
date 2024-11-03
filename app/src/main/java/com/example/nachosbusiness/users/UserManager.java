@@ -12,6 +12,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
 public class UserManager {
 
     private FirebaseFirestore db;
@@ -24,8 +26,8 @@ public class UserManager {
     /**
      * Creates a new user and adds the new user to the db
      */
-    public void registerUser(String android_id, String username, String email, String phone, Uri profileImage) {
-        User user = new User(android_id, username, email, phone, profileImage);
+    public void registerUser(String android_id, String username, String email, String phone, Uri profileImage, List<Double> coordinates) {
+        User user = new User(android_id, username, email, phone, profileImage, coordinates);
         addUser(user);
     }
 

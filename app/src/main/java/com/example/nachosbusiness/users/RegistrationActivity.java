@@ -3,7 +3,10 @@ package com.example.nachosbusiness.users;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,7 +15,7 @@ import android.telephony.PhoneNumberUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
+import android.Manifest;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,15 +23,24 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private double latitude, longitude;
     private DBManager dbManager;
     private ImageView imageView;
     private ImageButton closeButton;
@@ -64,17 +76,10 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             });
 
-    // Encapsulates image upload logic
-    private void imageChooser() {
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-        launchSomeActivity.launch(i);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeLocation();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registration);
 
@@ -118,6 +123,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 String username  = editUsername.getText().toString();
@@ -141,11 +147,70 @@ public class RegistrationActivity extends AppCompatActivity {
                 } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
-                    User user = new User(android_id, username, email, phone, selectedImageUri);
+                    List<Double> coordinates = new ArrayList<>();
+                    coordinates.add(latitude);
+                    coordinates.add(longitude);
+
+
+                    User user = new User(android_id, username, email, phone, selectedImageUri, coordinates);
                     dbManager.addEntry(user);
                     Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                    if (locationManager != null && locationListener != null) {
+                        locationManager.removeUpdates(locationListener);
+                    }
                 }
             }
         });
     }
+
+    // Encapsulates image upload logic
+    private void imageChooser() {
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        launchSomeActivity.launch(i);
+    }
+
+    private void initializeLocation() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = location -> {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        };
+
+        // Check if permissions are granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermissions();
+        } else {
+            requestUserLocation();
+        }
+    }
+
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        }, LOCATION_PERMISSION_REQUEST_CODE);
+    }
+
+    private void requestUserLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestUserLocation();
+            } else {
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
