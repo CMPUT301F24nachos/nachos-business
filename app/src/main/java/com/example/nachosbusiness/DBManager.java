@@ -1,5 +1,7 @@
 package com.example.nachosbusiness;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -8,7 +10,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class DBManager {
 
@@ -149,6 +154,42 @@ public class DBManager {
                 });
     }
 
+    public void getUser(String android_id, EntryRetrievalCallback callback) {
+        Query query = db.collection("entrants").whereEqualTo("android_id", android_id).limit(1);
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                    String name = document.getString("username");
+                    String email = document.getString("email");
+                    String phone = document.getString("phone");
+                    String imageString = document.getString("profileImage");
+
+                    Uri imageUri = null;
+                    if (imageString != null) {
+                        imageUri = Uri.parse(imageString);
+                    }
+
+                    callback.onEntryRetrieved(name, email, phone, imageUri);
+                } else {
+                    callback.onEntryNotFound();
+                }
+            } else {
+                callback.onError(task.getException() != null ? task.getException().getMessage() : "Unknown error");
+            }
+        });
+    }
+
+
+
+    public interface EntryRetrievalCallback {
+        void onEntryRetrieved(String name, String email, String phone, Uri imageUri);
+        void onEntryNotFound();
+        void onError(String error);
+    }
+    
     public CollectionReference getCollectionReference() {
         return collectionReference;
     }
