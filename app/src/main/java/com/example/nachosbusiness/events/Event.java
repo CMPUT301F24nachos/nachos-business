@@ -11,6 +11,7 @@ public class Event {
     private String eventID;
     private String name;
     private User organizer;
+    private String organizerID;
 
     private Timestamp startTime;
     private Timestamp endTime;
@@ -25,7 +26,11 @@ public class Event {
     private Facility facility;
     private ListManager listManager;
 
-
+    /**
+     * Constructor to query firebase DB
+     */
+    public Event() {
+    }
 
     /**
      * Constructor with date/time as Timestamp datatype
@@ -173,4 +178,72 @@ public class Event {
     public void setFacility(Facility facility) { this.facility = facility; }
 
     public ListManager getListManager() { return listManager; }
+
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
+
+    public Timestamp getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Timestamp endTime) {
+        this.endTime = endTime;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public Boolean getHasGeolocation() {
+        return hasGeolocation;
+    }
+
+    public void setHasGeolocation(Boolean hasGeolocation) {
+        this.hasGeolocation = hasGeolocation;
+    }
+
+    public void setListManager(ListManager listManager) {
+        this.listManager = listManager;
+    }
+
+    public String getOrganizerID() {
+        return organizerID;
+    }
+
+    public void setOrganizerID(String organizerID) {
+        this.organizerID = organizerID;
+    }
 }
