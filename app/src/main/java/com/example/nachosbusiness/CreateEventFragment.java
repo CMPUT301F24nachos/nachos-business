@@ -181,7 +181,7 @@ public class CreateEventFragment extends Fragment {
 
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
-
+    // TODO should find a way to check if the times are correct
     private void validateAndCreateEvent() {
 
         if (TextUtils.isEmpty(editTextEventName.getText())) {
@@ -219,6 +219,11 @@ public class CreateEventFragment extends Fragment {
                 Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
                 return;
             }
+        }
+
+        if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
+            Toast.makeText(getActivity(), "Attendees cannot be greater than waitlist limit", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         saveEvent();
