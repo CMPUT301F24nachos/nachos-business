@@ -79,7 +79,7 @@ public class RegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeLocation();
+        //initializeLocation();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registration);
 
@@ -155,9 +155,10 @@ public class RegistrationActivity extends AppCompatActivity {
                     User user = new User(android_id, username, email, phone, selectedImageUri, coordinates);
                     dbManager.addEntry(user);
                     Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                    if (locationManager != null && locationListener != null) {
-                        locationManager.removeUpdates(locationListener);
-                    }
+
+                    // if (locationManager != null && locationListener != null) {
+                    //    locationManager.removeUpdates(locationListener);
+                    //}
                 }
             }
         });

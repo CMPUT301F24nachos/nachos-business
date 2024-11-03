@@ -189,7 +189,7 @@ public class DBManager {
         void onEntryNotFound();
         void onError(String error);
     }
-    
+
     public CollectionReference getCollectionReference() {
         return collectionReference;
     }
