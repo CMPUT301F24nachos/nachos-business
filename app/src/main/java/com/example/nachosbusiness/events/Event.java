@@ -19,22 +19,28 @@ public class Event {
 
     private String description;
     private String qrCode;
+    private int cost;
+    private Boolean hasGeolocation;
 
     private Facility facility;
     private ListManager listManager;
 
+
+
     /**
      * Constructor with date/time as Timestamp datatype
-     * @param name
-     * @param organizer
-     * @param facility
-     * @param description
-     * @param startDate
-     * @param endDate
-     * @param startTime
-     * @param endTime
+     * @param name event name
+     * @param organizer event organizer
+     * @param facility event facility
+     * @param description event description set by organizer
+     * @param startDate event start date
+     * @param endDate event end date
+     * @param startTime event start time
+     * @param endTime event end time
+     * @param cost cost of event
+     * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime)
+    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -45,23 +51,27 @@ public class Event {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.cost = cost;
+        this.hasGeolocation = hasGeolocation;
 
         listManager = new ListManager(eventID);
     }
 
     /**
      * Constructor with specified number of wait list spots. Date/time as Timestamp datatype
-     * @param name
-     * @param organizer
-     * @param facility
-     * @param description
-     * @param startDate
-     * @param endDate
-     * @param startTime
-     * @param endTime
+     * @param name event name
+     * @param organizer event organizer
+     * @param facility event facility
+     * @param description event description set by organizer
+     * @param startDate event start date
+     * @param endDate event end date
+     * @param startTime event start time
+     * @param endTime event end time
+     * @param cost cost of event
+     * @param hasGeolocation true if event has a geolocation
      * @param waitListSpots
      */
-    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int waitListSpots)
+    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -73,22 +83,26 @@ public class Event {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.cost = cost;
+        this.hasGeolocation = hasGeolocation;
 
         listManager = new ListManager(eventID, waitListSpots);
     }
 
     /**
      * Constructor with date/time as Date datatype
-     * @param name
-     * @param organizer
-     * @param facility
-     * @param description
-     * @param startDate
-     * @param endDate
-     * @param startTime
-     * @param endTime
+     * @param name event name
+     * @param organizer event organizer
+     * @param facility event facility
+     * @param description event description set by organizer
+     * @param startDate event start date
+     * @param endDate event end date
+     * @param startTime event start time
+     * @param endTime event end time
+     * @param cost cost of event
+     * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime)
+    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -100,23 +114,27 @@ public class Event {
         this.endDate = new Timestamp(endDate);
         this.startTime = new Timestamp(startTime);
         this.endTime = new Timestamp(endTime);
+        this.cost = cost;
+        this.hasGeolocation = hasGeolocation;
 
         listManager = new ListManager(eventID);
     }
 
     /**
      * Constructor with specified number of waitlist spots. Date/time as Date datatype
-     * @param name
-     * @param organizer
-     * @param facility
-     * @param description
-     * @param startDate
-     * @param endDate
-     * @param startTime
-     * @param endTime
-     * @param waitListSpots
+     * @param name event name
+     * @param organizer event organizer
+     * @param facility event facility
+     * @param description event description set by organizer
+     * @param startDate event start date
+     * @param endDate event end date
+     * @param startTime event start time
+     * @param endTime event end time
+     * @param cost cost of event
+     * @param hasGeolocation true if event has a geolocation
+     * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, int waitListSpots)
+    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -128,6 +146,8 @@ public class Event {
         this.endDate = new Timestamp(endDate);
         this.startTime = new Timestamp(startTime);
         this.endTime = new Timestamp(endTime);
+        this.cost = cost;
+        this.hasGeolocation = hasGeolocation;
 
         listManager = new ListManager(eventID, waitListSpots);
     }

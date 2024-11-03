@@ -78,6 +78,22 @@ public class ListManager {
     }
 
     /**
+     * Remove user from waitlist
+     * @param user user to remove
+     * @return true if successfully removed
+     */
+    public Boolean removeFromWaitList(User user)
+    {
+        if (waitList.contains(user))
+        {
+            waitList.remove(user);
+            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove((user.getAndroid_id())));
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Transfers user from waitlist to invited list
      * @param user user to transfer
      * @return true for successful transfer
@@ -114,33 +130,17 @@ public class ListManager {
     }
 
     /**
-     * Transfers user from wait/invited/accepted list to cancelled list
+     * Transfers user from invited list to canceled list
      * @param user user to transfer
      * @return true for successful transfer
      */
     public Boolean moveToCanceledList(User user)
     {
-        if (waitList.contains(user))
-        {
-            waitList.remove(user);
-            canceledList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(user.getAndroid_id()));
-            dbManager.getCollectionReference().document(listManagerID).update("canceledlist", FieldValue.arrayUnion(user.getAndroid_id()));
-            return true;
-        }
-        else if (invitedList.contains(user))
+        if (invitedList.contains(user))
         {
             invitedList.remove(user);
             canceledList.add(user);
             dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayRemove(user.getAndroid_id()));
-            dbManager.getCollectionReference().document(listManagerID).update("canceledlist", FieldValue.arrayUnion(user.getAndroid_id()));
-            return true;
-        }
-        else if (acceptedList.contains(user))
-        {
-            acceptedList.remove(user);
-            canceledList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("acceptedlist", FieldValue.arrayRemove(user.getAndroid_id()));
             dbManager.getCollectionReference().document(listManagerID).update("canceledlist", FieldValue.arrayUnion(user.getAndroid_id()));
             return true;
         }
