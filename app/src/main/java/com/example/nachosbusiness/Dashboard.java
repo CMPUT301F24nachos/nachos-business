@@ -35,7 +35,7 @@ public class Dashboard extends AppCompatActivity {
 
         androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        FacilityDBManager facilityManager = new FacilityDBManager();
         facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
             @Override
             public void onFacilityReceived(Facility facility) {

@@ -3,6 +3,7 @@ package com.example.nachosbusiness.events;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,35 +24,36 @@ import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
+import com.example.nachosbusiness.users.User;
+import com.google.firebase.firestore.core.EventManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class EventRegistration extends AppCompatActivity {
 
+    private EventDBManager eventManager = new EventDBManager();
+    private FacilityDBManager facilityManager = new FacilityDBManager();
+
+    //TODO
+    // need to get waitlist info
+
+    private QRUtil qrUtil = new QRUtil();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
         Bundle args = getIntent().getExtras();
-
-        String eventId = args.getString("eventID");
-        eventId = eventId.replace("nachos-business://event/","");
-
         String androidID = args.getString("androidID");
-
-        QRUtil qrUtil = new QRUtil();
-        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        EventDBManager eventManager = new EventDBManager();
-
-        //TODO
-        // need to get waitlist info
-        // if already in waitlist, then change button to red and show pop up?
+        String eventId = args.getString("eventID");
+        eventId = eventId.replace("nachos-business://event/", "");
 
         ImageButton buttonHome = findViewById(R.id.button_event_home);
-
         Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
 
+        TextView regTitle = findViewById(R.id.textview_register_title);
         TextView eventTitle = findViewById(R.id.textview_event_reg_title);
         TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
         TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
@@ -72,7 +75,7 @@ public class EventRegistration extends AppCompatActivity {
                 String costString = String.valueOf(event.getCost());
                 eventCost.setText(costString);
                 eventDesc.setText(event.getDescription());
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm", Locale.getDefault());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                 String fStartDate = dateFormat.format(event.getStartDate().toDate());
                 String fEndDate = dateFormat.format(event.getEndDate().toDate());
                 eventStart.setText(fStartDate);
@@ -84,11 +87,22 @@ public class EventRegistration extends AppCompatActivity {
                         facilityLocation.setText(facility.getLocation());
                     }
                 });
+                // TODO
+                // eventlist query if user in.
+                // if yes then update title and button
+//                regTitle.setText(R.string.event_register_title);
+//                signUpButton.setVisibility(View.VISIBLE);
+//                leaveButton.setVisibility(View.GONE);
+                // if no then update title and button
+                regTitle.setText(R.string.event_leave_waitlist_title);
+                signUpButton.setVisibility(View.GONE);
+                leaveButton.setVisibility(View.VISIBLE);
+
                 Bitmap qr = qrUtil.generateQRCode(event.getOrganizerID());
                 qrUtil.display(qr, qrCode);
+
             }
         });
-
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -97,9 +111,6 @@ public class EventRegistration extends AppCompatActivity {
             }
         });
 
-
-        //TODO
-        // IF the user is not in waitlist, then show sign up/ else
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,26 +118,51 @@ public class EventRegistration extends AppCompatActivity {
                     new AlertDialog.Builder(v.getContext())
                             .setTitle("Geolocation Warning")
                             .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
-                            .setPositiveButton("Agree to Share Location", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Agree and Join Waitlist", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(getApplicationContext(), "Pressed Agree!", Toast.LENGTH_SHORT).show();
-                                    // Add logic here to join the waitlist, as the user agreed to share location
+                                    Toast.makeText(getApplicationContext(), "Agree", Toast.LENGTH_SHORT).show();
+                                    // TODO Add logic here to join the waitlist, as the user agreed to share location
                                 }
                             })
-                            .setNegativeButton("Do Not Join Waitlist", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("Deny and Do Not Join", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(getApplicationContext(), "Pressed NOOOOOOOOO!", Toast.LENGTH_SHORT).show();
-                                    Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
-                                    startActivity(dashboardIntent);
+                                    Toast.makeText(getApplicationContext(), "Pressed NO!", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .show(); // Don't forget to show the dialog
+                            .show();
+                } else {
+                    // TODO sign up for waitlist without geolocation
                 }
             }
         });
 
+        String finalEventId = eventId;
+        leaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(v.getContext())
+                        .setMessage("Confirm that you want to leave the Wait List for this event.")
+                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
+                                // TODO Leave waitlist logic
+                                Intent intent = new Intent(EventRegistration.this, EventRegistration.class);
+                                intent.putExtra("eventID", finalEventId);
+                                intent.putExtra("androidID", androidID);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 }
-
