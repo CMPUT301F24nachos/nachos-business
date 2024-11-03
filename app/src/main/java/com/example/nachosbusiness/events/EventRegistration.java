@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.events;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -8,8 +9,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.DBManager;
@@ -18,6 +21,7 @@ import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
+import com.example.nachosbusiness.facilities.FacilityFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -85,13 +89,44 @@ public class EventRegistration extends AppCompatActivity {
             }
         });
 
-        //TODO
-        // IF the user is not in waitlist, then show sign up/ else
+
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
                 startActivity(dashboardIntent);
             }
         });
+
+
+        //TODO
+        // IF the user is not in waitlist, then show sign up/ else
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (eventManager.getEvent().getHasGeolocation()) {
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("Geolocation Warning")
+                            .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
+                            .setPositiveButton("Agree to Share Location", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplicationContext(), "Pressed Agree!", Toast.LENGTH_SHORT).show();
+                                    // Add logic here to join the waitlist, as the user agreed to share location
+                                }
+                            })
+                            .setNegativeButton("Do Not Join Waitlist", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplicationContext(), "Pressed NOOOOOOOOO!", Toast.LENGTH_SHORT).show();
+                                    Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
+                                    startActivity(dashboardIntent);
+                                }
+                            })
+                            .show(); // Don't forget to show the dialog
+                }
+            }
+        });
+
     }
 }
+
