@@ -17,10 +17,13 @@ public class Event {
     private Timestamp endTime;
     private Timestamp startDate;
     private Timestamp endDate;
+    private Timestamp waitListOpenDate;
+    private Timestamp waitListCloseDate;
 
     private String description;
     private String qrCode;
     private int cost;
+    private int waitListSpots;
     private Boolean hasGeolocation;
 
     private Facility facility;
@@ -42,10 +45,12 @@ public class Event {
      * @param endDate event end date
      * @param startTime event start time
      * @param endTime event end time
+     * @param waitListOpenDate open date of waitlist
+     * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int cost, Boolean hasGeolocation)
+    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -56,8 +61,11 @@ public class Event {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.waitListOpenDate = waitListOpenDate;
+        this.waitListCloseDate = waitListCloseDate;
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = -1;
 
         listManager = new ListManager(eventID);
     }
@@ -72,11 +80,13 @@ public class Event {
      * @param endDate event end date
      * @param startTime event start time
      * @param endTime event end time
+     * @param waitListOpenDate open date of waitlist
+     * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
-     * @param waitListSpots
+     * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int cost, Boolean hasGeolocation, int waitListSpots)
+    public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -88,8 +98,11 @@ public class Event {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.waitListOpenDate = waitListOpenDate;
+        this.waitListCloseDate = waitListCloseDate;
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = waitListSpots;
 
         listManager = new ListManager(eventID, waitListSpots);
     }
@@ -104,10 +117,12 @@ public class Event {
      * @param endDate event end date
      * @param startTime event start time
      * @param endTime event end time
+     * @param waitListOpenDate open date of waitlist
+     * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, int cost, Boolean hasGeolocation)
+    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -119,8 +134,11 @@ public class Event {
         this.endDate = new Timestamp(endDate);
         this.startTime = new Timestamp(startTime);
         this.endTime = new Timestamp(endTime);
+        this.waitListOpenDate = new Timestamp(waitListOpenDate);
+        this.waitListCloseDate = new Timestamp(waitListCloseDate);
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = -1;
 
         listManager = new ListManager(eventID);
     }
@@ -135,11 +153,13 @@ public class Event {
      * @param endDate event end date
      * @param startTime event start time
      * @param endTime event end time
+     * @param waitListOpenDate open date of waitlist
+     * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, int cost, Boolean hasGeolocation, int waitListSpots)
+    public Event(String name, User organizer, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -151,8 +171,11 @@ public class Event {
         this.endDate = new Timestamp(endDate);
         this.startTime = new Timestamp(startTime);
         this.endTime = new Timestamp(endTime);
+        this.waitListOpenDate = new Timestamp(waitListOpenDate);
+        this.waitListCloseDate = new Timestamp(waitListCloseDate);
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = waitListSpots;
 
         listManager = new ListManager(eventID, waitListSpots);
     }
