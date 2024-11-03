@@ -42,6 +42,10 @@
     <string name="event_reg_spots_remaining">spots remaining!</string>
     <string name="event_reg_sign_up">Sign-Up to Wait List!</string>
 
+    <!--event registration strings-->
+    <string name="event_entrant_view_title">Currently Registered on Waitlist</string>
+    <string name="event_entrant_leave">Leave Waiting List</string>
+
     <!--Crate event strings!-->
     <string name="event_button_save">Create Event</string>
     <string name="event_button_cancel">Cancel Event Creation</string>
