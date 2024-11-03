@@ -34,7 +34,7 @@ import androidx.annotation.Nullable;
 
 public class CreateEventFragment extends Fragment {
 
-    private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees;
+    private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;
     private ImageButton btnUploadPoster;
     private CheckBox editGeolocation;
@@ -62,6 +62,7 @@ public class CreateEventFragment extends Fragment {
         editEventDescription = view.findViewById(R.id.editEventDescription);
         editPrice = view.findViewById(R.id.editPrice);
         editMaxAttendees = view.findViewById(R.id.editMaxAttendees);
+        editMaxWaitlist = view.findViewById(R.id.editMaxWaitlist);
         editEventFrequency = view.findViewById(R.id.editEventFrequency);
         editGeolocation = view.findViewById(R.id.editGeolocation);
         editStartTime = view.findViewById(R.id.editStartTime);
@@ -201,8 +202,21 @@ public class CreateEventFragment extends Fragment {
         String attendeesStr = editMaxAttendees.getText().toString();
         if (!TextUtils.isEmpty(attendeesStr)) {
             int attendees = Integer.parseInt(attendeesStr);
-            if (attendees < 0) {
+            if (attendees <= 0) {
                 Toast.makeText(getActivity(), "Invalid number of attendees", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        else {
+            Toast.makeText(getActivity(), "Please limit the number of attendees", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String waitlistStr = editMaxWaitlist.getText().toString();
+        if (!TextUtils.isEmpty(waitlistStr)) {
+            int waitlist = Integer.parseInt(attendeesStr);
+            if (waitlist <= 0) {
+                Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -214,7 +228,7 @@ public class CreateEventFragment extends Fragment {
     // TODO Attach to backend.
     private void saveEvent() {
 
-        int price, attendees;
+        int price, waitlist, attendees;
         String eventName = editTextEventName.getText().toString();
         String eventDescription = editEventDescription.getText().toString();
         String priceText = editPrice.getText().toString();
@@ -226,11 +240,16 @@ public class CreateEventFragment extends Fragment {
             price = Integer.parseInt(priceText);
         }
 
+
+        // checked early in the code doesn't need to be checked again.
         String attendeesText = editMaxAttendees.getText().toString();
-        if (attendeesText.isEmpty()) {
-            attendees = 0;
+        attendees = Integer.parseInt(attendeesText);
+
+        String WaitlistText = editMaxWaitlist.getText().toString();
+        if (WaitlistText.isEmpty()) {
+            waitlist = 0;
         } else {
-            attendees = Integer.parseInt(priceText);
+            waitlist = Integer.parseInt(priceText);
         }
 
         boolean isGeolocationEnabled = editGeolocation.isChecked();
@@ -239,7 +258,8 @@ public class CreateEventFragment extends Fragment {
         String eventDetails = "Event Name: " + eventName +
                 "\nDescription: " + eventDescription +
                 "\nPrice: " + price +
-                "\nAttendees: " + attendees +
+                "\nAttendees" + attendees +
+                "\nWaitlist limit: " + waitlist +
                 "\nGeolocation: " + (isGeolocationEnabled ? "Enabled" : "Disabled") +
                 "\nStart Hour: " + startTime +
                 "\nEnd Hour: " + endTime +
@@ -248,5 +268,4 @@ public class CreateEventFragment extends Fragment {
                 "\nPoster Path: " + uploadedPosterPath;
         Toast.makeText(getActivity(), "Event Created:\n" + eventDetails, Toast.LENGTH_LONG).show();
     }
-
 }

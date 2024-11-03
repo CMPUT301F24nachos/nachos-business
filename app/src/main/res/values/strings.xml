@@ -47,8 +47,8 @@
     <string name="event_button_cancel">Cancel Event Creation</string>
     <string name="create_event">Create Event</string>
     <string name="event_description">Event Description:</string>
-    <string name="verify_where_users_will_join_the_waiting_list_from_optional">Verify where users will join the waiting list from? (Optional)</string>
-    <string name="max_number_of_attendees_optional">Max number of attendees (Optional)</string>
+    <string name="geolocation_verification">Verify where users will join the waiting list from?</string>
+    <string name="max_number_of_attendees_optional">Max number of attendees </string>
     <string name="date">Date</string>
     <string name="upload_a_poster_optional">Upload a poster (Optional)</string>
     <string name="event_name">Event Name</string>
