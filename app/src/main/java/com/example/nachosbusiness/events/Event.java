@@ -1,6 +1,6 @@
 package com.example.nachosbusiness.events;
 
-import com.example.nachosbusiness.Facility;
+import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.Timestamp;
 
@@ -20,6 +20,7 @@ public class Event {
     private String description;
     private String qrCode;
     private int cost;
+    private int waitListSpots;
     private Boolean hasGeolocation;
 
     private Facility facility;
@@ -53,6 +54,7 @@ public class Event {
         this.endTime = endTime;
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = -1;
 
         listManager = new ListManager(eventID);
     }
@@ -69,7 +71,7 @@ public class Event {
      * @param endTime event end time
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
-     * @param waitListSpots
+     * @param waitListSpots number of spots in waitlist
      */
     public Event(String name, User organizer, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, int cost, Boolean hasGeolocation, int waitListSpots)
     {
@@ -85,6 +87,7 @@ public class Event {
         this.endTime = endTime;
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = waitListSpots;
 
         listManager = new ListManager(eventID, waitListSpots);
     }
@@ -116,6 +119,7 @@ public class Event {
         this.endTime = new Timestamp(endTime);
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = -1;
 
         listManager = new ListManager(eventID);
     }
@@ -148,6 +152,7 @@ public class Event {
         this.endTime = new Timestamp(endTime);
         this.cost = cost;
         this.hasGeolocation = hasGeolocation;
+        this.waitListSpots = waitListSpots;
 
         listManager = new ListManager(eventID, waitListSpots);
     }
