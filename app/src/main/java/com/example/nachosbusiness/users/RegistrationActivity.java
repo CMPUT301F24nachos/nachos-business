@@ -134,15 +134,14 @@ public class RegistrationActivity extends AppCompatActivity {
                     }
                 }
 
-                String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
                 if (username.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegistrationActivity.this, "Please fill out username and email", Toast.LENGTH_LONG).show();
                 } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
+                    String android_id = Settings.Secure.getString(RegistrationActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
                     User user = new User(android_id, username, email, phone, selectedImageUri);
-                    dbManager.addEntry(user);
+                    dbManager.setEntry(android_id, user);
                     Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
                 }
             }
