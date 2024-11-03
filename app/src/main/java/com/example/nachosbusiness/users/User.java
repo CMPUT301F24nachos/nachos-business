@@ -14,16 +14,16 @@ public class User {
     private String phone;
 
     private boolean admin;
-    private Uri profileImage;
+    private String profileImage;
     private List<String> events;
 
-    public User(String android_id, String username, String email, String phone, Uri profileImage) {
+    public User(String android_id, String username, String email, String phone, String profileImage) {
         this.android_id = android_id;
         this.username = username;
         this.email = email;
         this.phone = (phone != null && !phone.isEmpty()) ? phone : "";
         this.admin = false;
-        this.profileImage = profileImage != null ? profileImage : Uri.parse(""); // Set default value if null
+        this.profileImage = (profileImage != null && !profileImage.isEmpty()) ? profileImage : "";
         this.events = new ArrayList<>();
     }
 
@@ -32,11 +32,11 @@ public class User {
         this.admin = admin;
     }
 
-    public Uri getProfileImage() {
+    public String getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(Uri profileImage) {
+    public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 

@@ -14,7 +14,7 @@
         android:text="Username"
         android:textColor="#616161"
         android:textSize="14dp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +116,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/editTextUsername"
         android:layout_width="280dp"
         android:layout_height="48dp"
         android:background="@drawable/register_input_fields"
