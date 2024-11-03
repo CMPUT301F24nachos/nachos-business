@@ -1,6 +1,6 @@
 package com.example.nachosbusiness.events;
 
-import com.example.nachosbusiness.Facility;
+import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.Timestamp;
 
