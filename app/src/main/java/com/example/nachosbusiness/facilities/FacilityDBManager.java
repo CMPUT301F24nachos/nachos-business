@@ -53,12 +53,16 @@ public class FacilityDBManager extends DBManager implements Serializable{
         return this.facility.getName() != null;
     }
 
+    public interface FacilityCallback {
+        void onFacilityReceived(Facility facility);
+    }
+
     /**
      * Query the firebase db for a facility with document ID = androidID. Updates this.facility if
      * facility exists.
      * @param androidID Android ID of the user to query the db with
      */
-    public void queryOrganizerFacility(String androidID) {
+    public void queryOrganizerFacility(String androidID, FacilityCallback callback) {
         this.setCollectionReference("facilities");
         this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -74,10 +78,17 @@ public class FacilityDBManager extends DBManager implements Serializable{
                             facility.setLocation(doc.getString("location"));
                             facility.setDesc(doc.getString("desc"));
                             Log.d(TAG, String.format("Facility - androidID %s, facility name %s) fetched", doc.getId(), facility.getName()));
+
+                            callback.onFacilityReceived(facility);
                         }
                     }
                 }
             }
         });
     }
+
+
+
 }
+
+
