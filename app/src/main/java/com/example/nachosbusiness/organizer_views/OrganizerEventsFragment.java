@@ -11,7 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.CreateEventFragment;
+import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 
 public class OrganizerEventsFragment extends Fragment {
@@ -33,7 +36,12 @@ public class OrganizerEventsFragment extends Fragment {
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_add_event) {
-                    Toast.makeText(requireContext(), "create a new event", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(requireContext(), "create a new event", Toast.LENGTH_SHORT).show();
+                        CreateEventFragment createEventFragment = new CreateEventFragment();
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, createEventFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                     return true;
                 } else if (item.getItemId() == R.id.action_nav_facility) {
                     Toast.makeText(requireContext(), "nav to my facility", Toast.LENGTH_SHORT).show();
