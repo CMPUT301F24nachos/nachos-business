@@ -67,8 +67,12 @@ public class EventDBManager extends DBManager implements Serializable {
                             Long costLong = doc.getLong("cost");
                             event.setCost(costLong.intValue());
                             event.setHasGeolocation(doc.getBoolean("hasGeolocation"));
-                            Log.d(TAG, String.format("Event - ID %s, organizerID %s) fetched", doc.getId(), event.getEventID()));
+                            event.setWaitListOpenDate(doc.getTimestamp("waitListOpenDate"));
+                            event.setWaitListCloseDate(doc.getTimestamp("waitListCloseDate"));
+                            Long constSpots = doc.getLong("waitListSpots");
+                            event.setWaitListSpots(constSpots.intValue());
 
+                            Log.d(TAG, String.format("Event - ID %s, organizerID %s) fetched", doc.getId(), event.getEventID()));
                             callback.onEventReceived(event);
                         }
                     }
@@ -76,9 +80,6 @@ public class EventDBManager extends DBManager implements Serializable {
             }
         });
     }
-
-
-
 }
 
 

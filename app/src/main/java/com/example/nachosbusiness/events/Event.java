@@ -269,4 +269,28 @@ public class Event {
     public void setOrganizerID(String organizerID) {
         this.organizerID = organizerID;
     }
+
+    public Timestamp getWaitListOpenDate() {
+        return waitListOpenDate;
+    }
+
+    public void setWaitListOpenDate(Timestamp waitListOpenDate) {
+        this.waitListOpenDate = waitListOpenDate;
+    }
+
+    public Timestamp getWaitListCloseDate() {
+        return waitListCloseDate;
+    }
+
+    public void setWaitListCloseDate(Timestamp waitListCloseDate) {
+        this.waitListCloseDate = waitListCloseDate;
+    }
+
+    public int getWaitListSpots() {
+        return waitListSpots;
+    }
+
+    public void setWaitListSpots(int waitListSpots) {
+        this.waitListSpots = waitListSpots;
+    }
 }

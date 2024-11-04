@@ -2,15 +2,21 @@ package com.example.nachosbusiness.events;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.User;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ListManager {
-    private ArrayList<User> waitList;
+    private ArrayList<Map<String, Object>> waitList;
     private ArrayList<User> invitedList;
     private ArrayList<User> acceptedList;
     private ArrayList<User> canceledList;
@@ -21,6 +27,11 @@ public class ListManager {
 
     private DBManager dbManager;
 
+    /**
+     * Constructor for DBManager
+     */
+    public ListManager() {
+    }
 
     /**
      * Constructor for ListManager with unlimited waitlist spots
@@ -30,7 +41,7 @@ public class ListManager {
     {
         this.listManagerID = eventID;
 
-        this.waitList = new ArrayList<User>();
+        this.waitList = new ArrayList<Map<String, Object>>();
         this.invitedList = new ArrayList<User>();
         this.acceptedList = new ArrayList<User>();
         this.canceledList = new ArrayList<User>();
@@ -50,7 +61,7 @@ public class ListManager {
     {
         this.listManagerID = UUID.randomUUID().toString();
 
-        this.waitList = new ArrayList<User>();
+        this.waitList = new ArrayList<Map<String, Object>>();
         this.invitedList = new ArrayList<User>();
         this.acceptedList = new ArrayList<User>();
         this.canceledList = new ArrayList<User>();
@@ -63,15 +74,19 @@ public class ListManager {
 
     /**
      * Adds user to waitlist
-     * @param user user to add
+     * @param user string of userID to add
      * @return true if successfully added
      */
-    public Boolean addToWaitList(User user)
+    public Boolean addToWaitList(String user, GeoPoint geoPoint)
     {
-        if ((waitListSpots < 0 || (waitListSpots > 0 && waitList.size() < waitListSpots)) && !waitList.contains(user))
+        if ((waitListSpots < 0 || (waitListSpots > 0 && waitList.size() < waitListSpots))) //&& waitList.stream().noneMatch(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user)))
         {
-            waitList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayUnion(user.getAndroid_id()));
+            Map<String, Object> userEntry = new HashMap<>();
+            userEntry.put("userID", user);
+            userEntry.put("location", geoPoint);
+
+            waitList.add(userEntry);
+            dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayUnion(userEntry));
             return true;
         }
         return false;
@@ -82,12 +97,15 @@ public class ListManager {
      * @param user user to remove
      * @return true if successfully removed
      */
-    public Boolean removeFromWaitList(User user)
-    {
-        if (waitList.contains(user))
-        {
-            waitList.remove(user);
-            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove((user.getAndroid_id())));
+    public Boolean removeFromWaitList(String user) {
+        Map<String, Object> userEntry = waitList.stream()
+                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user))
+                .findFirst()
+                .orElse(null);
+
+        if (userEntry != null) {
+            waitList.remove(userEntry);
+            dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
             return true;
         }
         return false;
@@ -98,13 +116,16 @@ public class ListManager {
      * @param user user to transfer
      * @return true for successful transfer
      */
-    public Boolean moveToInvitedList(User user)
-    {
-        if (waitList.contains(user))
-        {
-            waitList.remove(user);
+    public Boolean moveToInvitedList(User user) {
+        Map<String, Object> userEntry = waitList.stream()
+                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user.getAndroid_id()))
+                .findFirst()
+                .orElse(null);
+        if (userEntry != null) {
+            waitList.remove(userEntry);
             invitedList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(user.getAndroid_id()));
+
+            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(userEntry));
             dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayUnion(user.getAndroid_id()));
             return true;
         }
@@ -152,21 +173,44 @@ public class ListManager {
      * @param count number of users to select
      * @return list of selected users
      */
-    public List<User> sampleWaitList(int count)
+    public List<String> sampleWaitList(int count)
     {
         Collections.shuffle(waitList);
 
-        // put them in invite list
+        List<Map<String, Object>> selectedEntries = waitList.subList(0, count);
 
-        return waitList.subList(0, count-1);
+        List<String> selectedUsers = new ArrayList<>();
+        for (Map<String, Object> entry : selectedEntries) {
+            String userID = (String) entry.get("userID");
+            selectedUsers.add(userID);
+        }
+
+        return selectedUsers;
+    }
+
+    /**
+     * Check if the user is in the waitlist
+     * @param user userID to query
+     * @return true if in waitList
+     */
+    public boolean inWaitList(String user){
+        Map<String, Object> userEntry = waitList.stream()
+                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user))
+                .findFirst()
+                .orElse(null);
+        return userEntry != null;
     }
 
     /**
      * Getter for wait list
      * @return wait list
      */
-    public ArrayList<User> getWaitList() {
+    public ArrayList<Map<String, Object>> getWaitList() {
         return waitList;
+    }
+
+    public void setWaitList(ArrayList<Map<String, Object>> dBWaitList) {
+        this.waitList = dBWaitList;
     }
 
     /**
@@ -191,5 +235,29 @@ public class ListManager {
      */
     public ArrayList<User> getCanceledList() {
         return canceledList;
+    }
+
+    /**
+     * Set the number of available spots in the wishlist
+     * @param waitListSpots total number of spots in the wishlist
+     */
+    public void setWaitListSpots(int waitListSpots) {
+        this.waitListSpots = waitListSpots;
+    }
+
+    public String getListManagerID() {
+        return listManagerID;
+    }
+
+    public void setListManagerID(String listManagerID) {
+        this.listManagerID = listManagerID;
+    }
+
+    public DBManager getDbManager() {
+        return dbManager;
+    }
+
+    public void setDbManager(DBManager dbManager) {
+        this.dbManager = dbManager;
     }
 }
