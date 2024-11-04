@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ListManager {
-    private ArrayList<Map<String, Object>> waitList;
+    private ArrayList<Map<Object, Object>> waitList;
     private ArrayList<User> invitedList;
     private ArrayList<User> acceptedList;
     private ArrayList<User> canceledList;
@@ -41,7 +41,7 @@ public class ListManager {
     {
         this.listManagerID = eventID;
 
-        this.waitList = new ArrayList<Map<String, Object>>();
+        this.waitList = new ArrayList<Map<Object, Object>>();
         this.invitedList = new ArrayList<User>();
         this.acceptedList = new ArrayList<User>();
         this.canceledList = new ArrayList<User>();
@@ -61,7 +61,7 @@ public class ListManager {
     {
         this.listManagerID = UUID.randomUUID().toString();
 
-        this.waitList = new ArrayList<Map<String, Object>>();
+        this.waitList = new ArrayList<Map<Object, Object>>();
         this.invitedList = new ArrayList<User>();
         this.acceptedList = new ArrayList<User>();
         this.canceledList = new ArrayList<User>();
@@ -77,12 +77,12 @@ public class ListManager {
      * @param user string of userID to add
      * @return true if successfully added
      */
-    public Boolean addToWaitList(String user, GeoPoint geoPoint)
+    public Boolean addToWaitList(User user, GeoPoint geoPoint)
     {
         if ((waitListSpots < 0 || (waitListSpots > 0 && waitList.size() < waitListSpots))) //&& waitList.stream().noneMatch(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user)))
         {
-            Map<String, Object> userEntry = new HashMap<>();
-            userEntry.put("userID", user);
+            Map<Object, Object> userEntry = new HashMap<>();
+            userEntry.put("user", user);
             userEntry.put("location", geoPoint);
 
             waitList.add(userEntry);
@@ -97,9 +97,22 @@ public class ListManager {
      * @param user user to remove
      * @return true if successfully removed
      */
-    public Boolean removeFromWaitList(String user) {
-        Map<String, Object> userEntry = waitList.stream()
-                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user))
+    public Boolean removeFromWaitList(User user) {
+        Map<Object, Object> userEntry = waitList.stream()
+                .filter(entry -> entry.containsKey("user"))
+                .filter(entry -> {
+                    Object userObject = entry.get("user");
+
+                    if (userObject instanceof User) {
+                        return Objects.equals(((User) userObject).getAndroid_id(), user.getAndroid_id());
+                    }
+
+                    else if (userObject instanceof Map) {
+                        Object androidId = ((Map<?, ?>) userObject).get("android_id");
+                        return Objects.equals(androidId, user.getAndroid_id());
+                    }
+                    return false;
+                })
                 .findFirst()
                 .orElse(null);
 
@@ -117,7 +130,7 @@ public class ListManager {
      * @return true for successful transfer
      */
     public Boolean moveToInvitedList(User user) {
-        Map<String, Object> userEntry = waitList.stream()
+        Map<Object, Object> userEntry = waitList.stream()
                 .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user.getAndroid_id()))
                 .findFirst()
                 .orElse(null);
@@ -173,29 +186,42 @@ public class ListManager {
      * @param count number of users to select
      * @return list of selected users
      */
-    public List<String> sampleWaitList(int count)
-    {
-        Collections.shuffle(waitList);
-
-        List<Map<String, Object>> selectedEntries = waitList.subList(0, count);
-
-        List<String> selectedUsers = new ArrayList<>();
-        for (Map<String, Object> entry : selectedEntries) {
-            String userID = (String) entry.get("userID");
-            selectedUsers.add(userID);
-        }
-
-        return selectedUsers;
-    }
+//    public List<User> sampleWaitList(int count)
+//    {
+//        Collections.shuffle(waitList);
+//
+//        List<Map<Object, Object>> selectedEntries = waitList.subList(0, count);
+//
+//        List<User> selectedUsers = new ArrayList<>();
+//        for (Map<Object, Object> entry : selectedEntries) {
+//            String userID = (String) entry.get("userID");
+//            selectedUsers.add(userID);
+//        }
+//
+//        return selectedUsers;
+//    }
 
     /**
      * Check if the user is in the waitlist
      * @param user userID to query
      * @return true if in waitList
      */
-    public boolean inWaitList(String user){
-        Map<String, Object> userEntry = waitList.stream()
-                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user))
+    public boolean inWaitList(User user){
+        Map<Object, Object> userEntry = waitList.stream()
+                .filter(entry -> entry.containsKey("user"))
+                .filter(entry -> {
+                    Object userObject = entry.get("user");
+
+                    if (userObject instanceof User) {
+                        return Objects.equals(((User) userObject).getAndroid_id(), user.getAndroid_id());
+                    }
+
+                    else if (userObject instanceof Map) {
+                        Object androidId = ((Map<?, ?>) userObject).get("android_id");
+                        return Objects.equals(androidId, user.getAndroid_id());
+                    }
+                    return false;
+                })
                 .findFirst()
                 .orElse(null);
         return userEntry != null;
@@ -205,11 +231,11 @@ public class ListManager {
      * Getter for wait list
      * @return wait list
      */
-    public ArrayList<Map<String, Object>> getWaitList() {
+    public ArrayList<Map<Object, Object>> getWaitList() {
         return waitList;
     }
 
-    public void setWaitList(ArrayList<Map<String, Object>> dBWaitList) {
+    public void setWaitList(ArrayList<Map<Object, Object>> dBWaitList) {
         this.waitList = dBWaitList;
     }
 

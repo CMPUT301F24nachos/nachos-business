@@ -36,19 +36,21 @@ public class EventRegistration extends AppCompatActivity {
     private EventDBManager eventManager = new EventDBManager();
     private FacilityDBManager facilityManager = new FacilityDBManager();
     private ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
+    private QRUtil qrUtil = new QRUtil();
+
+    private Event event1;
+
     private String androidID;
     private String eventId;
-
-    private QRUtil qrUtil = new QRUtil();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
-        Bundle args = getIntent().getExtras();
-        androidID = args.getString("androidID");
-        eventId = args.getString("eventID");
-        eventId = eventId.replace("nachos-business://event/", "");
+        initializeUser();
+
+        // TODO DELETE THIS
+        User u = new User("123", "abc", "abc@gmail.co", "123456789", null);
 
         ImageButton buttonHome = findViewById(R.id.button_event_home);
         Button signUpButton = findViewById(R.id.button_event_register);
@@ -72,7 +74,7 @@ public class EventRegistration extends AppCompatActivity {
         listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
             @Override
             public void onListManagerReceived(ListManager listManager) {
-                if (listManagerDBManager.listManager.inWaitList(androidID)) {
+                if (listManagerDBManager.listManager.inWaitList(u)) {
                     regTitle.setText(R.string.event_leave_waitlist_title);
                     signUpButton.setVisibility(View.GONE);
                     leaveButton.setVisibility(View.VISIBLE);
@@ -118,7 +120,6 @@ public class EventRegistration extends AppCompatActivity {
                                 facilityLocation.setText(facility.getLocation());
                             }
                         });
-
                         Bitmap qr = qrUtil.generateQRCode(event.getEventID());
                         qrUtil.display(qr, qrCode);
                     }
@@ -129,8 +130,7 @@ public class EventRegistration extends AppCompatActivity {
 
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
-                startActivity(dashboardIntent);
+                navigateToDashboard();
             }
         });
 
@@ -141,29 +141,25 @@ public class EventRegistration extends AppCompatActivity {
                         .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
                         .setPositiveButton("Agree and Join Waitlist", (dialog, which) -> {
                             // TODO: Replace (0, 0) with actual user's geolocation if available
+                            listManagerDBManager.listManager.addToWaitList(u, new GeoPoint(0, 0));
                             Toast.makeText(getApplicationContext(), "Joined Waitlist", Toast.LENGTH_SHORT).show();
-                            listManagerDBManager.listManager.addToWaitList(androidID, new GeoPoint(0, 0));
-                            reloadRegistrationPage();
                         })
                         .setNegativeButton("Deny and Do Not Join", (dialog, which) -> {
                             Toast.makeText(getApplicationContext(), "You chose not to join the waitlist", Toast.LENGTH_SHORT).show();
                         })
                         .show();
             } else {
+                listManagerDBManager.listManager.addToWaitList(u, new GeoPoint(0, 0));
                 Toast.makeText(getApplicationContext(), "Joined Waitlist", Toast.LENGTH_SHORT).show();
-                listManagerDBManager.listManager.addToWaitList(androidID, new GeoPoint(0, 0));
-                reloadRegistrationPage();
             }
         });
 
-        String finalEventId = eventId; // Ensure final variable for use in inner class
         leaveButton.setOnClickListener(v -> {
             new AlertDialog.Builder(v.getContext())
                     .setMessage("Confirm that you want to leave the Wait List for this event.")
                     .setPositiveButton("Confirm", (dialog, which) -> {
+                        listManagerDBManager.listManager.removeFromWaitList(u);
                         Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
-                        listManagerDBManager.listManager.removeFromWaitList(androidID);
-                        reloadRegistrationPage();
                     })
                     .setNegativeButton("Cancel", (dialog, which) -> {
                         Toast.makeText(getApplicationContext(), "Canceled leaving waitlist", Toast.LENGTH_SHORT).show();
@@ -173,13 +169,22 @@ public class EventRegistration extends AppCompatActivity {
 }
 
     /**
-     * Reload the register page with updated database information
+     *  Initialize the user and get the bundled arguments
      */
-    private void reloadRegistrationPage() {
-        Intent intent = new Intent(EventRegistration.this, EventRegistration.class);
-        intent.putExtra("eventID", eventId);
-        intent.putExtra("androidID", androidID);
-        startActivity(intent);
+    private void initializeUser() {
+        Bundle args = getIntent().getExtras();
+        androidID = args.getString("androidID");
+        eventId = args.getString("eventID");
+        eventId = eventId.replace("nachos-business://event/", "");
+        // TODO Add user Query here
+    }
+
+    /**
+     * Navigate to the Dashboard activity
+     */
+    private void navigateToDashboard(){
+        Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
+        startActivity(dashboardIntent);
     }
 }
 
