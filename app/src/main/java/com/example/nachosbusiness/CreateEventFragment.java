@@ -2,6 +2,7 @@ package com.example.nachosbusiness;
 
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.facilities.Facility;
+import com.example.nachosbusiness.facilities.FacilityDBManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * The CreateEventFragment class provides a UI for creating an event by filling out details such as
  * event name, description, date, time, price, maximum attendees, and more. Required fields include
@@ -38,10 +47,10 @@ public class CreateEventFragment extends Fragment {
     private Spinner editEventFrequency;
     private ImageButton btnUploadPoster;
     private CheckBox editGeolocation;
-    private Button editStartTime, editEndTime, editDate, saveButton, cancelButton;
-    private TextView textViewSelectedDate, textViewSelectedStartTime, textViewSelectedEndTime, createEventText;
+    private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton;
+    private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, selectedDate;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate;
 
     @Nullable
     @Override
@@ -67,13 +76,19 @@ public class CreateEventFragment extends Fragment {
         editGeolocation = view.findViewById(R.id.editGeolocation);
         editStartTime = view.findViewById(R.id.editStartTime);
         editEndTime = view.findViewById(R.id.editEndTime);
-        editDate = view.findViewById(R.id.editDate);
+        editStartDate = view.findViewById(R.id.editStartDate);
+        editEndDate = view.findViewById(R.id.editEndDate);
+        editOpenDate = view.findViewById(R.id.editOpenDate);
+        editCloseDate = view.findViewById(R.id.editCloseDate);
         btnUploadPoster = view.findViewById(R.id.btnUploadPoster);
 
         // View text
-        textViewSelectedDate = view.findViewById(R.id.textViewSelectedDate);
+        textViewSelectedStartDate = view.findViewById(R.id.textViewSelectedStartDate);
+        textViewSelectedEndDate = view.findViewById(R.id.textViewSelectedEndDate);
         textViewSelectedStartTime = view.findViewById(R.id.textViewSelectedStartTime);
         textViewSelectedEndTime = view.findViewById(R.id.textViewSelectedEndTime);
+        textViewSelectedOpenDate = view.findViewById(R.id.textViewSelectedOpenDate);
+        getTextViewSelectedCloseDate = view.findViewById(R.id.textViewSelectedCloseDate);
 
         // Save events and stuff
         createEventText = view.findViewById(R.id.createEventText);
@@ -134,7 +149,7 @@ public class CreateEventFragment extends Fragment {
             }
         });
 
-        editDate.setOnClickListener(new View.OnClickListener() {
+        editStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerFragment datePickerFragment = new DatePickerFragment();
@@ -143,8 +158,62 @@ public class CreateEventFragment extends Fragment {
                 datePickerFragment.setOnDateSelectedListener(new DatePickerFragment.OnDateSelectedListener() {
                     @Override
                     public void onDateSelected(int year, int month, int day) {
-                        selectedDate = String.format("%04d-%02d-%02d", year, month + 1, day);
-                        textViewSelectedDate.setText(selectedDate);
+                        startDate = String.format("%04d-%02d-%02d", year, month + 1, day);
+                        textViewSelectedStartDate.setText(startDate);
+                    }
+                });
+
+                datePickerFragment.show(getChildFragmentManager(), "datePicker");
+            }
+        });
+
+        editEndDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+
+                // Set the listener for date selection
+                datePickerFragment.setOnDateSelectedListener(new DatePickerFragment.OnDateSelectedListener() {
+                    @Override
+                    public void onDateSelected(int year, int month, int day) {
+                        endDate = String.format("%04d-%02d-%02d", year, month + 1, day);
+                        textViewSelectedEndDate.setText(endDate);
+                    }
+                });
+
+                datePickerFragment.show(getChildFragmentManager(), "datePicker");
+            }
+        });
+
+        editOpenDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+
+                // Set the listener for date selection
+                datePickerFragment.setOnDateSelectedListener(new DatePickerFragment.OnDateSelectedListener() {
+                    @Override
+                    public void onDateSelected(int year, int month, int day) {
+                        openDate = String.format("%04d-%02d-%02d", year, month + 1, day);
+                        textViewSelectedOpenDate.setText(openDate);
+                    }
+                });
+
+                datePickerFragment.show(getChildFragmentManager(), "datePicker");
+            }
+        });
+
+        editCloseDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePickerFragment = new DatePickerFragment();
+
+                // Set the listener for date selection
+                datePickerFragment.setOnDateSelectedListener(new DatePickerFragment.OnDateSelectedListener() {
+                    @Override
+                    public void onDateSelected(int year, int month, int day) {
+                        closeDate = String.format("%04d-%02d-%02d", year, month + 1, day);
+                        getTextViewSelectedCloseDate.setText(closeDate);
                     }
                 });
 
@@ -219,12 +288,13 @@ public class CreateEventFragment extends Fragment {
                 Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
+                Toast.makeText(getActivity(), "Attendees cannot be greater than waitlist limit", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
-        if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
-            Toast.makeText(getActivity(), "Attendees cannot be greater than waitlist limit", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
 
         saveEvent();
 
@@ -232,6 +302,18 @@ public class CreateEventFragment extends Fragment {
     }
     // TODO Attach to backend.
     private void saveEvent() {
+
+        DBManager dbManager = new DBManager("events");
+        String androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility) {
+            }
+        });
+
 
         int price, waitlist, attendees;
         String eventName = editTextEventName.getText().toString();
@@ -260,6 +342,34 @@ public class CreateEventFragment extends Fragment {
         boolean isGeolocationEnabled = editGeolocation.isChecked();
         String frequency = editEventFrequency.getSelectedItem().toString();
 
+        Date sTime = null;
+        Date eTime = null;
+        Date sDate = null;
+        Date eDate = null;
+        Date oDate = null;
+        Date cDate = null;
+        try {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+            sTime = timeFormat.parse(startTime);
+            eTime = timeFormat.parse(endTime);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            sDate = dateFormat.parse(startDate);
+            eDate = dateFormat.parse(endDate);
+            oDate = dateFormat.parse(openDate);
+            cDate = dateFormat.parse(closeDate);
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(getActivity(), "Date parsing error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Event event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, sDate, eDate, sTime, eTime, frequency, oDate, cDate, price, isGeolocationEnabled);
+
+        // add event to db
+        dbManager.setEntry(event.getEventID(), event);
+
         String eventDetails = "Event Name: " + eventName +
                 "\nDescription: " + eventDescription +
                 "\nPrice: " + price +
@@ -268,7 +378,7 @@ public class CreateEventFragment extends Fragment {
                 "\nGeolocation: " + (isGeolocationEnabled ? "Enabled" : "Disabled") +
                 "\nStart Hour: " + startTime +
                 "\nEnd Hour: " + endTime +
-                "\nDate: " + selectedDate +
+                "\nDate: " + startDate +
                 "\nFrequency: " + frequency +
                 "\nPoster Path: " + uploadedPosterPath;
         Toast.makeText(getActivity(), "Event Created:\n" + eventDetails, Toast.LENGTH_LONG).show();
