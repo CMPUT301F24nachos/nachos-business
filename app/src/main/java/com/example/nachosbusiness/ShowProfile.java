@@ -42,7 +42,8 @@ public class ShowProfile extends AppCompatActivity {
                 email.setText(emailAddress);
                 phoneNumber.setText(phone);
 
-
+                // Now that we have the user details, fetch and display the profile image
+                dbManager.getProfileImage(android_id, selectedImageUri, ShowProfile.this);
 
                 userProfileBundle = new Bundle();
                 userProfileBundle.putString("android_id", android_id);
@@ -53,19 +54,19 @@ public class ShowProfile extends AppCompatActivity {
 
             @Override
             public void onEntryNotFound() {
+                userName.setText("User not found");
             }
 
             @Override
             public void onError(String error) {
                 userName.setText("Error fetching user");
-
             }
         });
 
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Handle update profile logic here
             }
         });
     }
