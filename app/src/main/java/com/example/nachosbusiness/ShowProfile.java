@@ -1,6 +1,5 @@
 package com.example.nachosbusiness;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.nachosbusiness.users.UserManager;
 
 public class ShowProfile extends AppCompatActivity {
 
@@ -39,7 +37,7 @@ public class ShowProfile extends AppCompatActivity {
 
         dbManager.getUser(android_id, new DBManager.EntryRetrievalCallback() {
             @Override
-            public void onEntryRetrieved(String name, String emailAddress, String phone, Uri imageUri) {
+            public void onEntryRetrieved(String name, String emailAddress, String phone) {
                 userName.setText(name);
                 email.setText(emailAddress);
                 phoneNumber.setText(phone);

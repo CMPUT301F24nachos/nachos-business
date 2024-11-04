@@ -24,8 +24,8 @@ public class UserManager {
     /**
      * Creates a new user and adds the new user to the db
      */
-    public void registerUser(String android_id, String username, String email, String phone, String profileImage) {
-        User user = new User(android_id, username, email, phone, profileImage);
+    public void registerUser(String android_id, String username, String email, String phone) {
+        User user = new User(android_id, username, email, phone);
         addUser(user);
     }
 

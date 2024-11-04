@@ -1,10 +1,10 @@
 package com.example.nachosbusiness;
 
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.nachosbusiness.users.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,6 +15,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import android.content.Context;
 
 
 public class DBManager {
@@ -167,14 +171,8 @@ public class DBManager {
                     String name = document.getString("username");
                     String email = document.getString("email");
                     String phone = document.getString("phone");
-                    String imageString = document.getString("profileImage");
 
-                    Uri imageUri = null;
-                    if (imageString != null) {
-                        imageUri = Uri.parse(imageString);
-                    }
-
-                    callback.onEntryRetrieved(name, email, phone, imageUri);
+                    callback.onEntryRetrieved(name, email, phone);
                 } else {
                     callback.onEntryNotFound();
                 }
@@ -184,10 +182,27 @@ public class DBManager {
         });
     }
 
+    public static void uploadProfileImage(Context context, String imageName, Uri selectedImageUri) {
+        if (selectedImageUri != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference profileImagesRef = storageRef.child("profile_images/" + imageName + ".jpg");
+            UploadTask uploadTask = profileImagesRef.putFile(selectedImageUri);
 
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                profileImagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Toast.makeText(context, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(context, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Toast.makeText(context, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public interface EntryRetrievalCallback {
-        void onEntryRetrieved(String name, String email, String phone, Uri imageUri);
+        void onEntryRetrieved(String name, String email, String phone);
         void onEntryNotFound();
         void onError(String error);
     }
