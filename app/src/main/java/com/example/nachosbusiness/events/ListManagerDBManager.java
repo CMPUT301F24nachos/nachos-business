@@ -51,7 +51,7 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                 if (querySnapshots != null) {
                     for (QueryDocumentSnapshot doc : querySnapshots) {
                         if (doc.getId().equals(eventID)) {
-                            ArrayList<Map<String, Object>> waitlistData = (ArrayList<Map<String, Object>>) doc.get("waitList");
+                            ArrayList<Map<Object, Object>> waitlistData = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                             if (waitlistData != null) {
                                 listManager.setWaitList(waitlistData);
                             }
