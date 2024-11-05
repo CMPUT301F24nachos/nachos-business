@@ -2,6 +2,7 @@ package com.example.nachosbusiness;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -30,6 +31,10 @@ public class ShowProfile extends AppCompatActivity {
         phoneNumber = findViewById(R.id.user_phone);
         selectedImageUri = findViewById(R.id.profileImage);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
+        View fragmentContainer = findViewById(R.id.fragment_container); // Reference to fragment container
+
+        // Set the fragment container to GONE initially
+        fragmentContainer.setVisibility(View.GONE);
 
         setDefaultValues();
 
@@ -42,11 +47,11 @@ public class ShowProfile extends AppCompatActivity {
                 email.setText(emailAddress);
                 phoneNumber.setText(phone);
 
-                // Now that we have the user details, fetch and display the profile image
+                // Fetch profile image
                 dbManager.getProfileImage(android_id, selectedImageUri, ShowProfile.this);
 
+                // Prepare the Bundle
                 userProfileBundle = new Bundle();
-                userProfileBundle.putString("android_id", android_id);
                 userProfileBundle.putString("name", name);
                 userProfileBundle.putString("email", emailAddress);
                 userProfileBundle.putString("phone", phone);
@@ -66,9 +71,27 @@ public class ShowProfile extends AppCompatActivity {
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle update profile logic here
+                navigateToUpdateProfile();
             }
         });
+    }
+
+    private void navigateToUpdateProfile() {
+        if (userProfileBundle == null) {
+            Log.e("ShowProfile", "User profile bundle is null.");
+            return;
+        }
+
+        UpdateProfile updateProfileFragment = new UpdateProfile();
+        updateProfileFragment.setArguments(userProfileBundle);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, updateProfileFragment)
+                .addToBackStack(null)
+                .commit();
+
+        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
     }
 
     private void setDefaultValues() {

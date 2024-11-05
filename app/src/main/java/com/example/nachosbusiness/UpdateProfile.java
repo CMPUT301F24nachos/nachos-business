@@ -1,6 +1,5 @@
 package com.example.nachosbusiness;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
@@ -13,13 +12,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.nachosbusiness.users.RegistrationActivity;
-import com.google.android.material.textfield.TextInputEditText;
-
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class UpdateProfile extends Fragment {
+
+    private EditText phoneNumber;
+    private EditText email;
+    private EditText userName;
 
     @Override
     public View onCreateView(
@@ -29,15 +29,28 @@ public class UpdateProfile extends Fragment {
         return inflater.inflate(R.layout.activity_update_profile_final, container, false);
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Button saveButton = view.findViewById(R.id.signUpButton);
         Button cancelButton = view.findViewById(R.id.cancelButton);
 
-        EditText phoneNumber = view.findViewById(R.id.editTextPhone);
-        EditText email = view.findViewById(R.id.editTextTextEmailAddress);
-        EditText userName = view.findViewById(R.id.editTextUsername);
+        phoneNumber = view.findViewById(R.id.editTextPhone);
+        email = view.findViewById(R.id.editTextTextEmailAddress);
+        userName = view.findViewById(R.id.editTextUsername);
+
+        // Retrieve data from the Bundle
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            String name = arguments.getString("name");
+            String emailAddress = arguments.getString("email");
+            String phone = arguments.getString("phone");
+
+            userName.setText(name);
+            email.setText(emailAddress);
+            phoneNumber.setText(phone);
+        }
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +59,9 @@ public class UpdateProfile extends Fragment {
                 boolean isEmailValid = isValidEmail(email);
                 boolean isPhoneNumber = isValidPhoneNumber(phoneNumber);
 
+                if (isNameValid && isEmailValid && isPhoneNumber) {
+                    // Proceed with saving the updated profile
+                }
             }
         });
 
