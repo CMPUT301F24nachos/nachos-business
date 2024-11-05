@@ -51,6 +51,7 @@ public class CreateEventFragment extends Fragment {
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
     private String startTime, endTime, startDate, endDate, openDate, closeDate;
+    private Date startTimeDate, endTimeDate, oDate, cDate;
 
     @Nullable
     @Override
@@ -306,15 +307,6 @@ public class CreateEventFragment extends Fragment {
         DBManager dbManager = new DBManager("events");
         String androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-
-        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
-            @Override
-            public void onFacilityReceived(Facility facility) {
-            }
-        });
-
-
         int price, waitlist, attendees;
         String eventName = editTextEventName.getText().toString();
         String eventDescription = editEventDescription.getText().toString();
@@ -342,20 +334,16 @@ public class CreateEventFragment extends Fragment {
         boolean isGeolocationEnabled = editGeolocation.isChecked();
         String frequency = editEventFrequency.getSelectedItem().toString();
 
-        Date sTime = null;
-        Date eTime = null;
-        Date sDate = null;
-        Date eDate = null;
-        Date oDate = null;
-        Date cDate = null;
+        startTimeDate = null;
+        endTimeDate = null;
+        oDate = null;
+        cDate = null;
         try {
-            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
-            sTime = timeFormat.parse(startTime);
-            eTime = timeFormat.parse(endTime);
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd, hh:mm");
+            startTimeDate = dateTimeFormat.parse(startDate + ", " + startTime);
+            endTimeDate = dateTimeFormat.parse(endDate + ", " + endTime);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            sDate = dateFormat.parse(startDate);
-            eDate = dateFormat.parse(endDate);
             oDate = dateFormat.parse(openDate);
             cDate = dateFormat.parse(closeDate);
         }
@@ -365,10 +353,15 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        Event event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, sDate, eDate, sTime, eTime, frequency, oDate, cDate, price, isGeolocationEnabled);
-
-        // add event to db
-        dbManager.setEntry(event.getEventID(), event);
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility) {
+                // add event to db
+                Event event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled);
+                dbManager.setEntry(event.getEventID(), event);
+            }
+        });
 
         String eventDetails = "Event Name: " + eventName +
                 "\nDescription: " + eventDescription +
