@@ -1,12 +1,12 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.admin_browse;
 
 public class Profile {
     private String name;
-    private String imageUrl;
+    private String image;
 
     public Profile(String name, String imageUrl) {
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.image = imageUrl;
     }
 
     public String getName() {
@@ -17,12 +17,12 @@ public class Profile {
         this.name = name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 
