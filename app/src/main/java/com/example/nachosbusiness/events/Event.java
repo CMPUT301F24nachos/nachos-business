@@ -11,10 +11,8 @@ public class Event {
     private String name;
     private String organizerID;
 
-    private Timestamp startTime;
-    private Timestamp endTime;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private Timestamp startDateTime;
+    private Timestamp endDateTime;
     private Timestamp waitListOpenDate;
     private Timestamp waitListCloseDate;
 
@@ -36,17 +34,15 @@ public class Event {
      * @param organizerID event organizer
      * @param facility event facility
      * @param description event description set by organizer
-     * @param startDate event start date
-     * @param endDate event end date
-     * @param startTime event start time
-     * @param endTime event end time
+     * @param startDateTime event start date
+     * @param endDateTime event end date
      * @param frequency frequency of event
      * @param waitListOpenDate open date of waitlist
      * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation)
+    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -54,11 +50,9 @@ public class Event {
         this.organizerID = organizerID;
         this.facility = facility;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.frequency = frequency;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.waitListOpenDate = waitListOpenDate;
         this.waitListCloseDate = waitListCloseDate;
         this.cost = cost;
@@ -74,10 +68,8 @@ public class Event {
      * @param organizerID event organizer
      * @param facility event facility
      * @param description event description set by organizer
-     * @param startDate event start date
-     * @param endDate event end date
-     * @param startTime event start time
-     * @param endTime event end time
+     * @param startDateTime event start date
+     * @param endDateTime event end date
      * @param frequency frequency of event
      * @param waitListOpenDate open date of waitlist
      * @param waitListCloseDate close date of waitlist
@@ -85,7 +77,7 @@ public class Event {
      * @param hasGeolocation true if event has a geolocation
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDate, Timestamp endDate, Timestamp startTime, Timestamp endTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
+    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -93,11 +85,9 @@ public class Event {
         this.organizerID = organizerID;
         this.facility = facility;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.frequency = frequency;
-        this.startTime = startTime;
-        this.endTime = endTime;
         this.waitListOpenDate = waitListOpenDate;
         this.waitListCloseDate = waitListCloseDate;
         this.cost = cost;
@@ -113,17 +103,15 @@ public class Event {
      * @param organizerID event organizer
      * @param facility event facility
      * @param description event description set by organizer
-     * @param startDate event start date
-     * @param endDate event end date
+     * @param startDateTime event start date
+     * @param endDateTime event end date
      * @param frequency event frequency
-     * @param startTime event start time
-     * @param endTime event end time
      * @param waitListOpenDate open date of waitlist
      * @param waitListCloseDate close date of waitlist
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, String organizerID, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation)
+    public Event(String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -131,11 +119,9 @@ public class Event {
         this.organizerID = organizerID;
         this.facility = facility;
         this.description = description;
-        this.startDate =  new Timestamp(startDate);
-        this.endDate = new Timestamp(endDate);
+        this.startDateTime =  new Timestamp(startDateTime);
+        this.endDateTime = new Timestamp(endDateTime);
         this.frequency = frequency;
-        this.startTime = new Timestamp(startTime);
-        this.endTime = new Timestamp(endTime);
         this.waitListOpenDate = new Timestamp(waitListOpenDate);
         this.waitListCloseDate = new Timestamp(waitListCloseDate);
         this.cost = cost;
@@ -151,10 +137,8 @@ public class Event {
      * @param organizerID event organizer
      * @param facility event facility
      * @param description event description set by organizer
-     * @param startDate event start date
-     * @param endDate event end date
-     * @param startTime event start time
-     * @param endTime event end time
+     * @param startDateTime event start date
+     * @param endDateTime event end date
      * @param frequency event frequency
      * @param waitListOpenDate open date of waitlist
      * @param waitListCloseDate close date of waitlist
@@ -162,7 +146,7 @@ public class Event {
      * @param hasGeolocation true if event has a geolocation
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, String organizerID, Facility facility, String description, Date startDate, Date endDate, Date startTime, Date endTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
+    public Event(String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int waitListSpots)
     {
         this.eventID = UUID.randomUUID().toString();
 
@@ -170,10 +154,8 @@ public class Event {
         this.organizerID = organizerID;
         this.facility = facility;
         this.description = description;
-        this.startDate =  new Timestamp(startDate);
-        this.endDate = new Timestamp(endDate);
-        this.startTime = new Timestamp(startTime);
-        this.endTime = new Timestamp(endTime);
+        this.startDateTime =  new Timestamp(startDateTime);
+        this.endDateTime = new Timestamp(endDateTime);
         this.frequency = frequency;
         this.waitListOpenDate = new Timestamp(waitListOpenDate);
         this.waitListCloseDate = new Timestamp(waitListCloseDate);
@@ -206,36 +188,20 @@ public class Event {
 
     public ListManager getListManager() { return listManager; }
 
-    public Timestamp getStartTime() {
-        return startTime;
+    public Timestamp getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setStartTime(Timestamp startTime) {
-        this.startTime = startTime;
+    public void setStartDateTime(Timestamp startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public Timestamp getEndTime() {
-        return endTime;
+    public Timestamp getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setEndTime(Timestamp endTime) {
-        this.endTime = endTime;
-    }
-
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-
-    public Timestamp getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Timestamp endDate) {
-        this.endDate = endDate;
+    public void setEndDateTime(Timestamp endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public Timestamp getWaitListOpenDate() {
