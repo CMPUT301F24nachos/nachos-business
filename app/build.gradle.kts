@@ -45,12 +45,14 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.firebase.storage)
     implementation(libs.navigation.runtime)
     implementation(libs.navigation.fragment)
     implementation("com.google.zxing:core:3.4.1")

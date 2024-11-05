@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.example.nachosbusiness.DBManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -46,6 +46,9 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
 
         profileName.setText(profile.getName());
 
+        String androidId = profile.getAndroid_id(); // Make sure this method exists to retrieve the ID
+        DBManager dbManager = new DBManager("entrants"); // Use your collection name
+        dbManager.getProfileImage(androidId, profileImage, context);
 
         return view;
     }

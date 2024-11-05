@@ -44,8 +44,9 @@ public class ProfileDBManager extends DBManager implements Serializable {
                     for (QueryDocumentSnapshot doc : querySnapshots) {
                         String Username = doc.getString("username");
                         String image = doc.getString("profileImage");
+                        String androidID= doc.getString("android_id");
                         if (Username != null) {
-                            Profile profile = new Profile(Username, image);
+                            Profile profile = new Profile(Username, image, androidID);
                             profilesList.add(profile);
                         }
                     }
