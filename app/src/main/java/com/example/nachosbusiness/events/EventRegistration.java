@@ -26,7 +26,6 @@ import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.R;
 
-import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -35,7 +34,6 @@ import java.util.Locale;
 
 public class EventRegistration extends AppCompatActivity {
     private EventDBManager eventManager = new EventDBManager();
-    private FacilityDBManager facilityManager = new FacilityDBManager();
     private ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
     private QRUtil qrUtil = new QRUtil();
 
@@ -89,7 +87,7 @@ public class EventRegistration extends AppCompatActivity {
         eventId = args.getString("eventID");
         eventId = eventId.replace("nachos-business://event/", "");
         // TODO Add user Query here
-        initializeLocation();
+
     }
 
     /**
@@ -195,8 +193,10 @@ public class EventRegistration extends AppCompatActivity {
         waitlistStart.setText(fWaitListOpenDate);
         waitlistEnd.setText(fWaitListCloseDate);
 
-        Bitmap qr = qrUtil.generateQRCode(event.getEventID());
-        qrUtil.display(qr, qrCode);
+        if (event.getQrCode() != null) {
+            Bitmap qr = qrUtil.generateQRCode(event.getEventID());
+            qrUtil.display(qr, qrCode);
+        }
     }
 
     /**
@@ -239,6 +239,7 @@ public class EventRegistration extends AppCompatActivity {
 
         signUpButton.setOnClickListener(v -> {
             if (eventManager.getEvent().getHasGeolocation()) {
+                initializeLocation();
                 showGeolocationDialog(user);
             } else {
                 listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(0, 0));

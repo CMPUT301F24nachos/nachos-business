@@ -23,8 +23,8 @@ public class FacilityDBManager extends DBManager implements Serializable{
     /**
      * Constructor for FacilityDBManager
      */
-    public FacilityDBManager() {
-        super("facilities");
+    public FacilityDBManager(String collection) {
+        super(collection);
         this.facility = new Facility();
     }
 
