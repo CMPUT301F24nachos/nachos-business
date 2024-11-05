@@ -28,14 +28,30 @@ public class ListManager {
 
     private int waitListSpots;
 
+    private boolean testMode = false;
+
     private String listManagerID;
 
     private DBManager dbManager;
 
     /**
-     * Constructor for DBManager
+     * Empty Constructor forfirebase db queries.
      */
-    public ListManager() {
+    public ListManager(){
+
+    }
+
+    /**
+     * Constructor for testing, disables all calls to db and allows core functionality testing. Set
+     * testMode to True to bypass db calls.
+     */
+    public ListManager(int waitListSpots, boolean testMode) {
+        this.waitList = new ArrayList<Map<Object, Object>>();
+        this.invitedList = new ArrayList<User>();
+        this.acceptedList = new ArrayList<User>();
+        this.canceledList = new ArrayList<User>();
+        this.waitListSpots = waitListSpots;
+        this.testMode = testMode;
     }
 
     /**
@@ -91,7 +107,9 @@ public class ListManager {
             userEntry.put("location", geoPoint);
 
             waitList.add(userEntry);
-            dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayUnion(userEntry));
+            if (!testMode) {
+                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayUnion(userEntry));
+            };
             return true;
         }
         return false;
@@ -123,7 +141,9 @@ public class ListManager {
 
         if (userEntry != null) {
             waitList.remove(userEntry);
-            dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
+            if (!testMode) {
+                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
+            }
             return true;
         }
         return false;
@@ -143,8 +163,10 @@ public class ListManager {
             waitList.remove(userEntry);
             invitedList.add(user);
 
-            dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(userEntry));
-            dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayUnion(user.getAndroid_id()));
+            if (!testMode) {
+                dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(userEntry));
+                dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayUnion(user.getAndroid_id()));
+            }
             return true;
         }
         return false;
@@ -191,20 +213,21 @@ public class ListManager {
      * @param count number of users to select
      * @return list of selected users
      */
-//    public List<User> sampleWaitList(int count)
-//    {
-//        Collections.shuffle(waitList);
-//
-//        List<Map<Object, Object>> selectedEntries = waitList.subList(0, count);
-//
-//        List<User> selectedUsers = new ArrayList<>();
-//        for (Map<Object, Object> entry : selectedEntries) {
-//            String userID = (String) entry.get("userID");
-//            selectedUsers.add(userID);
-//        }
-//
-//        return selectedUsers;
-//    }
+    public ArrayList<User> sampleWaitList(int count)
+    {
+        Collections.shuffle(waitList);
+
+        List<Map<Object, Object>> selectedEntries = waitList.subList(0, count);
+
+        ArrayList<User> selectedUsers = new ArrayList<>();
+        for (Map<Object, Object> entry : selectedEntries) {
+            User user = (User) entry.get("user");
+            if (user != null) {
+                selectedUsers.add(user);
+            }
+        }
+        return selectedUsers;
+    }
 
     /**
      * Check if the user is in the waitlist
@@ -276,7 +299,10 @@ public class ListManager {
         this.waitListSpots = waitListSpots;
     }
 
-
+    /**
+     * Sets the listManagerID
+     * @param listManagerID id of the event
+     */
     public void setListManagerID(String listManagerID) {
         this.listManagerID = listManagerID;
     }
