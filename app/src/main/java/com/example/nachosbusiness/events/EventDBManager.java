@@ -5,12 +5,14 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class EventDBManager extends DBManager implements Serializable {
 
@@ -55,28 +57,39 @@ public class EventDBManager extends DBManager implements Serializable {
                 if (querySnapshots != null) {
                     for (QueryDocumentSnapshot doc : querySnapshots) {
                         if (doc.getId().equals(eventID)) {
-                            event.setEventID(doc.getId());
-                            event.setName(doc.getString("name"));
-                            event.setOrganizerID(doc.getString("organizer"));
-                            event.setStartTime(doc.getTimestamp("startTime"));
-                            event.setEndTime(doc.getTimestamp("endTime"));
-                            event.setStartDate(doc.getTimestamp("startDate"));
-                            event.setEndDate(doc.getTimestamp("endDate"));
-                            event.setDescription(doc.getString("description"));
-                            event.setQrCode(doc.getString("qrCode"));
                             Long costLong = doc.getLong("cost");
                             event.setCost(costLong.intValue());
+                            event.setDescription(doc.getString("description"));
+                            event.setEndDate(doc.getTimestamp("endDate"));
+                            event.setEndTime(doc.getTimestamp("endTime"));
+                            event.setEventID(doc.getId());
                             event.setHasGeolocation(doc.getBoolean("hasGeolocation"));
-                            event.setWaitListOpenDate(doc.getTimestamp("waitListOpenDate"));
+                            event.setName(doc.getString("name"));
+                            event.setOrganizerID(doc.getString("organizer"));
+                            event.setQrCode(doc.getString("qrCode"));
+                            event.setStartDate(doc.getTimestamp("startDate"));
+                            event.setStartTime(doc.getTimestamp("startTime"));
                             event.setWaitListCloseDate(doc.getTimestamp("waitListCloseDate"));
+                            event.setWaitListOpenDate(doc.getTimestamp("waitListOpenDate"));
                             Long constSpots = doc.getLong("waitListSpots");
                             event.setWaitListSpots(constSpots.intValue());
 
+                            Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
+                            Facility facility = new Facility();
+                            if (facilityMap != null) {
+                                facility.setName(facilityMap.get("name"));
+                                facility.setLocation(facilityMap.get("location"));
+                                facility.setDesc(facilityMap.get("desc"));
+                            }
+                            event.setFacility(facility);
+
                             Log.d(TAG, String.format("Event - ID %s, organizerID %s) fetched", doc.getId(), event.getEventID()));
                             callback.onEventReceived(event);
+                            return;
                         }
                     }
                 }
+                callback.onEventReceived(null);
             }
         });
     }

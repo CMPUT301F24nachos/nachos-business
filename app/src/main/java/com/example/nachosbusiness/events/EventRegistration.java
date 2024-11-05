@@ -1,9 +1,10 @@
 package com.example.nachosbusiness.events;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,162 +12,73 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
 
-import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.R;
-import com.example.nachosbusiness.facilities.Facility;
+
 import com.example.nachosbusiness.facilities.FacilityDBManager;
-import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.core.EventManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class EventRegistration extends AppCompatActivity {
-
     private EventDBManager eventManager = new EventDBManager();
     private FacilityDBManager facilityManager = new FacilityDBManager();
     private ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
     private QRUtil qrUtil = new QRUtil();
 
-    private Event event1;
+    private Event event;
+    private User user;
 
     private String androidID;
     private String eventId;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private double latitude, longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
         initializeUser();
+        initializeBaseUI();
 
         // TODO DELETE THIS
-        User u = new User("123", "abc", "abc@gmail.co", "123456789", null);
+        User uz = new User("123", "abc", "abc@gmail.co", "123456789", null);
+        user = uz;
 
-        ImageButton buttonHome = findViewById(R.id.button_event_home);
-        Button signUpButton = findViewById(R.id.button_event_register);
-        Button leaveButton = findViewById(R.id.button_event_leave_button);
-
-        TextView regTitle = findViewById(R.id.textview_register_title);
-        TextView eventTitle = findViewById(R.id.textview_event_reg_title);
-        TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
-        TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
-        TextView eventEnd = findViewById(R.id.textview_event_reg_event_end);
-        TextView eventCost = findViewById(R.id.textview_event_reg_cost);
-        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
-        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
-        TextView eventDesc = findViewById(R.id.textview_event_reg_event_desc);
-        TextView waitlistStart = findViewById(R.id.textview_event_reg_list_start);
-        TextView waitlistEnd = findViewById(R.id.textview_event_reg_list_end);
-        TextView facilityName = findViewById(R.id.textview_event_reg_facility_name);
-        TextView facilityLocation = findViewById(R.id.textview_event_reg_fac_loc);
-        ImageView qrCode = findViewById(R.id.textview_event_reg_qr_image);
-
-        listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
+        eventManager.queryEvent(eventId, new EventDBManager.EventCallback() {
             @Override
-            public void onListManagerReceived(ListManager listManager) {
-                if (listManagerDBManager.listManager.inWaitList(u)) {
-                    regTitle.setText(R.string.event_leave_waitlist_title);
-                    signUpButton.setVisibility(View.GONE);
-                    leaveButton.setVisibility(View.VISIBLE);
-                } else {
-                    regTitle.setText(R.string.event_register_title);
-                    signUpButton.setVisibility(View.VISIBLE);
-                    leaveButton.setVisibility(View.GONE);}
-                eventManager.queryEvent(eventId, new EventDBManager.EventCallback() {
-                    @Override
-                    public void onEventReceived(Event event) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                        String fStartDate = dateFormat.format(event.getStartDate().toDate());
-                        String fEndDate = dateFormat.format(event.getEndDate().toDate());
-                        String fWaitListOpenDate = dateFormat.format(event.getWaitListOpenDate().toDate());
-                        String fWaitListCloseDate = dateFormat.format(event.getWaitListCloseDate().toDate());
-                        String costString = String.valueOf(event.getCost());
-                        listManagerDBManager.listManager.setWaitListSpots(event.getWaitListSpots());
-                        listManagerDBManager.listManager.setListManagerID(eventId);
-                        listManagerDBManager.listManager.setDbManager(new DBManager("lists"));
-
-                        String waitListTotalSpots = "∞";
-                        if (event.getWaitListSpots() > 0) {
-                            waitListTotalSpots = String.valueOf(event.getWaitListSpots());
+            public void onEventReceived(Event e) {
+                if (e != null && e.getEventID() != null) {
+                    event = e;
+                    updateEventInfoUI();
+                    listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
+                        @Override
+                        public void onListManagerReceived(ListManager listManager) {
+                            updateWaitListStatusUI();
                         }
-                        String waitListOpenSpots = String.valueOf(listManagerDBManager.listManager.getWaitList().size());
-
-                        eventTitle.setText(event.getName());
-                        eventStart.setText(fStartDate);
-                        eventEnd.setText(fEndDate);
-                        eventCost.setText(costString);
-
-                        waitlistOpenSpotsTV.setText(waitListOpenSpots);
-                        waitlistTotalSpotsTV.setText(waitListTotalSpots);
-                        eventDesc.setText(event.getDescription());
-
-                        waitlistStart.setText(fWaitListOpenDate);
-                        waitlistEnd.setText(fWaitListCloseDate);
-
-                        facilityManager.queryOrganizerFacility(eventManager.getEvent().getOrganizerID(), new FacilityDBManager.FacilityCallback() {
-                            @Override
-                            public void onFacilityReceived(Facility facility) {
-                                facilityName.setText(facility.getName());
-                                facilityLocation.setText(facility.getLocation());
-                            }
-                        });
-                        Bitmap qr = qrUtil.generateQRCode(event.getEventID());
-                        qrUtil.display(qr, qrCode);
-                    }
-                });
-            }
-        }
-    );
-
-        buttonHome.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                navigateToDashboard();
+                    });
+                } else {
+                    displayEventDNE();
+                }
             }
         });
-
-        signUpButton.setOnClickListener(v -> {
-            if (eventManager.getEvent().getHasGeolocation()) {
-                new AlertDialog.Builder(v.getContext())
-                        .setTitle("Geolocation Warning")
-                        .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
-                        .setPositiveButton("Agree and Join Waitlist", (dialog, which) -> {
-                            // TODO: Replace (0, 0) with actual user's geolocation if available
-                            listManagerDBManager.listManager.addToWaitList(u, new GeoPoint(0, 0));
-                            Toast.makeText(getApplicationContext(), "Joined Waitlist", Toast.LENGTH_SHORT).show();
-                        })
-                        .setNegativeButton("Deny and Do Not Join", (dialog, which) -> {
-                            Toast.makeText(getApplicationContext(), "You chose not to join the waitlist", Toast.LENGTH_SHORT).show();
-                        })
-                        .show();
-            } else {
-                listManagerDBManager.listManager.addToWaitList(u, new GeoPoint(0, 0));
-                Toast.makeText(getApplicationContext(), "Joined Waitlist", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        leaveButton.setOnClickListener(v -> {
-            new AlertDialog.Builder(v.getContext())
-                    .setMessage("Confirm that you want to leave the Wait List for this event.")
-                    .setPositiveButton("Confirm", (dialog, which) -> {
-                        listManagerDBManager.listManager.removeFromWaitList(u);
-                        Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        Toast.makeText(getApplicationContext(), "Canceled leaving waitlist", Toast.LENGTH_SHORT).show();
-                    })
-                    .show();
-        });
-}
+    }
 
     /**
      *  Initialize the user and get the bundled arguments
@@ -177,7 +89,202 @@ public class EventRegistration extends AppCompatActivity {
         eventId = args.getString("eventID");
         eventId = eventId.replace("nachos-business://event/", "");
         // TODO Add user Query here
+        initializeLocation();
     }
+
+    /**
+     *  Initialize the base UI, mainly just the home button as this will always be shown
+     */
+    private void initializeBaseUI(){
+        ImageButton buttonHome = findViewById(R.id.button_event_home);
+        buttonHome.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                navigateToDashboard();
+            }
+        });
+    }
+
+    /**
+     * Display the error string that the event does not exist. Hides everything else. Probably better way
+     * to do this... A much better way to do this....
+     */
+    private void displayEventDNE(){
+        TextView eventTitle = findViewById(R.id.textview_event_reg_title);
+        TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
+        TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
+        TextView eventEnd = findViewById(R.id.textview_event_reg_event_end);
+        TextView eventCost = findViewById(R.id.textview_event_reg_cost);
+        TextView eventDesc = findViewById(R.id.textview_event_reg_event_desc);
+        TextView waitlistStart = findViewById(R.id.textview_event_reg_list_start);
+        TextView waitlistEnd = findViewById(R.id.textview_event_reg_list_end);
+        TextView facilityName = findViewById(R.id.textview_event_reg_facility_name);
+        TextView facilityLocation = findViewById(R.id.textview_event_reg_fac_loc);
+        ImageView qrCode = findViewById(R.id.textview_event_reg_qr_image);
+
+        eventTitle.setVisibility(View.INVISIBLE);
+        eventOrg.setVisibility(View.INVISIBLE);
+        eventStart.setVisibility(View.INVISIBLE);
+        eventEnd.setVisibility(View.INVISIBLE);
+        eventCost.setVisibility(View.INVISIBLE);
+        eventDesc.setVisibility(View.INVISIBLE);
+        waitlistStart.setVisibility(View.INVISIBLE);
+        waitlistEnd.setVisibility(View.INVISIBLE);
+        facilityName.setVisibility(View.INVISIBLE);
+        facilityLocation.setVisibility(View.INVISIBLE);
+        qrCode.setVisibility(View.INVISIBLE);
+
+        // the static textviews to disappear -- yikes! who named these!!
+        TextView textView13 = findViewById(R.id.textView13);
+        TextView textView20 = findViewById(R.id.textView20);
+        TextView textView2 = findViewById(R.id.textView2);
+        TextView textView9 = findViewById(R.id.textView9);
+        TextView textView11 = findViewById(R.id.textView11);
+        TextView textview_event_reg_open_spots = findViewById(R.id.textview_event_reg_open_spots);
+        TextView textView17 = findViewById(R.id.textView17);
+        TextView textview_event_reg_total_spots = findViewById(R.id.textview_event_reg_total_spots);
+        TextView textView19 = findViewById(R.id.textView19);
+
+        textView13.setVisibility(View.INVISIBLE);
+        textView20.setVisibility(View.INVISIBLE);
+        textView2.setVisibility(View.INVISIBLE);
+        textView9.setVisibility(View.INVISIBLE);
+        textView11.setVisibility(View.INVISIBLE);
+        textview_event_reg_open_spots.setVisibility(View.INVISIBLE);
+        textView17.setVisibility(View.INVISIBLE);
+        textview_event_reg_total_spots.setVisibility(View.INVISIBLE);
+        textView19.setVisibility(View.INVISIBLE);
+
+        TextView eventDNE = findViewById(R.id.textview_event_dne_error);
+        eventDNE.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Display the specific event information for the event queried from the db
+     */
+    private void updateEventInfoUI(){
+        TextView eventTitle = findViewById(R.id.textview_event_reg_title);
+        TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
+        TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
+        TextView eventEnd = findViewById(R.id.textview_event_reg_event_end);
+        TextView eventCost = findViewById(R.id.textview_event_reg_cost);
+        TextView eventDesc = findViewById(R.id.textview_event_reg_event_desc);
+        TextView waitlistStart = findViewById(R.id.textview_event_reg_list_start);
+        TextView waitlistEnd = findViewById(R.id.textview_event_reg_list_end);
+        TextView facilityName = findViewById(R.id.textview_event_reg_facility_name);
+        TextView facilityLocation = findViewById(R.id.textview_event_reg_fac_loc);
+        ImageView qrCode = findViewById(R.id.textview_event_reg_qr_image);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String fStartDate = dateFormat.format(event.getStartDate().toDate());
+        String fEndDate = dateFormat.format(event.getEndDate().toDate());
+        String fWaitListOpenDate = dateFormat.format(event.getWaitListOpenDate().toDate());
+        String fWaitListCloseDate = dateFormat.format(event.getWaitListCloseDate().toDate());
+        String costString = String.valueOf(event.getCost());
+        listManagerDBManager.listManager.setWaitListSpots(event.getWaitListSpots());
+        listManagerDBManager.listManager.setListManagerID(eventId);
+        listManagerDBManager.listManager.setDbManager(new DBManager("lists"));
+        eventTitle.setText(event.getName());
+        eventDesc.setText(event.getDescription());
+        eventStart.setText(fStartDate);
+        eventEnd.setText(fEndDate);
+        eventCost.setText(costString);
+
+        facilityLocation.setText(event.getFacility().getLocation());
+        facilityName.setText(event.getFacility().getName());
+
+        waitlistStart.setText(fWaitListOpenDate);
+        waitlistEnd.setText(fWaitListCloseDate);
+
+        Bitmap qr = qrUtil.generateQRCode(event.getEventID());
+        qrUtil.display(qr, qrCode);
+    }
+
+    /**
+     * Update the event information based on if the user is in the waitlist or not. Will show the
+     * Join WaitList view if user is not currently in the wait list.
+     */
+    private void updateWaitListStatusUI(){
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+
+        String waitListOpenSpots;
+
+        if (listManagerDBManager.listManager.getWaitList() == null){
+            regTitle.setText(R.string.event_register_title);
+            signUpButton.setVisibility(View.VISIBLE);
+            leaveButton.setVisibility(View.GONE);
+            waitListOpenSpots = "0";
+        }
+        else if (listManagerDBManager.listManager.inWaitList(user)) {
+            regTitle.setText(R.string.event_leave_waitlist_title);
+            signUpButton.setVisibility(View.GONE);
+            leaveButton.setVisibility(View.VISIBLE);
+            waitListOpenSpots = String.valueOf(listManagerDBManager.listManager.getWaitList().size());
+        } else {
+            regTitle.setText(R.string.event_register_title);
+            signUpButton.setVisibility(View.VISIBLE);
+            leaveButton.setVisibility(View.GONE);
+            waitListOpenSpots = String.valueOf(listManagerDBManager.listManager.getWaitList().size());
+        }
+        String waitListTotalSpots = "∞";
+        if (event.getWaitListSpots() > 0) {
+            waitListTotalSpots = String.valueOf(event.getWaitListSpots());
+        }
+
+        waitlistOpenSpotsTV.setText(waitListOpenSpots);
+        waitlistTotalSpotsTV.setText(waitListTotalSpots);
+
+        signUpButton.setOnClickListener(v -> {
+            if (eventManager.getEvent().getHasGeolocation()) {
+                showGeolocationDialog(user);
+            } else {
+                listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(0, 0));
+                Toast.makeText(getApplicationContext(), "Join Waitlist", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        leaveButton.setOnClickListener(v -> {
+            showLeaveDialog(user);
+        });
+    }
+
+    /**
+     * Show the GeoLocation warning. On Positive click, user joins the waitList.
+     * @param user User to join the waitList
+     */
+    private void showGeolocationDialog(User user) {
+        new AlertDialog.Builder(this)
+                .setTitle("Geolocation Warning")
+                .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
+                .setPositiveButton("Agree and Join Waitlist", (dialog, which) -> {
+                        listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(latitude, longitude));
+                })
+                .setNegativeButton("Deny and Do Not Join", (dialog, which) -> {
+                    Toast.makeText(getApplicationContext(), "You chosen to not join the waitlist", Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+    /**
+     * Show the Leave Confirmation warning. On Positive click, user leaves the waitlist;
+     * @param user User to leave the waitList.
+     */
+    private void showLeaveDialog(User user){
+            new AlertDialog.Builder(this)
+                    .setMessage("Confirm that you want to leave the Wait List for this event.")
+                    .setPositiveButton("Confirm", (dialog, which) -> {
+                        listManagerDBManager.listManager.removeFromWaitList(user);
+                        Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> {
+                        Toast.makeText(getApplicationContext(), "Canceled leaving waitlist", Toast.LENGTH_SHORT).show();
+                    })
+                    .show();
+        }
+
 
     /**
      * Navigate to the Dashboard activity
@@ -186,6 +293,46 @@ public class EventRegistration extends AppCompatActivity {
         Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
         startActivity(dashboardIntent);
     }
+
+    private void initializeLocation() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = location -> {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        };
+
+        // Check if permissions are granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermissions();
+        } else {
+            requestUserLocation();
+        }
+    }
+
+    private void requestLocationPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        }, LOCATION_PERMISSION_REQUEST_CODE);
+    }
+
+    private void requestUserLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestUserLocation();
+            } else {
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
-
-

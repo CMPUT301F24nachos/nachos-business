@@ -15,6 +15,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * WaitList holds objects of type User, and GeoPoint. They are of type Object to be able to be stored
+ * in FireBase. Using a Map<User, GeoPoint> returns an error and does not allow the map to hold the
+ * different types.
+ */
 public class ListManager {
     private ArrayList<Map<Object, Object>> waitList;
     private ArrayList<User> invitedList;
@@ -271,18 +276,15 @@ public class ListManager {
         this.waitListSpots = waitListSpots;
     }
 
-    public String getListManagerID() {
-        return listManagerID;
-    }
 
     public void setListManagerID(String listManagerID) {
         this.listManagerID = listManagerID;
     }
 
-    public DBManager getDbManager() {
-        return dbManager;
-    }
-
+    /**
+     * Sets the DB Manager for sending items to the DB
+     * @param dbManager class of DBManager
+     */
     public void setDbManager(DBManager dbManager) {
         this.dbManager = dbManager;
     }
