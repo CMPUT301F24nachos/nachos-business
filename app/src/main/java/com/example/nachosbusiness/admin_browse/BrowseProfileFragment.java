@@ -24,6 +24,10 @@ import java.util.ArrayList;
 
 public class BrowseProfileFragment extends Fragment {
 
+    private ProfileArrayAdapter adapter;
+    private ArrayList<Profile> entrantsList;
+    private ProfileDBManager profileDBManager;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -36,34 +40,16 @@ public class BrowseProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ListView listView = view.findViewById(R.id.profileview);
-//
-//        // Initialize Firestore
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        CollectionReference usersRef = db.collection("entrants");
-//
-//        ArrayList<String> userList = new ArrayList<>();
-//
-//        // Create an ArrayAdapter to display user data in the ListView
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, userList);
-//        listView.setAdapter(adapter);
-//
-//        usersRef.get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                for (QueryDocumentSnapshot document : task.getResult()) {
-//                    // Convert the document to a User object
-//                    User user = document.toObject(User.class);
-//
-//                    // Add user info (e.g., username) to the list
-//                    userList.add(user.getUsername());
-//                }
-//
-//                // Notify the adapter that the data has changed
-//                adapter.notifyDataSetChanged();
-//            } else {
-//                Toast.makeText(getContext(), "Failed to fetch users.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        // Initialize EntrantsDbManager and ListView setup
+        profileDBManager = new ProfileDBManager ("entrants");
+        ListView entrantsListView = view.findViewById(R.id.profile_list);
+        entrantsList = new ArrayList<>();
+        adapter = new ProfileArrayAdapter(getActivity(), entrantsList);
+        entrantsListView.setAdapter(adapter);
+
+        // Fetch entrants and populate ListView
+        loadEntrants();
+
 
         ImageButton eventViewButton = view.findViewById(R.id.eventview);
         eventViewButton.setOnClickListener(v -> {
@@ -84,5 +70,16 @@ public class BrowseProfileFragment extends Fragment {
                     .show();
         });
 
+    }
+    private void loadEntrants() {
+        profileDBManager.fetchAllEntrants(entrants -> {
+            if (entrants != null) {
+                entrantsList.clear();
+                entrantsList.addAll(entrants);
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
