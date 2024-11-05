@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.admin_browse;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -15,17 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.nachosbusiness.users.User;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.example.nachosbusiness.R;
 
 import java.util.ArrayList;
 
 public class BrowseProfileFragment extends Fragment {
 
     private ProfileArrayAdapter adapter;
-    private ArrayList<Profile> entrantsList;
+    private ArrayList<Profile> profilesList;
     private ProfileDBManager profileDBManager;
 
     @Override
@@ -40,15 +36,13 @@ public class BrowseProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize EntrantsDbManager and ListView setup
         profileDBManager = new ProfileDBManager ("entrants");
-        ListView entrantsListView = view.findViewById(R.id.profile_list);
-        entrantsList = new ArrayList<>();
-        adapter = new ProfileArrayAdapter(getActivity(), entrantsList);
-        entrantsListView.setAdapter(adapter);
+        ListView profilesListView = view.findViewById(R.id.profile_list);
+        profilesList = new ArrayList<>();
+        adapter = new ProfileArrayAdapter(getActivity(), profilesList);
+        profilesListView.setAdapter(adapter);
 
-        // Fetch entrants and populate ListView
-        loadEntrants();
+        loadProfiles();
 
 
         ImageButton eventViewButton = view.findViewById(R.id.eventview);
@@ -60,6 +54,7 @@ public class BrowseProfileFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(getActivity(), Browse.class);
                             startActivity(intent);
+
                         }
                     })
                     .setNegativeButton("Back", new DialogInterface.OnClickListener() {
@@ -71,14 +66,14 @@ public class BrowseProfileFragment extends Fragment {
         });
 
     }
-    private void loadEntrants() {
-        profileDBManager.fetchAllEntrants(entrants -> {
-            if (entrants != null) {
-                entrantsList.clear();
-                entrantsList.addAll(entrants);
+    private void loadProfiles() {
+        profileDBManager.fetchAllProfiles(profiles-> {
+            if (profiles!= null) {
+                profilesList.clear();
+                profilesList.addAll(profiles);
                 adapter.notifyDataSetChanged();
             } else {
-                Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Failed to load profiles", Toast.LENGTH_SHORT).show();
             }
         });
     }

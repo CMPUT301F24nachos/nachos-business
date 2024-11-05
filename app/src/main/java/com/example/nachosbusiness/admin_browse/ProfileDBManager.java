@@ -1,9 +1,10 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.admin_browse;
 
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.nachosbusiness.DBManager;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -13,30 +14,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handler to query the 'entrants' database.
- */
+
 public class ProfileDBManager extends DBManager implements Serializable {
     private static final String TAG = "ProfileDBManager ";
 
-    /**
-     * Constructor for EntrantsDbManager
-     * @param collection string of collection name
-     */
+
     public ProfileDBManager (String collection) {
         super(collection);
-        this.setCollectionReference("entrants"); // Default to "entrants" collection
+        this.setCollectionReference("entrants");
     }
 
-    // Callback interface to handle retrieved entrants data
-    public interface EntrantCallback {
-        void onEntrantsReceived(List<Profile> entrantsList);
+
+    public interface ProfileCallback {
+        void onProfilesReceived(List<Profile> profileList);
     }
 
-    /**
-     * Query the Firestore DB for all entrants and trigger the callback with a list of entrants' names.
-     */
-    public void fetchAllEntrants(EntrantCallback callback) {
+
+    public void fetchAllProfiles(ProfileCallback callback) {
         getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
@@ -46,16 +40,16 @@ public class ProfileDBManager extends DBManager implements Serializable {
                 }
 
                 if (querySnapshots != null) {
-                    List<Profile> entrantsList = new ArrayList<>();
+                    List<Profile> profilesList = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : querySnapshots) {
-                        String entrantName = doc.getString("username");
-                        String imageUrl = doc.getString("profileImage");// Adjust field name if needed
-                        if (entrantName != null) {
-                            Profile profile = new Profile(entrantName, imageUrl); // Create Profile object
-                            entrantsList.add(profile);
+                        String Username = doc.getString("username");
+                        String image = doc.getString("profileImage");
+                        if (Username != null) {
+                            Profile profile = new Profile(Username, image);
+                            profilesList.add(profile);
                         }
                     }
-                    callback.onEntrantsReceived(entrantsList); // Trigger callback with the list
+                    callback.onProfilesReceived(profilesList);
                 }
             }
         });

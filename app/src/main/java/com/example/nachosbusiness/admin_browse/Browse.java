@@ -1,21 +1,45 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.admin_browse;
+
+import static android.view.View.GONE;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+import android.widget.ListView;
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nachosbusiness.R;
+
+
 
 public class Browse extends AppCompatActivity {
+    private EventDBManager eventDBManager;
+    private ListView eventListView;
+    private EventArrayAdapter eventAdapter;
+    private ArrayList<Event> eventList;
+    private View headerLayout;
+    private ImageButton profile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.browse_home);
+
+        eventListView = findViewById(R.id.event_list_view);
+        eventList = new ArrayList<>();
+
+        // Initialize EventDBManager
+        eventDBManager = new EventDBManager("events");
+
+        // Fetch all events
+        fetchEvents();
+
 
 
         ImageButton profileViewButton = findViewById(R.id.profileview);
@@ -37,12 +61,22 @@ public class Browse extends AppCompatActivity {
         });
     }
 
+    private void fetchEvents() {
+        eventDBManager.fetchAllEvents(new EventDBManager.EventCallback() {
+            @Override
+            public void onEventsReceived(List<Event> events) {
+                eventList.clear(); // Clear existing items
+                eventList.addAll(events); // Add new items to the list
+                eventAdapter = new EventArrayAdapter(Browse.this, eventList);
+                eventListView.setAdapter(eventAdapter);
+            }
+        });
+    }
     // Method to switch to the BrowseProfileFragment
     //Adapted from: https://stackoverflow.com/questions/23212162/how-to-move-from-one-fragment-to-another-fragment-on-click-of-an-imageview-in-an
     private void switchToProfileFragment() {
-        BrowseProfileFragment profileFragment = new BrowseProfileFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.browse_home_container, profileFragment);
+        transaction.replace(R.id.browse_home_container, new BrowseProfileFragment());
         transaction.addToBackStack(null);
         transaction.commit();
     }
