@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
@@ -47,8 +48,10 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         TextView eventDate = view.findViewById(R.id.event_date);
 
 
-        String startDate = event.getStartDate() != null ? event.getStartDate().toString() : "N/A"; // Convert Date to String
-        String endDate = event.getEndDate() != null ? event.getEndDate().toString() : "N/A"; // Convert Date to String
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+        String startDate = event.getStartDate() != null ? dateFormat.format(event.getStartDate()) : "N/A";
+        String endDate = event.getEndDate() != null ? dateFormat.format(event.getEndDate()) : "N/A";
         String displayText = startDate + " - " + endDate;
 
         eventDate.setText(displayText);
