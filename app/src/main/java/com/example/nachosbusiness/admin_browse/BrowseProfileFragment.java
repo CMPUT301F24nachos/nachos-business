@@ -18,12 +18,23 @@ import com.example.nachosbusiness.R;
 
 import java.util.ArrayList;
 
+/**
+ * A fragment that displays a list of profiles in a ListView and has the  option to navigate to an event view.
+ */
 public class BrowseProfileFragment extends Fragment {
 
     private ProfileArrayAdapter adapter;
     private ArrayList<Profile> profilesList;
     private ProfileDBManager profileDBManager;
 
+    /**
+     * Inflates the fragment for profile browsing
+     *
+     * @param inflater           The LayoutInflater to inflate  views in the fragment.
+     * @param container          the parent view
+     * @param savedInstanceState  fragment from a previous saved state.
+     * @return The View for the fragment
+     */
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -32,6 +43,15 @@ public class BrowseProfileFragment extends Fragment {
         return inflater.inflate(R.layout.browse_profile, container, false);
     }
 
+    /**
+     * Initializes user interface components, by setting up the ProfileArrayAdapter and loads profiles from the database
+     * Sets up a button for switching between events and profiles, with a dialog confirmation
+     *
+     * @param view               The view
+     * @param savedInstanceState fragment from a previous saved state.
+     *
+     *
+     */
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -66,6 +86,11 @@ public class BrowseProfileFragment extends Fragment {
         });
 
     }
+
+    /**
+     * Loads profiles from the database and notifies adapter to update view of list as well
+     *
+     */
     private void loadProfiles() {
         profileDBManager.fetchAllProfiles(profiles-> {
             if (profiles!= null) {

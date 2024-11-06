@@ -16,12 +16,21 @@ import com.example.nachosbusiness.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+/**
+ * Array Adapter for displaying Event objects in a custom ListView.
+ * Each item in the list shows the events's image, description  and name, with an edit button.
+ */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
     private ArrayList<Event> events;
     private Context context;
 
+    /**
+     * Constructs a new EventArrayAdpater
+     *
+     * @param context  The current context.
+     * @param events The list of Event objects to display.
+     */
     public EventArrayAdapter(Context context, ArrayList<Event> events) {
 
         super(context, 0, events);
@@ -29,6 +38,16 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         this.context = context;
     }
 
+    /**
+     * Provides a view, inflates a layout for each list item, retrieves the
+     *  profile at the specified position, sets the profile name, and the profile image
+     *
+     * @param position    The position of the item within the adapter's data set
+     * @param convertView the old view
+     * @param parent      parent view.
+     * @return View corresponding to the data at the specified position.
+     *
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
