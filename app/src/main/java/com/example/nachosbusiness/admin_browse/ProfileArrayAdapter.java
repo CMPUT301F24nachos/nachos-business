@@ -63,7 +63,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         ImageView profileImage = view.findViewById(R.id.profile_image);
         TextView profileName = view.findViewById(R.id.profile_name);
         ImageButton editProfile = view.findViewById(R.id.edit);
-
+        profileImage.setImageDrawable(null);
         profileName.setText(profile.getName());
 
         String androidId = profile.getAndroid_id(); // Make sure this method exists to retrieve the ID
