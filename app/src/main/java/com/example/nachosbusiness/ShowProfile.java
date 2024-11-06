@@ -48,7 +48,7 @@ public class ShowProfile extends AppCompatActivity {
                 phoneNumber.setText(phone);
 
                 // Fetch profile image
-                dbManager.getProfileImage(android_id, selectedImageUri, ShowProfile.this);
+                dbManager.getProfileImage(android_id, selectedImageUri, ShowProfile.this, null);
 
                 // Prepare the Bundle
                 userProfileBundle = new Bundle();
