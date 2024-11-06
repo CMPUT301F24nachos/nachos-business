@@ -30,9 +30,9 @@ public class Browse extends AppCompatActivity {
 
     /**
      * Called when the activity is first created.
-     * Sets up the UI components and initializes the EventDBManager\
+     * Sets up the UI components and initializes the EventDBManager
      * Sets up button to switch to profile view with alert dialog
-     *
+     * Sets up a button for returning to the dashboard, with a dialog confirmation
      * @param savedInstanceState Bundle with the most recent data
      *
      */
@@ -63,6 +63,20 @@ public class Browse extends AppCompatActivity {
                         }
                     })
                     .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        });
+
+        ImageButton backButton = findViewById(R.id.back);
+        backButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Return to Dashboard")
+                    .setMessage("Do you want to go back to the dashboard?")
+                    .setPositiveButton("Yes", (dialog, which) -> finish())
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
