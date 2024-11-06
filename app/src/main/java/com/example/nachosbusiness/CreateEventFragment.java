@@ -52,7 +52,6 @@ public class CreateEventFragment extends Fragment {
     private String uploadedPosterPath = null;
     private String startTime, endTime, startDate, endDate, openDate, closeDate;
     private Date startTimeDate, endTimeDate, oDate, cDate;
-    private QRUtil qrUtil = new QRUtil();
 
     @Nullable
     @Override
