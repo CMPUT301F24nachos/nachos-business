@@ -82,6 +82,7 @@ public class UpdateProfile extends Fragment {
             profileImage.setVisibility(View.GONE);
             closeButton.setVisibility(View.GONE);
             selectedImageUri = null;
+            isImageMarkedForDeletion = true;
         });
 
         // Retrieve data from the Bundle
@@ -124,12 +125,6 @@ public class UpdateProfile extends Fragment {
                     startActivity(new Intent(requireContext(), ShowProfile.class));
                 }
             }
-        });
-
-        closeButton.setOnClickListener(v -> {
-            profileImage.setVisibility(View.GONE);
-            selectedImageUri = null;
-            isImageMarkedForDeletion = true;
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {

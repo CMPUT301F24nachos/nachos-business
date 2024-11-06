@@ -233,11 +233,49 @@ public class DBManager {
                 });
     }
 
+    public void getProfileImageExtra(String androidId, ImageView imageView, Context context, ProfileImageCallback callback) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    ((Activity) context).runOnUiThread(() -> {
+                        imageView.setImageBitmap(bitmap);
+                        if (callback != null) {
+                            callback.onImageLoaded(bitmap);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ((Activity) context).runOnUiThread(() -> {
+                        if (callback != null) {
+                            callback.onImageLoadFailed(e);
+                        }
+                    });
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.onImageLoadFailed(e);
+            }
+        });
+    }
+
     public interface EntryRetrievalCallback {
         void onEntryRetrieved(String name, String email, String phone);
         void onEntryNotFound();
         void onError(String error);
     }
+
+    public interface ProfileImageCallback {
+        void onImageLoaded(Bitmap bitmap);
+        void onImageLoadFailed(Exception e);
+    }
+
     public CollectionReference getCollectionReference() {
         return collectionReference;
     }
