@@ -220,18 +220,14 @@ public class DBManager {
     }
 
     public void deleteProfileImage(String androidId, ShowProfile context) {
-        // Reference to Firebase Storage
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
-        // Attempt to delete the image
         profileImageRef.delete()
                 .addOnSuccessListener(aVoid -> {
-                    // Successfully deleted the image
                     Toast.makeText(context, "Profile image deleted successfully.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    // Failed to delete the image
                     Toast.makeText(context, "Failed to delete profile image.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 });
