@@ -361,11 +361,11 @@ public class CreateEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled);
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
                 else
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, waitlist);
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
                 }
                 dbManager.setEntry(event.getEventID(), event);
             }
