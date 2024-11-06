@@ -1,5 +1,6 @@
 package com.example.nachosbusiness;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -16,7 +17,7 @@ public class ShowProfile extends AppCompatActivity {
     private TextView userName;
     private TextView email;
     private TextView phoneNumber;
-    private ImageView selectedImageUri;
+    private ImageView profileImage;
     private Bundle userProfileBundle;
 
     @Override
@@ -29,7 +30,7 @@ public class ShowProfile extends AppCompatActivity {
         userName = findViewById(R.id.user_name);
         email = findViewById(R.id.user_email);
         phoneNumber = findViewById(R.id.user_phone);
-        selectedImageUri = findViewById(R.id.profileImage);
+        profileImage = findViewById(R.id.profileImage);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
         View fragmentContainer = findViewById(R.id.fragment_container); // Reference to fragment container
 
@@ -47,8 +48,18 @@ public class ShowProfile extends AppCompatActivity {
                 email.setText(emailAddress);
                 phoneNumber.setText(phone);
 
-                // Fetch profile image
-                dbManager.getProfileImage(android_id, selectedImageUri, ShowProfile.this, null);
+                // Gets profile image
+                dbManager.getProfileImageExtra(android_id, profileImage, ShowProfile.this, new DBManager.ProfileImageCallback() {
+                    @Override
+                    public void onImageLoaded(Bitmap bitmap) {
+                        profileImage.setVisibility(View.VISIBLE); // Show image if loaded
+                    }
+
+                    @Override
+                    public void onImageLoadFailed(Exception e) {
+                        profileImage.setVisibility(View.GONE); // Hide image if loading failed
+                    }
+                });
 
                 // Prepare the Bundle
                 userProfileBundle = new Bundle();
