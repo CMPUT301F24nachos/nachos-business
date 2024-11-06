@@ -15,21 +15,36 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Handler to query the 'events' database, which holds all event information
+ */
 public class EventDBManager extends DBManager implements Serializable {
     private static final String TAG = "EventDBManager ";
 
+    /**
+     * Constructor for EventDBManager
+     * @param collection string (name of collection)
+     */
 
     public EventDBManager(String collection) {
         super(collection);
         this.setCollectionReference("events");
     }
 
+    /**
+     * Callback interface for receiving a list of events
+     */
 
     public interface EventCallback {
         void onEventsReceived(List<Event> eventList);
     }
 
+    /**
+     * Queries the Firebase Db and retrieves all events  from the events collection
+     *
+     * @param callback  to handle the list of event objects retrieved.
+     *
+     */
 
     public void fetchAllEvents(EventCallback callback) {
         getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {

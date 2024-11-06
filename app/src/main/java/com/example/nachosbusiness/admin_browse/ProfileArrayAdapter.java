@@ -16,11 +16,21 @@ import com.example.nachosbusiness.R;
 
 import java.util.ArrayList;
 
+/**
+ * Array Adapter for displaying Profile objects in a custom ListView.
+ * Each item in the list shows the profile's image and name, with an edit button.
+ */
 public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
 
     private ArrayList<Profile> profiles;
     private Context context;
 
+    /**
+     * Constructs a new ProfileArrayAdpater
+     *
+     * @param context  The current context.
+     * @param profiles The list of Profile objects to display.
+     */
     public ProfileArrayAdapter(Context context, ArrayList<Profile> profiles) {
 
         super(context, 0, profiles);
@@ -28,6 +38,16 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         this.context = context;
     }
 
+    /**
+     * Provides a view, inflates a layout for each list item, retrieves the
+     *  event at the specified position.
+     *
+     * @param position    The position of the item within the adapter's data set
+     * @param convertView the old view
+     * @param parent      parent view.
+     * @return View corresponding to the data at the specified position.
+     *
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

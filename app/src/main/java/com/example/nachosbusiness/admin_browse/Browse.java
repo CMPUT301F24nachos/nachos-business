@@ -17,7 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.nachosbusiness.R;
 
 
-
+/**
+ * Activity that displays a list of events is ListView and has an option to switch to profile browsing view.
+ */
 public class Browse extends AppCompatActivity {
     private EventDBManager eventDBManager;
     private ListView eventListView;
@@ -26,6 +28,14 @@ public class Browse extends AppCompatActivity {
     private View headerLayout;
     private ImageButton profile;
 
+    /**
+     * Called when the activity is first created.
+     * Sets up the UI components and initializes the EventDBManager\
+     * Sets up button to switch to profile view with alert dialog
+     *
+     * @param savedInstanceState Bundle with the most recent data
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +71,11 @@ public class Browse extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches all events from the database and updates the list view.
+     * Events are added to eventList and displayed with the EventArrayAdapter
+     *
+     */
     private void fetchEvents() {
         eventDBManager.fetchAllEvents(new EventDBManager.EventCallback() {
             @Override
@@ -72,8 +87,13 @@ public class Browse extends AppCompatActivity {
             }
         });
     }
+    /**
+     * Switches to  BrowseProfileFragment to display profiles. Replaces the current view with the browse profile fragment
+     *
+     */
     // Method to switch to the BrowseProfileFragment
     //Adapted from: https://stackoverflow.com/questions/23212162/how-to-move-from-one-fragment-to-another-fragment-on-click-of-an-imageview-in-an
+
     private void switchToProfileFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.browse_home_container, new BrowseProfileFragment());
