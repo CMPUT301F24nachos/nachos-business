@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class BrowseProfileFragment extends Fragment {
     /**
      * Initializes user interface components, by setting up the ProfileArrayAdapter and loads profiles from the database
      * Sets up a button for switching between events and profiles, with a dialog confirmation
+     * Sets up a button for returning to the dashboard, with a dialog confirmation
      *
      * @param view               The view
      * @param savedInstanceState fragment from a previous saved state.
@@ -85,6 +87,24 @@ public class BrowseProfileFragment extends Fragment {
                     .show();
         });
 
+        ImageButton backButton = view.findViewById(R.id.back);
+        backButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Return to Dashboard")
+                    .setMessage("Do you want to go back to the dashboard?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(getActivity(), Dashboard.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        });
     }
 
     /**
