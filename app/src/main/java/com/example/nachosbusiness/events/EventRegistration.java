@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,7 @@ import java.util.Locale;
 public class EventRegistration extends AppCompatActivity {
     private EventDBManager eventManager = new EventDBManager();
     private ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
+    private DBManager dbManager = new DBManager("entrants");
     private QRUtil qrUtil = new QRUtil();
 
     private Event event;
@@ -52,42 +54,56 @@ public class EventRegistration extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
-        initializeUser();
+        initializeArgs();
         initializeBaseUI();
 
-        // TODO DELETE THIS
-        User uz = new User("123", "abc", "abc@gmail.co", "123456789", null);
-        user = uz;
-
-        eventManager.queryEvent(eventId, new EventDBManager.EventCallback() {
+        // query to be sure the user is in the db so a real user is signing up
+        dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
             @Override
-            public void onEventReceived(Event e) {
-                if (e != null && e.getEventID() != null) {
-                    event = e;
-                    updateEventInfoUI();
-                    listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
-                        @Override
-                        public void onListManagerReceived(ListManager listManager) {
-                            updateWaitListStatusUI();
+            public void onEntryRetrieved(String name, String email, String phone, Uri imageUri) {
+                user = new User(androidID, name, email, phone, imageUri);
+                // found a user! Query to see if the event exists.
+                eventManager.queryEvent(eventId, new EventDBManager.EventCallback() {
+                    @Override
+                    public void onEventReceived(Event e) {
+                        if (e != null && e.getEventID() != null) {
+                            event = e;
+                            updateEventInfoUI();
+                            // found an event! Find the wait list and finally update the last of the UI
+                            listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
+                                @Override
+                                public void onListManagerReceived(ListManager listManager) {
+                                    updateWaitListStatusUI();
+                                }
+                            });
+                        // no event matches the eventID. show does not exist view.
+                        } else {
+                            displayEventDNE();
                         }
-                    });
-                } else {
-                    displayEventDNE();
-                }
+                    }
+                });
+            }
+            // not a legal user, so do not allow them to sign up.
+            @Override
+            public void onEntryNotFound() {
+                displayEventDNE();
+            }
+
+            @Override
+            public void onError(String error) {
+                displayEventDNE();
             }
         });
     }
 
     /**
-     *  Initialize the user and get the bundled arguments
+     *  Get the bundled arguments
      */
-    private void initializeUser() {
+    private void initializeArgs() {
         Bundle args = getIntent().getExtras();
         androidID = args.getString("androidID");
         eventId = args.getString("eventID");
         eventId = eventId.replace("nachos-business://event/", "");
-        // TODO Add user Query here
-
     }
 
     /**
@@ -161,7 +177,6 @@ public class EventRegistration extends AppCompatActivity {
      */
     private void updateEventInfoUI(){
         TextView eventTitle = findViewById(R.id.textview_event_reg_title);
-        TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
         TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
         TextView eventEnd = findViewById(R.id.textview_event_reg_event_end);
         TextView eventCost = findViewById(R.id.textview_event_reg_cost);
@@ -261,7 +276,7 @@ public class EventRegistration extends AppCompatActivity {
                 .setTitle("Geolocation Warning")
                 .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
                 .setPositiveButton("Agree and Join Waitlist", (dialog, which) -> {
-                        listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(latitude, longitude));
+                    listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(latitude, longitude));
                 })
                 .setNegativeButton("Deny and Do Not Join", (dialog, which) -> {
                     Toast.makeText(getApplicationContext(), "You chosen to not join the waitlist", Toast.LENGTH_SHORT).show();
@@ -274,18 +289,17 @@ public class EventRegistration extends AppCompatActivity {
      * @param user User to leave the waitList.
      */
     private void showLeaveDialog(User user){
-            new AlertDialog.Builder(this)
-                    .setMessage("Confirm that you want to leave the Wait List for this event.")
-                    .setPositiveButton("Confirm", (dialog, which) -> {
-                        listManagerDBManager.listManager.removeFromWaitList(user);
-                        Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("Cancel", (dialog, which) -> {
-                        Toast.makeText(getApplicationContext(), "Canceled leaving waitlist", Toast.LENGTH_SHORT).show();
-                    })
-                    .show();
-        }
-
+        new AlertDialog.Builder(this)
+                .setMessage("Confirm that you want to leave the Wait List for this event.")
+                .setPositiveButton("Confirm", (dialog, which) -> {
+                    listManagerDBManager.listManager.removeFromWaitList(user);
+                    Toast.makeText(getApplicationContext(), "Confirmed to leave", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    Toast.makeText(getApplicationContext(), "Canceled leaving waitlist", Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
 
     /**
      * Navigate to the Dashboard activity
@@ -322,6 +336,9 @@ public class EventRegistration extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+            if (latitude == 0 && longitude == 0){
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }
         }
     }
 
