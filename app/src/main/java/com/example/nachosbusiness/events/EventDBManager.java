@@ -14,13 +14,19 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * This class is used to query the firebase database for event items. Currently returns an event based
+ * on the event ID and will set this.event to the queried event.
+ *
+ */
+
 public class EventDBManager extends DBManager implements Serializable {
 
     Event event;
     private static final String TAG = "EventDBManager";
 
     /**
-     * Constructor for EventDBManager
+     * Constructor for EventDBManager. Does not take in an argument.
      *
      */
     public EventDBManager() {
@@ -36,6 +42,9 @@ public class EventDBManager extends DBManager implements Serializable {
         return event;
     }
 
+    /**
+     *  Callback method to indicate that an event was received.
+     */
     public interface EventCallback {
         void onEventReceived(Event event);
     }
@@ -60,15 +69,15 @@ public class EventDBManager extends DBManager implements Serializable {
                             Long costLong = doc.getLong("cost");
                             event.setCost(costLong.intValue());
                             event.setDescription(doc.getString("description"));
-                            event.setEndDate(doc.getTimestamp("endDate"));
-                            event.setEndTime(doc.getTimestamp("endTime"));
+                            event.setEndDate(doc.getTimestamp("endDateTime"));
+                            //event.setEndTime(doc.getTimestamp("endTime"));
                             event.setEventID(doc.getId());
                             event.setHasGeolocation(doc.getBoolean("hasGeolocation"));
                             event.setName(doc.getString("name"));
                             event.setOrganizerID(doc.getString("organizer"));
                             event.setQrCode(doc.getString("qrCode"));
-                            event.setStartDate(doc.getTimestamp("startDate"));
-                            event.setStartTime(doc.getTimestamp("startTime"));
+                            event.setStartDate(doc.getTimestamp("startDateTime"));
+                            //event.setStartTime(doc.getTimestamp("startTime"));
                             event.setWaitListCloseDate(doc.getTimestamp("waitListCloseDate"));
                             event.setWaitListOpenDate(doc.getTimestamp("waitListOpenDate"));
                             Long constSpots = doc.getLong("waitListSpots");

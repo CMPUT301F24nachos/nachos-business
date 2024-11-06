@@ -16,6 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class queries the Lists collection to return the list information. Currently only waitlist is implemented.
+ *
+ * Outstanding item: Need to implement the rest of the lists to be queried.
+ */
+
 public class ListManagerDBManager extends DBManager implements Serializable {
 
     ListManager listManager;
@@ -35,7 +41,8 @@ public class ListManagerDBManager extends DBManager implements Serializable {
     }
 
     /**
-     * Query the firebase db for a waitlist with specific eventID. Sets the waitList.
+     * Query the firebase db for a waitlist with specific eventID. Sets the waitList to be the eventID's
+     * saved waitlist.
      *
      * @param eventID eventID to query the DB
      */

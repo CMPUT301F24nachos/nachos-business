@@ -64,5 +64,14 @@ public class FacilityUnitTests {
         assertFalse(this.mockFacilityManager.hasFacility());
     }
 
+    @Test
+    public void testFacilityGettersAndSetter(){
+        Facility mockFacility = new Facility("name", "loc", "desc");
+        assertEquals(mockFacility.getName(), "name");
+        assertEquals(mockFacility.getLocation(), "loc");
+        assertEquals(mockFacility.getDesc(), "desc");
+
+    }
+
 }
 
