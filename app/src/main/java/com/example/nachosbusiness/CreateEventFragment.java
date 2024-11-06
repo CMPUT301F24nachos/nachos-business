@@ -358,7 +358,15 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onFacilityReceived(Facility facility) {
                 // add event to db
-                Event event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled);
+                Event event;
+                if (waitlist > 0)
+                {
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled);
+                }
+                else
+                {
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, waitlist);
+                }
                 dbManager.setEntry(event.getEventID(), event);
             }
         });
