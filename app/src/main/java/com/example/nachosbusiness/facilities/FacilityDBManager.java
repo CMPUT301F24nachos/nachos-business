@@ -13,7 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.Serializable;
 
 /**
- * Handler to query the 'facilities' database.
+ * Handler to query the 'facilities' database. Sets this.facility to be the queried facility.
  */
 public class FacilityDBManager extends DBManager implements Serializable{
 

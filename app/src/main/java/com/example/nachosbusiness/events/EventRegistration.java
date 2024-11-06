@@ -33,6 +33,18 @@ import com.google.firebase.firestore.GeoPoint;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+/**
+ * This Class/Activty is used to sign up for events. User's can navigate to the event by scanning a
+ * QR code. The class will query to ensure that the user exists in the system, and then query to ensure
+ * the event exists in the system. If the event exists, it will update the ui to show all of the event
+ * details and if the user is already registered in the event. User's can register/unregister on this
+ * page. If the event has "Geolocation Required", a warning will be shown to the user before they
+ * agree to join the event waitlist.
+ *
+ * Outstanding items: Need to update the logic on when we are outside of the waitlist open time range.
+ *
+ */
+
 public class EventRegistration extends AppCompatActivity {
     private EventDBManager eventManager = new EventDBManager();
     private ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
@@ -309,6 +321,9 @@ public class EventRegistration extends AppCompatActivity {
         startActivity(dashboardIntent);
     }
 
+    /**
+     * Initialize the location services to get the user's location
+     */
     private void initializeLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = location -> {
@@ -325,6 +340,9 @@ public class EventRegistration extends AppCompatActivity {
         }
     }
 
+    /**
+     * Request user permissions for location services
+     */
     private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -332,6 +350,9 @@ public class EventRegistration extends AppCompatActivity {
         }, LOCATION_PERMISSION_REQUEST_CODE);
     }
 
+    /**
+     * Request the user's location if the correct permissions are set.
+     */
     private void requestUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -342,6 +363,14 @@ public class EventRegistration extends AppCompatActivity {
         }
     }
 
+    /**
+     * Based on the user's permissions, take action
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
