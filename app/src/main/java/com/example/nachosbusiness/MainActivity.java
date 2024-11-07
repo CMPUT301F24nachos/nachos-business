@@ -9,6 +9,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.events.EventRegistration;
+import com.example.nachosbusiness.users.RegistrationActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,22 +19,45 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
+        DBManager dbManager = new DBManager("entrants");
         String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Intent intent = getIntent();
         Uri data = intent.getData();
 
-        //TODO: Add logic to check if user is signed up
+        dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
+            @Override
+            public void onEntryRetrieved(String name, String email, String phone) {
+                if (data != null && "nachos-business".equals(data.getScheme()) && "event".equals(data.getHost())) {
+                    String eventId = data.getLastPathSegment();
+                    if (eventId != null) {
+                        Intent eventIntent = new Intent(MainActivity.this, EventRegistration.class);
+                        eventIntent.putExtra("eventID", eventId);
+                        eventIntent.putExtra("androidID", androidID);
+                        startActivity(eventIntent);
+                    }
+                }
+                else {
+                    Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
+                    eventIntent.putExtra("name", name);
+                    startActivity(eventIntent);
+                }
+            }
 
-        if (data != null && "nachos-business".equals(data.getScheme()) && "event".equals(data.getHost())) {
-            String eventId = data.getLastPathSegment();
-            if (eventId != null) {
-                Intent eventIntent = new Intent(this, EventRegistration.class);
-                eventIntent.putExtra("eventID", eventId);
-                eventIntent.putExtra("androidID", androidID);
+            @Override
+            public void onEntryNotFound() {
+                Intent eventIntent = new Intent(MainActivity.this, RegistrationActivity.class);
                 startActivity(eventIntent);
             }
-        }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
+
+
+
     }
 
 }
