@@ -27,7 +27,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 public class DBManager {
 
     private FirebaseFirestore db;
@@ -208,33 +207,73 @@ public class DBManager {
         }
     }
 
-    public void getProfileImage(String androidId, ImageView imageView, Context context) {
-        // Create a reference to the profile image using the androidId
+    public void getProfileImage(String androidId, ImageView imageView, Context context, Runnable onImageLoaded) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
-        // Get the download URL and load the image
         profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            // Load the image into the ImageView
-            // Here, we will use BitmapFactory to decode the image
             new Thread(() -> {
                 try {
-                    // Download the image as a Bitmap
                     InputStream inputStream = new java.net.URL(uri.toString()).openStream();
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-
-                    // Set the bitmap to the ImageView on the UI thread
-                    ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                    ((Activity) context).runOnUiThread(() -> {
+                        imageView.setImageBitmap(bitmap);
+                        if (onImageLoaded != null) {
+                            onImageLoaded.run();  // Execute the callback only if it's provided
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // Handle any errors here
-
                 }
             }).start();
         }).addOnFailureListener(e -> {
-            // Handle the failure to retrieve the image
             e.printStackTrace();
-            // Optionally, set a default image or handle the error appropriately
+        });
+    }
+
+    public void deleteProfileImage(String androidId, ShowProfile context) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
+
+        profileImageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Profile image deleted successfully.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to delete profile image.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
+    }
+
+    public void getProfileImageExtra(String androidId, ImageView imageView, Context context, ProfileImageCallback callback) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    ((Activity) context).runOnUiThread(() -> {
+                        imageView.setImageBitmap(bitmap);
+                        if (callback != null) {
+                            callback.onImageLoaded(bitmap);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    ((Activity) context).runOnUiThread(() -> {
+                        if (callback != null) {
+                            callback.onImageLoadFailed(e);
+                        }
+                    });
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            if (callback != null) {
+                callback.onImageLoadFailed(e);
+            }
         });
     }
 
@@ -242,6 +281,11 @@ public class DBManager {
         void onEntryRetrieved(String name, String email, String phone);
         void onEntryNotFound();
         void onError(String error);
+    }
+
+    public interface ProfileImageCallback {
+        void onImageLoaded(Bitmap bitmap);
+        void onImageLoadFailed(Exception e);
     }
 
     public CollectionReference getCollectionReference() {
