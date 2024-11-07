@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@color/header">
+
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="399dp"
+        android:layout_height="155dp"
+        android:contentDescription="Profile image"
+        android:scaleType="fitCenter"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="411dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/header"
+        android:gravity="left"
+        android:padding="8dp"
+        android:text="Username"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:background="@android:color/transparent"
+        android:contentDescription="Edit Profile"
+        android:layout_marginBottom="6dp"
+        android:layout_marginRight="6dp"
+        app:srcCompat="@drawable/ic_action_name" />
+
+
+</FrameLayout>
+
