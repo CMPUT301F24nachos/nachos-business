@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.admin_browse.Browse;
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
@@ -90,7 +91,8 @@ public class Dashboard extends AppCompatActivity {
 
         browseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "browse click!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Dashboard.this, Browse.class);
+                startActivity(intent);
             }
         });
 
