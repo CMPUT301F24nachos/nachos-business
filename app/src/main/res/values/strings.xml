@@ -36,11 +36,15 @@
     <string name="waitlist_title">Waitlist</string>
 
     <!--event registration strings-->
-    <string name="event_reg_title">Register for an Event</string>
+    <string name="event_register_title">Register for an Event</string>
     <string name="event_reg_registration_opens">Registration Opens:</string>
     <string name="event_reg_to">to</string>
     <string name="event_reg_spots_remaining">spots remaining!</string>
     <string name="event_reg_sign_up">Sign-Up to Wait List!</string>
+
+    <!--event registration strings-->
+    <string name="event_leave_waitlist_title">Currently Registered on Waitlist</string>
+    <string name="event_entrant_leave">Leave Waiting List</string>
 
     <!--Crate event strings!-->
     <string name="event_button_save">Create Event</string>
