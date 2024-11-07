@@ -1,16 +1,13 @@
 package com.example.nachosbusiness;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
+
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.content.Intent;
 
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -59,5 +56,40 @@ public class UITests {
     public void testNavScanner() {
         onView(withId(R.id.button_join_events)).perform(click());
     }
+
+    @Test
+    public void testDashboardUserID() {
+        onView(withId(R.id.dashboard_user_id)).check(matches(withText("Guest")));
+    }
+
+    @Test
+    public void testProfileNavigation(){
+        onView(withId(R.id.button_profile)).perform(click());
+        onView(withId(R.id.update_profile_button)).perform(click());
+        onView(withId(R.id.cancelButton)).perform(click());
+        onView(withId(R.id.button_profile_home)).perform(click());
+    }
+
+    @Test
+    public void testProfileNavigationWithErrorChecking(){
+        onView(withId(R.id.button_profile)).perform(click());
+        onView(withId(R.id.update_profile_button)).perform(click());
+
+        onView(withId(R.id.editTextUsername)).perform(ViewActions.clearText());
+        onView(withId(R.id.signUpButton)).perform(click());
+        onView(withId(R.id.editTextUsername)).perform(typeText("testing"));
+
+        onView(withId(R.id.editTextTextEmailAddress)).perform(ViewActions.clearText());
+        onView(withId(R.id.signUpButton)).perform(click());
+        onView(withId(R.id.editTextTextEmailAddress)).perform(typeText("testing"));
+
+        onView(withId(R.id.editTextPhone)).perform(ViewActions.clearText());
+        onView(withId(R.id.signUpButton)).perform(click());
+
+        onView(withId(R.id.cancelButton)).perform(click());
+        onView(withId(R.id.button_profile_home)).perform(click());
+    }
+
+
 
 }
