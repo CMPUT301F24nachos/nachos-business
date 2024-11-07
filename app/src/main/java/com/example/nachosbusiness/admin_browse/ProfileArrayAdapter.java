@@ -85,7 +85,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
      * @param androidId   The unique Android ID for each user profile.
      * @param imageView   The ImageView to display the profile image.
      */
-    private void loadProfileImage(String androidId, ImageView imageView) {
+    public void loadProfileImage(String androidId, ImageView imageView) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
