@@ -2,6 +2,11 @@ package com.example.nachosbusiness.facilities;
 
 import java.io.Serializable;
 
+/**
+ * Facility is used for organizer's to create a facility. An event must have a facility to be created.
+ *
+ */
+
 public class Facility implements Serializable{
     private String name;
     private String location;

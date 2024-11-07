@@ -25,6 +25,13 @@ import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+/**
+ * This Activity is the main dashboard activity for user's to navigate through the functionality
+ * of the app.
+ *
+ * TODO: connect remaining navigations up, set up the view event list
+ */
+
 public class Dashboard extends AppCompatActivity {
 
     private String androidID;

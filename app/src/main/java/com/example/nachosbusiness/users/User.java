@@ -17,13 +17,12 @@ public class User {
     private Uri profileImage;
     private List<String> events;
 
-    public User(String android_id, String username, String email, String phone, Uri profileImage) {
+    public User(String android_id, String username, String email, String phone) {
         this.android_id = android_id;
         this.username = username;
         this.email = email;
         this.phone = (phone != null && !phone.isEmpty()) ? phone : "";
         this.admin = false;
-        this.profileImage = profileImage != null ? profileImage : Uri.parse(""); // Set default value if null
         this.events = new ArrayList<>();
     }
 
