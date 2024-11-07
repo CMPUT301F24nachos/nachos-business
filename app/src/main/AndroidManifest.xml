@@ -42,10 +42,6 @@
             android:name=".UpdateProfile"
             android:exported="true">
         </activity>
-        <activity
-            android:name=".admin_browse.Browse"
-            android:exported="true">
-        </activity>
 
         <activity
             android:name=".events.EventRegistration"

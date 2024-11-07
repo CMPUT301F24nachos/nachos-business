@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.nachosbusiness.admin_browse.Browse;
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
@@ -98,8 +97,7 @@ public class Dashboard extends AppCompatActivity {
 
         browseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(Dashboard.this, Browse.class);
-                startActivity(intent);
+                Toast.makeText(getApplicationContext(), "browse click!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -165,47 +163,16 @@ public class Dashboard extends AppCompatActivity {
         }
 
     /**
-     * Open the specified fragment from the activity. Disabls themain screen buttons as the buttons were
-     * clickable when a fragment was opened even though they were visible.
+     * Open the specified fragment from the activity
      * @param fragment fragment to open
      * Reference: https://developer.android.com/guide/fragments/transactions
      */
     public void loadFragment(Fragment fragment) {
-        disableDashboardButtons();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.dashboard_fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
+
         fragmentTransaction.commit();
-
-        fragmentManager.addOnBackStackChangedListener(() -> {
-            if (fragmentManager.getBackStackEntryCount() == 0) {
-                enableDashboardButtons();
-            }
-        });
-    }
-
-    /**
-     * Disable the main dashboard buttons. Will have to add the items in the user event list here
-     */
-    private void disableDashboardButtons() {
-        findViewById(R.id.button_your_events).setEnabled(false);
-        findViewById(R.id.button_browse).setEnabled(false);
-        findViewById(R.id.button_facility).setEnabled(false);
-        findViewById(R.id.button_profile).setEnabled(false);
-        findViewById(R.id.button_event_updates).setEnabled(false);
-        findViewById(R.id.button_join_events).setEnabled(false);
-    }
-
-    /**
-     * enables the main dashboard buttons. Will have to add the items in the user event list here
-     */
-    private void enableDashboardButtons() {
-        findViewById(R.id.button_your_events).setEnabled(true);
-        findViewById(R.id.button_browse).setEnabled(true);
-        findViewById(R.id.button_facility).setEnabled(true);
-        findViewById(R.id.button_profile).setEnabled(true);
-        findViewById(R.id.button_event_updates).setEnabled(true);
-        findViewById(R.id.button_join_events).setEnabled(true);
     }
 }
