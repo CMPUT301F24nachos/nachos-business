@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.events;
 
+import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.Timestamp;
 
@@ -28,6 +29,7 @@ public class Event {
     private Facility facility;
     private ListManager listManager;
 
+    private QRUtil qrUtil = new QRUtil();
 
     /**
      * Constructor with date/time as Timestamp datatype
@@ -61,6 +63,7 @@ public class Event {
         this.hasGeolocation = hasGeolocation;
         this.attendeeSpots = attendeeSpots;
         this.waitListSpots = -1;
+        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID);
     }
@@ -98,6 +101,7 @@ public class Event {
         this.hasGeolocation = hasGeolocation;
         this.attendeeSpots = attendeeSpots;
         this.waitListSpots = waitListSpots;
+        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID, waitListSpots);
     }
@@ -134,6 +138,7 @@ public class Event {
         this.hasGeolocation = hasGeolocation;
         this.attendeeSpots = attendeeSpots;
         this.waitListSpots = -1;
+        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID);
     }
@@ -171,6 +176,7 @@ public class Event {
         this.hasGeolocation = hasGeolocation;
         this.attendeeSpots = attendeeSpots;
         this.waitListSpots = waitListSpots;
+        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID, waitListSpots);
     }
