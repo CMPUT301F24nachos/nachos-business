@@ -1,6 +1,7 @@
 package com.example.nachosbusiness.organizer_views;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.CreateEventFragment;
+import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.admin_browse.Browse;
@@ -27,6 +29,7 @@ import java.util.List;
 
 public class OrganizerEventsFragment extends Fragment {
 
+    private DBManager dbManager;
     private EventDBManager eventDBManager;
     private ListView eventListView;
     private EventArrayAdapter eventAdapter;
@@ -39,7 +42,7 @@ public class OrganizerEventsFragment extends Fragment {
         return inflater.inflate(R.layout.organizer_events, container, false);
     }
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         eventListView = view.findViewById(R.id.event_list_view);
@@ -91,13 +94,46 @@ public class OrganizerEventsFragment extends Fragment {
      *
      */
     private void fetchEvents() {
-        eventDBManager.fetchAllEvents(new EventDBManager.EventCallback() {
+        // Get the Android ID
+        String androidId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // Use DBManager to fetch the user info based on Android ID
+        DBManager dbManager = new DBManager("entrants");  // Assuming "entrants" is your collection
+        dbManager.getUser(androidId, new DBManager.EntryRetrievalCallback() {
             @Override
-            public void onEventsReceived(List<Event> events) {
-                eventList.clear(); // Clear existing items
-                eventList.addAll(events); // Add new items to the list
-                eventAdapter = new EventArrayAdapter(requireContext(), eventList);
-                eventListView.setAdapter(eventAdapter);
+            public void onEntryRetrieved(String name, String email, String phone) {
+                // User data has been retrieved successfully
+                // You can now use the name, email, and phone as needed
+
+                // Example: Fetch events for the user based on their data
+                eventDBManager.fetchEventsByUser(requireContext(), new EventDBManager.EventCallback() {
+                    @Override
+                    public void onEventsReceived(List<Event> events) {
+                        // Update UI with the events
+                        if (getActivity() != null && isAdded()) {
+                            // Clear existing items and add new events
+                            eventList.clear();
+                            eventList.addAll(events);
+                            eventAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onEntryNotFound() {
+                // Handle the case where the user is not found
+                if (getActivity() != null && isAdded()) {
+                    Toast.makeText(requireContext(), "User not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error during the database query
+                if (getActivity() != null && isAdded()) {
+                    Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
