@@ -1,18 +1,8 @@
 package com.example.nachosbusiness.events;
 
-import android.util.Log;
-
-import androidx.annotation.Nullable;
-
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.admin_browse.Profile;
-import com.example.nachosbusiness.admin_browse.ProfileDBManager;
 import com.example.nachosbusiness.users.User;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ListManager {
-    private static final String TAG = "ListManager";
-
     private ArrayList<User> waitList;
     private ArrayList<User> invitedList;
     private ArrayList<User> acceptedList;
@@ -171,37 +159,6 @@ public class ListManager {
         // put them in invite list
 
         return waitList.subList(0, count-1);
-    }
-
-    public interface EntrantCallback {
-        void onEntrantsReceived(List<User> entrantList);
-    }
-
-    public void fetchAllEntrants(EntrantCallback callback) {
-        dbManager.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, error.toString());
-                    return;
-                }
-
-                if (querySnapshots != null) {
-                    List<User> entrantsList = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : querySnapshots) {
-                        String androidID = doc.getString("android_id");
-                        String username = doc.getString("username");
-                        String email = doc.getString("email");
-                        String phone = doc.getString("phone");
-                        if (androidID != null) {
-                            User user = new User(androidID, username, email, phone);
-                            entrantsList.add(user);
-                        }
-                    }
-                    callback.onEntrantsReceived(entrantsList);
-                }
-            }
-        });
     }
 
     /**
