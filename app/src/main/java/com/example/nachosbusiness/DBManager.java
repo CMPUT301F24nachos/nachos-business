@@ -292,6 +292,10 @@ public class DBManager {
         return collectionReference;
     }
 
+    public FirebaseFirestore getDb() {
+        return db;
+    }
+
     public void setCollectionReference(String collection) {
         this.collectionReference = db.collection(collection);
     }
