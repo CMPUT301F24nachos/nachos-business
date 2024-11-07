@@ -1,10 +1,12 @@
 package com.example.nachosbusiness;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ public class ShowProfile extends AppCompatActivity {
         email = findViewById(R.id.user_email);
         phoneNumber = findViewById(R.id.user_phone);
         profileImage = findViewById(R.id.profileImage);
+        ImageButton buttonHome = findViewById(R.id.button_profile_home);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
         View fragmentContainer = findViewById(R.id.fragment_container); // Reference to fragment container
 
@@ -83,6 +86,15 @@ public class ShowProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 navigateToUpdateProfile();
+            }
+        });
+
+        buttonHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent eventIntent = new Intent(ShowProfile.this, Dashboard.class);
+                eventIntent.putExtra("name", userName.getText());
+                startActivity(eventIntent);
             }
         });
     }
