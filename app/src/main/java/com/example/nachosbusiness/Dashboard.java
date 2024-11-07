@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,8 +38,12 @@ public class Dashboard extends AppCompatActivity {
 
         androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Bundle args = getIntent().getExtras();
-        userName = args.getString("name");
 
+        if (args != null && args.containsKey("name")) {
+            userName = args.getString("name");
+        } else {
+            userName = "Guest";
+        }
 
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
         facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
