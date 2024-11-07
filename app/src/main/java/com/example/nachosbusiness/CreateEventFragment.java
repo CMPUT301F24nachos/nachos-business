@@ -328,7 +328,7 @@ public class CreateEventFragment extends Fragment {
         if (WaitlistText.isEmpty()) {
             waitlist = 0;
         } else {
-            waitlist = Integer.parseInt(priceText);
+            waitlist = Integer.parseInt(WaitlistText);
         }
 
         boolean isGeolocationEnabled = editGeolocation.isChecked();
@@ -361,11 +361,11 @@ public class CreateEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
                 }
                 else
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
                 dbManager.setEntry(event.getEventID(), event);
             }
