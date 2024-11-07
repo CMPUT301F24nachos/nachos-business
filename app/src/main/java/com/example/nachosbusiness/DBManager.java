@@ -27,7 +27,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 public class DBManager {
 
     private FirebaseFirestore db;
@@ -127,8 +126,21 @@ public class DBManager {
      * @param o object to set
      * @param collection firebase collection to set object
      */
+    public void setEntry(String document, Object o, String collection)
+    {
+        db.collection(collection).document(document).set(o)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
 
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
 
+                    }
+                });
+    }
 
     /**
      * Removes document from a specified collection in the firestore database
