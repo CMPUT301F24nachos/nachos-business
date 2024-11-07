@@ -1,14 +1,19 @@
 package com.example.nachosbusiness.admin_browse;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
@@ -36,6 +41,54 @@ public class ProfileDetailFragment extends Fragment {
             profile = (Profile) getArguments().getSerializable("profile");
         }
     }
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ImageButton backButton = view.findViewById(R.id.back);
+        ImageButton editButton = view.findViewById(R.id.edit);
+
+        backButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Return to Profile List")
+                    .setMessage("Do you want to go back to the profile list?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Navigate back to Profile List Fragment
+                            // From: https://stackoverflow.com/questions/25350397/android-return-to-previous-fragment-on-back-press
+                            assert getFragmentManager() != null;
+                            getFragmentManager().popBackStack();  // This pops the current fragment off the back stack
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss(); // Close the dialog without action
+                        }
+                    })
+                    .show();
+        });
+
+        // Set up the edit button with a confirmation dialog and toast
+        editButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Enter Edit Mode")
+                    .setMessage("Do you want to enter edit mode?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Show toast for edit mode
+                            Toast.makeText(getActivity(), "Edit Mode", Toast.LENGTH_SHORT).show();
+
+                            // Add your logic here for entering edit mode (if applicable)
+                            // For example, enable editing of TextViews, ImageViews, etc.
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss(); // Close the dialog without action
+                        }
+                    })
+                    .show();
+        });
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,10 +98,19 @@ public class ProfileDetailFragment extends Fragment {
         // Set profile details to views
         ImageView profileImage = view.findViewById(R.id.profile);
         TextView profileName = view.findViewById(R.id.Username);
+        TextView email = view.findViewById(R.id.EmailValue);
+        TextView phonenum = view.findViewById(R.id.PhoneValue);
+
 
         if (profile != null) {
             profileName.setText(profile.getName());
             loadProfileImage(profile.getAndroid_id(), profileImage);
+            email.setText(profile.getEmail());
+            if (profile.getPhonenum() != null && !profile.getPhonenum().isEmpty()) {
+                phonenum.setText(profile.getPhonenum());
+            } else {
+                phonenum.setText("Not Added");
+            }
         }
 
         return view;
