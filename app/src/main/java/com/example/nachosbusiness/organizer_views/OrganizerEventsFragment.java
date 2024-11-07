@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -16,8 +17,22 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.nachosbusiness.CreateEventFragment;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
+import com.example.nachosbusiness.admin_browse.Browse;
+import com.example.nachosbusiness.admin_browse.Event;
+import com.example.nachosbusiness.admin_browse.EventArrayAdapter;
+import com.example.nachosbusiness.admin_browse.EventDBManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrganizerEventsFragment extends Fragment {
+
+    private EventDBManager eventDBManager;
+    private ListView eventListView;
+    private EventArrayAdapter eventAdapter;
+    private ArrayList<Event> eventList;
+    private View headerLayout;
+    private ImageButton profile;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -26,6 +41,15 @@ public class OrganizerEventsFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
+
+        eventListView = view.findViewById(R.id.event_list_view);
+        eventList = new ArrayList<>();
+
+        // Initialize EventDBManager
+        eventDBManager = new EventDBManager("events");
+
+        // Fetch all events
+        fetchEvents();
 
         ImageButton homeButton = view.findViewById(R.id.button_event_home);
         ImageButton menuButton = view.findViewById(R.id.button_org_event_menu);
@@ -57,6 +81,23 @@ public class OrganizerEventsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+    }
+
+    /**
+     * Fetches all events from the database and updates the list view.
+     * Events are added to eventList and displayed with the EventArrayAdapter
+     *
+     */
+    private void fetchEvents() {
+        eventDBManager.fetchAllEvents(new EventDBManager.EventCallback() {
+            @Override
+            public void onEventsReceived(List<Event> events) {
+                eventList.clear(); // Clear existing items
+                eventList.addAll(events); // Add new items to the list
+                eventAdapter = new EventArrayAdapter(requireContext(), eventList);
+                eventListView.setAdapter(eventAdapter);
             }
         });
     }
