@@ -9,7 +9,8 @@ public class Profile implements Serializable {
     private String name;
     private String image;
     private String android_id;
-
+    private String email;
+    private String phonenum;
     /**
      * Constructor for a Profile object
      *
@@ -17,10 +18,28 @@ public class Profile implements Serializable {
      * @param image       users profile image
      * @param android_id  android device id for the user (primary key)
      */
-    public Profile(String name, String image, String android_id) {
+    public Profile(String name, String image, String android_id, String email, String phonenum) {
         this.name = name;
         this.image = image;
         this.android_id = android_id;
+        this.email = email;
+        this.phonenum = phonenum;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhonenum() {
+        return phonenum;
+    }
+
+    public void setPhonenum(String phonenum) {
+        this.phonenum = phonenum;
     }
 
     /**
