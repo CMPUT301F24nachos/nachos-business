@@ -14,6 +14,8 @@ import com.example.nachosbusiness.users.RegistrationActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
             @Override
             public void onEntryRetrieved(String name, String email, String phone) {
+                userName = name;
                 if (data != null && "nachos-business".equals(data.getScheme()) && "event".equals(data.getHost())) {
                     String eventId = data.getLastPathSegment();
                     if (eventId != null) {
@@ -36,11 +39,12 @@ public class MainActivity extends AppCompatActivity {
                         eventIntent.putExtra("androidID", androidID);
                         startActivity(eventIntent);
                     }
+                    else {
+                        navigateToDashboard();
+                    }
                 }
                 else {
-                    Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
-                    eventIntent.putExtra("name", name);
-                    startActivity(eventIntent);
+                   navigateToDashboard();
                 }
             }
 
@@ -55,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
-
+    private void navigateToDashboard() {
+        Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
+        eventIntent.putExtra("name", userName);
+        startActivity(eventIntent);
+    }
 }
