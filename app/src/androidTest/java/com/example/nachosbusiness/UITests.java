@@ -1,11 +1,16 @@
 package com.example.nachosbusiness;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Intent;
 
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -49,4 +54,10 @@ public class UITests {
         onView(withId(R.id.text_facility_input_location)).check(matches(withText("Test")));
         onView(withId(R.id.text_facility_input_desc)).check(matches(withText("Test")));
     }
+
+    @Test
+    public void testNavScanner() {
+        onView(withId(R.id.button_join_events)).perform(click());
+    }
+
 }

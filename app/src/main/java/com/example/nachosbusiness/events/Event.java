@@ -28,8 +28,14 @@ public class Event {
 
     private Facility facility;
     private ListManager listManager;
-
     private QRUtil qrUtil = new QRUtil();
+
+    /**
+     * Constructor to query firebase DB
+     */
+    public Event() {
+    }
+
 
     /**
      * Constructor with date/time as Timestamp datatype
@@ -267,6 +273,10 @@ public class Event {
         this.attendeeSpots = attendeeSpots;
     }
 
+    public void setListManager(ListManager listManager) {
+        this.listManager = listManager;
+    }
+
     public int getWaitListSpots() {
         return waitListSpots;
     }
@@ -282,4 +292,5 @@ public class Event {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
     }
+
 }
