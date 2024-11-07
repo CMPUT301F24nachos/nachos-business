@@ -1,6 +1,9 @@
 package com.example.nachosbusiness.admin_browse;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +11,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.example.nachosbusiness.DBManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -67,9 +74,37 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         profileName.setText(profile.getName());
 
         String androidId = profile.getAndroid_id(); // Make sure this method exists to retrieve the ID
-        DBManager dbManager = new DBManager("entrants"); // Use your collection name
-        dbManager.getProfileImage(androidId, profileImage, context);
+        loadProfileImage(androidId, profileImage);
 
         return view;
     }
+
+    /**
+     * Loads the profile image from Firebase Storage using the attached Android ID
+     *
+     * @param androidId   The unique Android ID for each user profile.
+     * @param imageView   The ImageView to display the profile image.
+     */
+    private void loadProfileImage(String androidId, ImageView imageView) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // Handle image loading errors here
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            // Optionally, handle the case where the image could not be retrieved
+        });
+    }
+
 }
