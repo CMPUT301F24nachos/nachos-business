@@ -1,9 +1,11 @@
 package com.example.nachosbusiness.admin_browse;
 
+import java.io.Serializable;
+
 /**
  * Class that defines a user profile with a name, image and android id
  */
-public class Profile {
+public class Profile implements Serializable {
     private String name;
     private String image;
     private String android_id;

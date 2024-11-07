@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
 import com.google.firebase.storage.FirebaseStorage;
@@ -76,6 +78,10 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         String androidId = profile.getAndroid_id(); // Make sure this method exists to retrieve the ID
         loadProfileImage(androidId, profileImage);
 
+        editProfile.setOnClickListener(v -> {
+            // When the edit button is clicked, open the profile fragment
+            openProfileDetailFragment(profile);
+        });
         return view;
     }
 
@@ -105,6 +111,17 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
             e.printStackTrace();
             // Optionally, handle the case where the image could not be retrieved
         });
+    }
+
+    private void openProfileDetailFragment(Profile profile) {
+        // Use newInstance to pass the profile to the fragment
+        ProfileDetailFragment detailFragment = ProfileDetailFragment.newInstance(profile);
+
+        // Replace the current fragment (or the content in the container) with ProfileDetailFragment
+        FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, detailFragment);  // Use the correct ID for your container
+        transaction.addToBackStack(null); // Add to back stack to allow back navigation
+        transaction.commit();
     }
 
 }
