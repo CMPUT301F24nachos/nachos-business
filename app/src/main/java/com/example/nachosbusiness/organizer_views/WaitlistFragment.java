@@ -17,16 +17,23 @@ import androidx.fragment.app.Fragment;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class WaitlistFragment extends Fragment {
 
     private Event event;
     private WaitlistArrayAdapter adapter;
     private ArrayList<User> entrants;
+    private ListManagerDBManager listManagerDBManager;
 
     // event has to be set with a bundle??
 
@@ -41,12 +48,16 @@ public class WaitlistFragment extends Fragment {
 
         ListView waitlistView = view.findViewById(R.id.user_list);
 
-        ArrayList<User> users = event.getListManager().getWaitList();
-        users.addAll(event.getListManager().getInvitedList());
-        users.addAll(event.getListManager().getAcceptedList());
-        users.addAll(event.getListManager().getCanceledList());
+        // bundle to get selected event in list
+        Bundle bundle  = getArguments();
+        assert bundle != null;
+        event = (Event) bundle.getSerializable("event");
+        assert event != null;
 
-        adapter = new WaitlistArrayAdapter(getActivity(), users);
+        listManagerDBManager = new ListManagerDBManager();
+        loadEntrants();
+
+        adapter = new WaitlistArrayAdapter(getActivity(), entrants);
         adapter.setEvent(event);
         waitlistView.setAdapter(adapter);
 
@@ -71,14 +82,36 @@ public class WaitlistFragment extends Fragment {
     }
 
     private void loadEntrants() {
-        event.getListManager().fetchAllEntrants(users -> {
-            if (users!= null) {
+        listManagerDBManager.queryLists(event.getEventID(), listManager -> {
+            if (listManager!= null) {
                 entrants.clear();
-                entrants.addAll(users);
+
+                for (Map<Object, Object> entry : listManager.getWaitList())
+                {
+                    User arr[] = new User[0];
+                    arr = entry.keySet().toArray(arr);
+                    entrants.add(arr[0]);
+                }
+
+                entrants.addAll(listManager.getInvitedList());
+                entrants.addAll(listManager.getAcceptedList());
+                entrants.addAll(listManager.getCanceledList());
+
                 adapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // create new instance of the view book fragment
+    static WaitlistFragment newInstance(Event event)
+    {
+        Bundle args = new Bundle();
+        args.putSerializable("event", event);
+
+        WaitlistFragment fragment = new WaitlistFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 }
