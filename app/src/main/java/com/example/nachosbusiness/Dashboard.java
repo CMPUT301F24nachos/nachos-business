@@ -166,19 +166,19 @@ public class Dashboard extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
-                String scannedData = result.getContents();
-                Intent intent = new Intent(Dashboard.this, EventRegistration.class);
-                intent.putExtra("eventID", scannedData);
-                intent.putExtra("androidID", androidID);
-                startActivity(intent);
-            }
+            String scannedData = result.getContents();
+            Intent intent = new Intent(Dashboard.this, EventRegistration.class);
+            intent.putExtra("eventID", scannedData);
+            intent.putExtra("androidID", androidID);
+            startActivity(intent);
+        }
         else{
             Intent intent = new Intent(Dashboard.this, Dashboard.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         }
-        }
+    }
 
     /**
      * Open the specified fragment from the activity. Disabls themain screen buttons as the buttons were
