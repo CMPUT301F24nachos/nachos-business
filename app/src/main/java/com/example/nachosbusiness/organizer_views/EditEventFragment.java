@@ -1,6 +1,5 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.organizer_views;
 
-import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -15,34 +14,28 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
+import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.DatePickerFragment;
+import com.example.nachosbusiness.R;
+import com.example.nachosbusiness.TimePickerFragment;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-/**
- * The CreateEventFragment class provides a UI for creating an event by filling out details such as
- * event name, description, date, time, price, maximum attendees, and more. Required fields include
- * event name, description, date, start time, and end time. Optional fields like price and attendees
- * default to 0 if unspecified.
- *
- * Users can:
- * - Select date and time with pickers.
- * - Enable geolocation with a checkbox.
- * - Choose frequency from a spinner.
- * - Upload a poster image.
- *
- * The fragment validates inputs before saving, showing errors for missing required fields. It also
- * includes Save and Cancel buttons, with a summary shown on successful creation.
- */
-
-public class CreateEventFragment extends Fragment {
-
+public class EditEventFragment extends Fragment {
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;
     private ImageButton btnUploadPoster;
@@ -50,8 +43,14 @@ public class CreateEventFragment extends Fragment {
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency;
     private Date startTimeDate, endTimeDate, oDate, cDate;
+    private int eventCost, attendeeSpots, waitlistSpots;
+    private Boolean hasGeolocation;
+
+
+    DBManager dbManager = new DBManager("events");
+    private Event currentEvent;
 
     @Nullable
     @Override
@@ -62,12 +61,33 @@ public class CreateEventFragment extends Fragment {
 
         setupListeners();
 
+        Bundle args = getArguments();
+        if (getArguments() != null) {
+            eventId = getArguments().getString("EVENT_ID");
+            eventName = getArguments().getString("EVENT_NAME");
+            eventDescription = getArguments().getString("EVENT_DESCRIPTION");
+            eventFrequency = getArguments().getString("EVENT_FREQUENCY");
+            startDate = getArguments().getString("START_DATE");
+            startTime = getArguments().getString("START_TIME");
+            endDate = getArguments().getString("END_DATE");
+            endTime = getArguments().getString("END_TIME");
+            openDate = getArguments().getString("EVENT_SIGNUPOPEN");
+            closeDate = getArguments().getString("EVENT_SIGNUPCLOSE");
+
+            eventCost = getArguments().getInt("EVENT_COST");
+            attendeeSpots = getArguments().getInt("ATTENDEE_SPOTS");
+            waitlistSpots = getArguments().getInt("WAITLIST_SPOTS");
+
+            hasGeolocation = getArguments().getBoolean("GEOLOCATION");
+        }
+
+        preloadEvent();
+
         return view;
     }
 
     private void initializeViews(View view) {
 
-        // Edit values
         editTextEventName = view.findViewById(R.id.editTextEventName);
         editEventDescription = view.findViewById(R.id.editEventDescription);
         editPrice = view.findViewById(R.id.editPrice);
@@ -251,7 +271,7 @@ public class CreateEventFragment extends Fragment {
 
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
-    // TODO should find a way to check if the times are correct
+
     private void validateAndCreateEvent() {
 
         if (TextUtils.isEmpty(editTextEventName.getText())) {
@@ -295,13 +315,67 @@ public class CreateEventFragment extends Fragment {
             }
         }
 
-
-
         saveEvent();
 
         requireActivity().getSupportFragmentManager().popBackStack();
     }
-    // TODO Attach to backend.
+
+    private void preloadEvent() {
+        // Populate fields with existing event details from bundled values
+        editTextEventName.setText(eventName);
+        editEventDescription.setText(eventDescription);
+        editPrice.setText(String.valueOf(eventCost));
+        editMaxAttendees.setText(String.valueOf(attendeeSpots));
+        if(waitlistSpots < 0) {
+            //do nothing
+        }
+        else {
+            editMaxWaitlist.setText(String.valueOf(waitlistSpots));
+        }
+        editGeolocation.setChecked(hasGeolocation);
+
+        // Set frequency in spinner
+        String[] frequencies = getResources().getStringArray(R.array.event_frequencies);
+        for (int i = 0; i < frequencies.length; i++) {
+            if (frequencies[i].equals(eventFrequency)) {
+                editEventFrequency.setSelection(i);
+                break;
+            }
+        }
+
+        // Set date and time TextViews with event's dates and times
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+        // Start Date and Time
+        if (startDate != null && startTime != null) {
+            textViewSelectedStartDate.setText(startDate);
+            textViewSelectedStartTime.setText(startTime);
+        }
+
+        // End Date and Time
+        if (endDate != null && endTime != null) {
+            textViewSelectedEndDate.setText(endDate);
+            textViewSelectedEndTime.setText(endTime);
+        }
+
+        // Open Date
+        if (openDate != null) {
+            textViewSelectedOpenDate.setText(openDate);
+        }
+
+        // Close Date
+        if (closeDate != null) {
+            getTextViewSelectedCloseDate.setText(closeDate);
+        }
+
+        // Poster Path (if applicable)
+        if (uploadedPosterPath != null) {
+            Toast.makeText(getActivity(), "Poster loaded", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private void saveEvent() {
 
         DBManager dbManager = new DBManager("events");
@@ -367,22 +441,8 @@ public class CreateEventFragment extends Fragment {
                 {
                     event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
-                event.setEventID(event.getEventID());
-                dbManager.setEntry(event.getEventID(), event);
+                dbManager.setEntry(eventId, event);
             }
         });
-
-        String eventDetails = "Event Name: " + eventName +
-                "\nDescription: " + eventDescription +
-                "\nPrice: " + price +
-                "\nAttendees" + attendees +
-                "\nWaitlist limit: " + waitlist +
-                "\nGeolocation: " + (isGeolocationEnabled ? "Enabled" : "Disabled") +
-                "\nStart Hour: " + startTime +
-                "\nEnd Hour: " + endTime +
-                "\nDate: " + startDate +
-                "\nFrequency: " + frequency +
-                "\nPoster Path: " + uploadedPosterPath;
-        Toast.makeText(getActivity(), "Event Created:\n" + eventDetails, Toast.LENGTH_LONG).show();
     }
 }
