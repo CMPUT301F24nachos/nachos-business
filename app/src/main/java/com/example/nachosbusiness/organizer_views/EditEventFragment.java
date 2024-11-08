@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.organizer_views;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
@@ -26,24 +28,22 @@ import com.example.nachosbusiness.TimePickerFragment;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.Timestamp;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class EditEventFragment extends Fragment {
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;
     private ImageButton btnUploadPoster;
     private CheckBox editGeolocation;
-    private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton;
+    private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton, deleteButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID;
     private Date startTimeDate, endTimeDate, oDate, cDate;
     private int eventCost, attendeeSpots, waitlistSpots;
     private Boolean hasGeolocation;
@@ -55,7 +55,7 @@ public class EditEventFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_create_event, container, false);
+        View view = inflater.inflate(R.layout.activity_edit_event, container, false);
 
         initializeViews(view);
 
@@ -73,12 +73,15 @@ public class EditEventFragment extends Fragment {
             endTime = getArguments().getString("END_TIME");
             openDate = getArguments().getString("EVENT_SIGNUPOPEN");
             closeDate = getArguments().getString("EVENT_SIGNUPCLOSE");
-
+            organizerID = getArguments().getString("ORGANIZERID");
+            uploadedPosterPath = getArguments().getString("EVENT_POSTER");
             eventCost = getArguments().getInt("EVENT_COST");
             attendeeSpots = getArguments().getInt("ATTENDEE_SPOTS");
             waitlistSpots = getArguments().getInt("WAITLIST_SPOTS");
 
             hasGeolocation = getArguments().getBoolean("GEOLOCATION");
+
+
         }
 
         preloadEvent();
@@ -115,6 +118,7 @@ public class EditEventFragment extends Fragment {
         createEventText = view.findViewById(R.id.createEventText);
         saveButton = view.findViewById(R.id.event_button_save);
         cancelButton = view.findViewById(R.id.event_button_cancel);
+        deleteButton = view.findViewById(R.id.delete_event_button);
     }
 
     private void setupListeners() {
@@ -269,6 +273,26 @@ public class EditEventFragment extends Fragment {
             }
         });
 
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create the confirmation dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Confirm Deletion")
+                        .setMessage("Are you sure you want to delete this branch?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbManager.deleteEntry(eventId);
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        })
+                        .setNegativeButton("No", null)  // If the user cancels, just close the dialog
+                        .create()
+                        .show();
+            }
+        });
+
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
 
@@ -343,10 +367,6 @@ public class EditEventFragment extends Fragment {
             }
         }
 
-        // Set date and time TextViews with event's dates and times
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
         // Start Date and Time
         if (startDate != null && startTime != null) {
             textViewSelectedStartDate.setText(startDate);
@@ -374,7 +394,6 @@ public class EditEventFragment extends Fragment {
             Toast.makeText(getActivity(), "Poster loaded", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void saveEvent() {
 
@@ -435,11 +454,42 @@ public class EditEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+                    event = new Event(
+                            eventId,
+                            eventName,
+                            organizerID,
+                            facility,
+                            eventDescription,
+                            new Timestamp(startTimeDate),  // Convert Date to Timestamp
+                            new Timestamp(endTimeDate),    // Convert Date to Timestamp
+                            frequency,
+                            new Timestamp(oDate),  // Convert Date to Timestamp
+                            new Timestamp(cDate), // Convert Date to Timestamp
+                            price,
+                            isGeolocationEnabled,
+                            attendees,
+                            waitlist
+                    );
+
                 }
                 else
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+                    event = new Event(
+                            eventId,
+                            eventName,
+                            organizerID,
+                            facility,
+                            eventDescription,
+                            new Timestamp(startTimeDate),  // Convert Date to Timestamp
+                            new Timestamp(endTimeDate),    // Convert Date to Timestamp
+                            frequency,
+                            new Timestamp(oDate),  // Convert Date to Timestamp
+                            new Timestamp(cDate), // Convert Date to Timestamp
+                            price,
+                            isGeolocationEnabled,
+                            attendees
+                    );
+
                 }
                 dbManager.setEntry(eventId, event);
             }
