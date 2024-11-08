@@ -17,21 +17,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.CreateEventFragment;
-import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
-import com.example.nachosbusiness.admin_browse.Event;
-import com.example.nachosbusiness.admin_browse.EventArrayAdapter;
-import com.example.nachosbusiness.admin_browse.EventDBManager;
+import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.EventDBManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizerEventsFragment extends Fragment {
-    // This is using the DBManager in admin_browse, I cannot for the life of me get the events on to work
-    private DBManager dbManager;
     private EventDBManager eventDBManager;
     private ListView eventListView;
-    private EventArrayAdapter eventAdapter;
+    private EventListArrayAdapter eventAdapter;
     private ArrayList<Event> eventList;
     private View headerLayout;
     private ImageButton profile;
@@ -50,7 +46,7 @@ public class OrganizerEventsFragment extends Fragment {
 
         eventList = new ArrayList<>();
 
-        eventDBManager = new EventDBManager("events");
+        eventDBManager = new EventDBManager();
 
         fetchEvents();
 
@@ -95,7 +91,7 @@ public class OrganizerEventsFragment extends Fragment {
     private void fetchEvents() {
         String androidID = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventCallback() {
+        eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventsCallback() {
             @Override
             public void onEventsReceived(List<Event> events) {
                 eventList.clear();
@@ -111,7 +107,7 @@ public class OrganizerEventsFragment extends Fragment {
 
                     // Initialize or update the adapter only when there are events
                     if (eventAdapter == null) {
-                        eventAdapter = new EventArrayAdapter(requireContext(), eventList);
+                        eventAdapter = new EventListArrayAdapter(requireContext(), eventList);
                         eventListView.setAdapter(eventAdapter);
                     } else {
                         eventAdapter.notifyDataSetChanged();
