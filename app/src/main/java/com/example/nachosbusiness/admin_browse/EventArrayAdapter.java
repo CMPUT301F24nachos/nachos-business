@@ -94,13 +94,12 @@ public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.e
     }
     private void openEventDetailFragment(com.example.nachosbusiness.events.Event event) {
         // Create the fragment
-
-        //TODO FIX THESE
         EventDetailFragment fragment = EventDetailFragment.newInstance(event);
 
         // Begin a fragment transaction
+
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment); // Replace with your container view ID
+        transaction.replace(R.id.browse_home_container, fragment); // Replace with your container view ID
         transaction.addToBackStack(null);  // Optional: to add fragment to back stack
         transaction.commit();
     }
