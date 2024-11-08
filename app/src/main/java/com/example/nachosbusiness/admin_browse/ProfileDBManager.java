@@ -61,8 +61,10 @@ public class ProfileDBManager extends DBManager implements Serializable {
                         String Username = doc.getString("username");
                         String image = doc.getString("profileImage");
                         String androidID= doc.getString("android_id");
+                        String email = doc.getString("email");
+                        String phonenum= doc.getString("phone");
                         if (Username != null) {
-                            Profile profile = new Profile(Username, image, androidID);
+                            Profile profile = new Profile(Username, image, androidID,email, phonenum);
                             profilesList.add(profile);
                         }
                     }
