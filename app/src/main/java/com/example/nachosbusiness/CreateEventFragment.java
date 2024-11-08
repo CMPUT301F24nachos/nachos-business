@@ -37,7 +37,7 @@ import java.util.UUID;
  * - Enable geolocation with a checkbox.
  * - Choose frequency from a spinner.
  * - Upload a poster image.
- *
+ * 
  * The fragment validates inputs before saving, showing errors for missing required fields. It also
  * includes Save and Cancel buttons, with a summary shown on successful creation.
  */
