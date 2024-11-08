@@ -68,6 +68,9 @@ public class EventRegistration extends AppCompatActivity {
         initializeArgs();
         initializeBaseUI();
 
+        Intent intent = getIntent();
+        String eventId = intent.getStringExtra("eventID");
+
         // query to be sure the user is in the db so a real user is signing up
         dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
             @Override

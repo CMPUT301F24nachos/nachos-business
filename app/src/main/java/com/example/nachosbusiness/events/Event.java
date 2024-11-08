@@ -187,6 +187,9 @@ public class Event {
         listManager = new ListManager(eventID, waitListSpots);
     }
 
+    public Event(String eventId, String eventName, String organizerID, Facility facility, String eventDescription, Timestamp timestamp, Timestamp timestamp1, String frequency, Timestamp timestamp2, Timestamp timestamp3, int price, boolean isGeolocationEnabled, int attendees, int waitlist) {
+    }
+
     public String getOrganizerID() { return organizerID; }
 
     public void setOrganizerID(String organizerID) { this.organizerID = organizerID; }

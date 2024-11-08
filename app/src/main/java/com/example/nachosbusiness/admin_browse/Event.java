@@ -4,7 +4,7 @@ import java.util.Date;
 /**
  * Class that defines an event with a name, description, organizer, start date, and end date.
  */
-public class Event {
+public class Event extends com.example.nachosbusiness.events.Event {
     private String name;
     //private String image;
     private String description;

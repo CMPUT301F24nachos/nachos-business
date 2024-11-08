@@ -6,4 +6,19 @@
     <item name="PhoneValue" type="id" />
     <item name="EmailLabel" type="id" />
     <item name="EmailValue" type="id" />
+    <item name="textViewMaxWaitlist" type="id" />
+    <item name="textViewEventName" type="id" />
+    <item name="textViewEventDescription" type="id" />
+    <item name="textViewPrice" type="id" />
+    <item name="textViewMaxAttendees" type="id" />
+    <item name="textViewEventFrequency" type="id" />
+    <item name="textViewStartDate" type="id" />
+    <item name="textViewEndDate" type="id" />
+    <item name="textViewStartTime" type="id" />
+    <item name="textViewEndTime" type="id" />
+    <item name="textViewOpenDate" type="id" />
+    <item name="textViewCloseDate" type="id" />
+    <item name="textViewPosterPath" type="id" />
+    <item name="textViewGeolocation" type="id" />
+    <item name="delete_event_button" type="id" />
 </resources>

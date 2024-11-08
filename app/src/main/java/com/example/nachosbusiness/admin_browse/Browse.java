@@ -1,7 +1,5 @@
 package com.example.nachosbusiness.admin_browse;
 
-import static android.view.View.GONE;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,6 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.R;
+import com.example.nachosbusiness.events.EventArrayAdapter;
 
 
 /**
