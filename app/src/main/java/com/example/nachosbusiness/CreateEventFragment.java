@@ -24,6 +24,7 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * The CreateEventFragment class provides a UI for creating an event by filling out details such as
@@ -226,7 +227,6 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String frequency = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Event Frequency: " + frequency, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -319,7 +319,6 @@ public class CreateEventFragment extends Fragment {
             price = Integer.parseInt(priceText);
         }
 
-
         // checked early in the code doesn't need to be checked again.
         String attendeesText = editMaxAttendees.getText().toString();
         attendees = Integer.parseInt(attendeesText);
@@ -361,28 +360,14 @@ public class CreateEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
                 }
                 else
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
-                event.setEventID(event.getEventID());
                 dbManager.setEntry(event.getEventID(), event);
             }
         });
-
-        String eventDetails = "Event Name: " + eventName +
-                "\nDescription: " + eventDescription +
-                "\nPrice: " + price +
-                "\nAttendees" + attendees +
-                "\nWaitlist limit: " + waitlist +
-                "\nGeolocation: " + (isGeolocationEnabled ? "Enabled" : "Disabled") +
-                "\nStart Hour: " + startTime +
-                "\nEnd Hour: " + endTime +
-                "\nDate: " + startDate +
-                "\nFrequency: " + frequency +
-                "\nPoster Path: " + uploadedPosterPath;
-        Toast.makeText(getActivity(), "Event Created:\n" + eventDetails, Toast.LENGTH_LONG).show();
     }
 }
