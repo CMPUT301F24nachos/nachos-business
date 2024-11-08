@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.CreateEventFragment;
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
-import com.example.nachosbusiness.admin_browse.Browse;
 import com.example.nachosbusiness.admin_browse.Event;
 import com.example.nachosbusiness.admin_browse.EventArrayAdapter;
 import com.example.nachosbusiness.admin_browse.EventDBManager;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizerEventsFragment extends Fragment {
-
+    // This is using the DBManager in admin_browse, I cannot for the life of me get the events on to work
     private DBManager dbManager;
     private EventDBManager eventDBManager;
     private ListView eventListView;
@@ -36,6 +35,7 @@ public class OrganizerEventsFragment extends Fragment {
     private ArrayList<Event> eventList;
     private View headerLayout;
     private ImageButton profile;
+    private TextView noEventsMessage;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,12 +46,12 @@ public class OrganizerEventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         eventListView = view.findViewById(R.id.event_list_view);
+        noEventsMessage = view.findViewById(R.id.no_events_message);
+
         eventList = new ArrayList<>();
 
-        // Initialize EventDBManager
         eventDBManager = new EventDBManager("events");
 
-        // Fetch all events
         fetchEvents();
 
         ImageButton homeButton = view.findViewById(R.id.button_event_home);
@@ -87,52 +87,35 @@ public class OrganizerEventsFragment extends Fragment {
             }
         });
     }
-
     /**
      * Fetches all events from the database and updates the list view.
      * Events are added to eventList and displayed with the EventArrayAdapter
      *
      */
     private void fetchEvents() {
-        // Get the Android ID
-        String androidId = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        String androidID = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Use DBManager to fetch the user info based on Android ID
-        DBManager dbManager = new DBManager("entrants");  // Assuming "entrants" is your collection
-        dbManager.getUser(androidId, new DBManager.EntryRetrievalCallback() {
+        eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventCallback() {
             @Override
-            public void onEntryRetrieved(String name, String email, String phone) {
-                // User data has been retrieved successfully
-                // You can now use the name, email, and phone as needed
+            public void onEventsReceived(List<Event> events) {
+                eventList.clear();
+                eventList.addAll(events);
 
-                // Example: Fetch events for the user based on their data
-                eventDBManager.fetchEventsByUser(requireContext(), new EventDBManager.EventCallback() {
-                    @Override
-                    public void onEventsReceived(List<Event> events) {
-                        // Update UI with the events
-                        if (getActivity() != null && isAdded()) {
-                            // Clear existing items and add new events
-                            eventList.clear();
-                            eventList.addAll(events);
-                            eventAdapter.notifyDataSetChanged();
-                        }
+                // Update visibility of noEventsMessage based on list size
+                if (eventList.isEmpty()) {
+                    noEventsMessage.setVisibility(View.VISIBLE);
+                    eventListView.setVisibility(View.GONE);
+                } else {
+                    noEventsMessage.setVisibility(View.GONE);
+                    eventListView.setVisibility(View.VISIBLE);
+
+                    // Initialize or update the adapter only when there are events
+                    if (eventAdapter == null) {
+                        eventAdapter = new EventArrayAdapter(requireContext(), eventList);
+                        eventListView.setAdapter(eventAdapter);
+                    } else {
+                        eventAdapter.notifyDataSetChanged();
                     }
-                });
-            }
-
-            @Override
-            public void onEntryNotFound() {
-                // Handle the case where the user is not found
-                if (getActivity() != null && isAdded()) {
-                    Toast.makeText(requireContext(), "User not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                // Handle error during the database query
-                if (getActivity() != null && isAdded()) {
-                    Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
                 }
             }
         });
