@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Uri data = intent.getData();
 
+        // navigate to dashboard if the user is already registered (device id is recognized). Redirect to registration page otherwise
         dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
             @Override
             public void onEntryRetrieved(String name, String email, String phone) {
@@ -59,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Navigate to dashboard activity
+     */
     private void navigateToDashboard() {
         Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
         eventIntent.putExtra("name", userName);

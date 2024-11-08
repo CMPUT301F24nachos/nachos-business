@@ -301,7 +301,10 @@ public class CreateEventFragment extends Fragment {
 
         requireActivity().getSupportFragmentManager().popBackStack();
     }
-    // TODO Attach to backend.
+
+    /**
+     * Creates an event and uploads to db based on filled in fields
+     */
     private void saveEvent() {
 
         DBManager dbManager = new DBManager("events");
