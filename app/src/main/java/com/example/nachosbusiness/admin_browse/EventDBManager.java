@@ -58,49 +58,16 @@ public class EventDBManager extends DBManager implements Serializable {
                 if (querySnapshots != null) {
                     List<Event> eventsList = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : querySnapshots) {
-                            String name = doc.getString("name");
-                            //String image = doc.getString("eventImage");
-                            Date endDate = doc.getDate("endDate");
-                            Date startDate = doc.getDate("startDate");
-                            String description = doc.getString("description");
-                            String organizer = doc.getString("organizer");
+                        String name = doc.getString("name");
+                        //String image = doc.getString("eventImage");
+                        Date endDate = doc.getDate("endDate");
+                        Date startDate = doc.getDate("startDate");
+                        String description = doc.getString("description");
+                        String organizer = doc.getString("organizer");
+                        if (name != null) {
+                            Event event = new Event(name,description, organizer, endDate, startDate);
 
-                            if (name != null) {
-                                Event event = new Event(name, description, organizer, endDate, startDate);
-
-                                eventsList.add(event);
-                            }
-                    }
-                    callback.onEventsReceived(eventsList);
-                }
-            }
-        });
-    }
-
-    public void fetchAllUserEvents(String androidID, EventCallback callback) {
-        getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, error.toString());
-                    return;
-                }
-
-                if (querySnapshots != null) {
-                    List<Event> eventsList = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : querySnapshots) {
-                        if (androidID.equals(doc.getString("organizerID"))) {
-                            String name = doc.getString("name");
-                            //String image = doc.getString("eventImage");
-                            Date endDate = doc.getDate("endDate");
-                            Date startDate = doc.getDate("startDate");
-                            String description = doc.getString("description");
-                            String organizer = doc.getString("organizer");
-
-                            if (name != null) {
-                                Event event = new Event(name, description, organizer, endDate, startDate);
-                                eventsList.add(event);
-                            }
+                            eventsList.add(event);
                         }
                     }
                     callback.onEventsReceived(eventsList);
