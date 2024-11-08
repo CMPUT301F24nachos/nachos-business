@@ -95,11 +95,13 @@ public class OrganizerEventsFragment extends Fragment {
         eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventsCallback() {
             @Override
             public void onEventsReceived(List<Event> events) {
+                if (!isAdded()) {
+                    // Fragment is not attached to an activity, do nothing
+                    return;
+                }
+
                 eventList.clear();
                 eventList.addAll(events);
-
-
-                Log.d("OrganizerEventsFragment", "Organizer Event ID: " + events.get(0).getEventID());
 
                 // Update visibility of noEventsMessage based on list size
                 if (eventList.isEmpty()) {
