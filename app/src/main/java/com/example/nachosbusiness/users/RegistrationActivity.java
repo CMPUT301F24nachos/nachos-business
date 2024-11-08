@@ -23,8 +23,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.Dashboard;
-import com.example.nachosbusiness.MainActivity;
 import com.example.nachosbusiness.R;
 
 import java.io.IOException;
@@ -153,9 +151,6 @@ public class RegistrationActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(RegistrationActivity.this, "Registration successful with default profile pic!", Toast.LENGTH_SHORT).show();
                     }
-                    Intent eventIntent = new Intent(RegistrationActivity.this, Dashboard.class);
-                    eventIntent.putExtra("name", username);
-                    startActivity(eventIntent);
                 }
             }
         });
