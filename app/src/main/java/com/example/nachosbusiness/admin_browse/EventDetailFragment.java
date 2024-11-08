@@ -24,6 +24,7 @@ import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
@@ -38,6 +39,11 @@ public class EventDetailFragment extends Fragment {
 
 
 
+    /**
+     * A fragment that displays the details of a specific event.
+     * Edit or remove the event, the QR code, and the facilites
+     *
+     */
     public static EventDetailFragment newInstance(com.example.nachosbusiness.events.Event event) {
         EventDetailFragment fragment = new EventDetailFragment();
         Bundle args = new Bundle();
@@ -47,6 +53,10 @@ public class EventDetailFragment extends Fragment {
 
     }
 
+    /**
+     * Creates a new instance of EventDetailFragment
+     * @return A new instance of fragment
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +67,13 @@ public class EventDetailFragment extends Fragment {
         dbManager = new DBManager("events");
     }
 
+
+    /**
+     * Fragment Creation
+     * Retrieves the event passed to the fragment.
+     *
+     * @param savedInstanceState The saved instance state .
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,6 +87,13 @@ public class EventDetailFragment extends Fragment {
         removeQR.setVisibility(GONE);
         removeEvent.setVisibility(GONE);
         removeFacility.setVisibility(GONE);
+        TextView eventName = view.findViewById(R.id.event_name);
+        TextView eventDescription = view.findViewById(R.id.event_description);
+//            TextView eventOrganizer = view.findViewById(R.id.event_organizer);
+        TextView eventDate = view.findViewById(R.id.event_date);
+        ImageView qrCode = view.findViewById(R.id.event_qr_code);
+        TextView facilityLocation = view.findViewById(R.id.facility_location);
+        TextView facilityName = view.findViewById(R.id.facility_name);
 
         backButton.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
@@ -110,38 +134,40 @@ public class EventDetailFragment extends Fragment {
         });
         removeEvent.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
-                    .setTitle("Remove Event ")
-                    .setMessage("Do you want to remove the event?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Remove the event from Firestore
-                            }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();  // Close the dialog without any action
-                        }
-                    })
-                    .show();
-        });
-
-
-        removeQR.setOnClickListener(v -> {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Remove Hashed QR Data")
-                    .setMessage("Do you want to remove the QR?")
+                    .setTitle("Remove Event")
+                    .setMessage("Do you want to remove this event?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         if (event != null) {
-                            // Reference the specific event document using the eventID
-                            DocumentReference eventRef = db.collection("events").document(event.getEventID());
+                            // Reference the Firestore collection
+                            CollectionReference eventsRef = db.collection("events");
 
-                            // Update the 'qrCode' field to null in the event document
-                            eventRef.update("qrCode", null)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(getActivity(), "QR removed successfully.", Toast.LENGTH_SHORT).show();
+                            // Query the collection for a document with the matching eventID field
+                            eventsRef.whereEqualTo("eventID", event.getEventID()).limit(1)
+                                    .get()
+                                    .addOnSuccessListener(querySnapshot -> {
+                                        if (!querySnapshot.isEmpty()) {
+                                            // Document found, proceed to delete
+                                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                                            String documentID = documentSnapshot.getId(); // Get the document ID
+
+                                            // Create an instance of DBManager for the "events" collection
+                                            DBManager dbManager = new DBManager("events");
+
+                                            // Delete the event document
+                                            dbManager.deleteEntry(documentID);
+
+                                            // Optionally, update the UI or give a success message
+                                            Toast.makeText(getActivity(), "Event removed successfully.", Toast.LENGTH_SHORT).show();
+
+                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        } else {
+                                            // If the query doesn't return any documents
+                                            Toast.makeText(getActivity(), "Event not found.", Toast.LENGTH_SHORT).show();
+                                        }
                                     })
                                     .addOnFailureListener(e -> {
-                                        Toast.makeText(getActivity(), "Failed to remove QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        // Handle the error case when querying the collection fails
+                                        Toast.makeText(getActivity(), "Error fetching event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     });
                         }
                     })
@@ -150,31 +176,104 @@ public class EventDetailFragment extends Fragment {
         });
 
 
+
+        removeQR.setOnClickListener(v -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Remove Hashed QR Data")
+                    .setMessage("Do you want to remove the QR?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        if (event != null) {
+                            String eventID = event.getEventID();
+                            Log.d("RemoveQR", "Attempting to remove QR for eventID: " + eventID);
+
+                            // Query Firestore for the event document
+                            db.collection("events")
+                                    .whereEqualTo("eventID", eventID)
+                                    .get()
+                                    .addOnSuccessListener(querySnapshot -> {
+                                        if (!querySnapshot.isEmpty()) {
+                                            // Document found, proceed to update QR code field
+                                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                                            String documentID = documentSnapshot.getId();
+
+                                            // Update the 'qrCode' field to null in the event document
+                                            db.collection("events").document(documentID)
+                                                    .update("qrCode", null)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Hide the QR code ImageView
+                                                        qrCode.setVisibility(View.GONE); // Hide the QR code image
+
+                                                        Toast.makeText(getActivity(), "QR removed successfully.", Toast.LENGTH_SHORT).show();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Toast.makeText(getActivity(), "Failed to remove QR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    });
+                                        } else {
+                                            // If the query doesn't return any documents
+                                            Toast.makeText(getActivity(), "Event not found with eventID: " + eventID, Toast.LENGTH_SHORT).show();
+                                            Log.e("RemoveQR", "No document found for eventID: " + eventID);
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getActivity(), "Error fetching event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e("RemoveQR", "Error fetching event: ", e);
+                                    });
+                        }
+                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
+
         removeFacility.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Remove Facility")
                     .setMessage("Do you want to remove the Facility?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         if (event != null) {
-                           //TO DO Remove Facilty, facilty is a collection wthin events
+                            String eventID = event.getEventID();
+                            Log.d("RemoveFacility", "Attempting to remove Facility for eventID: " + eventID);
+
+                            // Query Firestore for the event document
+                            db.collection("events")
+                                    .whereEqualTo("eventID", eventID)
+                                    .get()
+                                    .addOnSuccessListener(querySnapshot -> {
+                                        if (!querySnapshot.isEmpty()) {
+                                            // Document found, proceed to update facility field
+                                            DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                                            String documentID = documentSnapshot.getId();
+
+                                            // Update the 'facility' field to null in the event document
+                                            db.collection("events").document(documentID)
+                                                    .update("facility", null)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Update the UI by changing the facility text to "No Facility"
+
+                                                        facilityLocation.setText("No Facility");
+                                                        facilityName.setText("No Facility");
+
+                                                        Toast.makeText(getActivity(), "Facility removed successfully.", Toast.LENGTH_SHORT).show();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Toast.makeText(getActivity(), "Failed to remove facility: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        Log.e("RemoveFacility", "Error removing facility: ", e);
+                                                    });
+                                        } else {
+                                            // If no event was found with this eventID
+                                            Toast.makeText(getActivity(), "Event not found.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getActivity(), "Error querying Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e("RemoveFacility", "Error querying Firestore: ", e);
+                                    });
                         }
                     })
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .show();
         });
+
         if (event != null) {
-            Log.d("EventDetailFragment", "Event ID: " + event.getEventID());
-        } else {
-            Log.d("EventDetailFragment", "Event is null!");
-        }
-        if (event != null) {
-            TextView eventName = view.findViewById(R.id.event_name);
-            TextView eventDescription = view.findViewById(R.id.event_description);
-//            TextView eventOrganizer = view.findViewById(R.id.event_organizer);
-            TextView eventDate = view.findViewById(R.id.event_date);
-            ImageView qrCode = view.findViewById(R.id.event_qr_code);
-            TextView facilityLocation = view.findViewById(R.id.facility_location);
-            TextView facilityName = view.findViewById(R.id.facility_name);
 
             eventName.setText(event.getName());
             eventDescription.setText(event.getDescription());

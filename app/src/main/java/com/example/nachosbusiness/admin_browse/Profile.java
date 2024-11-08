@@ -17,6 +17,9 @@ public class Profile implements Serializable {
      * @param name        username for user profile
      * @param image       users profile image
      * @param android_id  android device id for the user (primary key)
+     * @param  email      email of user
+     * @param  phonenum user phone number (optional)
+     *
      */
     public Profile(String name, String image, String android_id, String email, String phonenum) {
         this.name = name;

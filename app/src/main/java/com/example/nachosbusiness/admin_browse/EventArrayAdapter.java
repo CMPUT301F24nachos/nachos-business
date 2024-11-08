@@ -92,11 +92,17 @@ public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.e
         return view;
 
     }
+
+    /**
+     * Opens a fragment to display details for the selected event.
+     *
+     *
+     * @param event  com.example.nachosbusiness.events.Event object
+     */
     private void openEventDetailFragment(com.example.nachosbusiness.events.Event event) {
-        // Create the fragment
+
         EventDetailFragment fragment = EventDetailFragment.newInstance(event);
 
-        // Begin a fragment transaction
 
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.browse_home_container, fragment); // Replace with your container view ID

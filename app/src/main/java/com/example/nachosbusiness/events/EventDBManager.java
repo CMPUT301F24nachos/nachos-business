@@ -195,6 +195,7 @@ public class EventDBManager extends DBManager implements Serializable {
                     for (QueryDocumentSnapshot doc : querySnapshots) {
                         String name = doc.getString("name");
                         //String image = doc.getString("eventImage");
+                        String eventID = doc.getString("eventID");
                         String organizerID = doc.getString("organizerID");
                         String description = doc.getString("description");
                         Timestamp startDateTime = doc.getTimestamp("startDateTime");
@@ -215,6 +216,7 @@ public class EventDBManager extends DBManager implements Serializable {
                         }
                         if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
                             Event event = new Event(
+                                    eventID,
                                     name,
                                     organizerID,
                                     facility,
