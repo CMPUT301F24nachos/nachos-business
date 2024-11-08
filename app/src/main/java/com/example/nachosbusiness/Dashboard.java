@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,7 +35,6 @@ import com.google.zxing.integration.android.IntentResult;
 public class Dashboard extends AppCompatActivity {
 
     private String androidID;
-    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +42,6 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.dashboard);
 
         androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Bundle args = getIntent().getExtras();
-
-        if (args != null && args.containsKey("name")) {
-            userName = args.getString("name");
-        } else {
-            userName = "Guest";
-        }
 
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
         facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
@@ -69,12 +60,6 @@ public class Dashboard extends AppCompatActivity {
         Button profileButton = findViewById(R.id.button_profile);
         Button eventUpdatesButton = findViewById(R.id.button_event_updates);
         Button joinEventsButton = findViewById(R.id.button_join_events);
-
-        if (!userName.isEmpty()) {
-            userID.setText(userName);
-        } else {
-            userID.setText("Welcome Back!");
-        }
 
         notificationSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -131,8 +116,7 @@ public class Dashboard extends AppCompatActivity {
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ShowProfile.class);
-                startActivity(intent);
+                Toast.makeText(getApplicationContext(), "profile click!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -211,7 +195,6 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_profile).setEnabled(false);
         findViewById(R.id.button_event_updates).setEnabled(false);
         findViewById(R.id.button_join_events).setEnabled(false);
-        findViewById(R.id.notification_switch).setEnabled(false);
     }
 
     /**
@@ -224,6 +207,5 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_profile).setEnabled(true);
         findViewById(R.id.button_event_updates).setEnabled(true);
         findViewById(R.id.button_join_events).setEnabled(true);
-        findViewById(R.id.notification_switch).setEnabled(true);
     }
 }

@@ -2,6 +2,7 @@ package com.example.nachosbusiness.organizer_views;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,11 @@ public class OrganizerEventsFragment extends Fragment {
         eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventsCallback() {
             @Override
             public void onEventsReceived(List<Event> events) {
+                if (!isAdded()) {
+                    // Fragment is not attached to an activity, do nothing
+                    return;
+                }
+
                 eventList.clear();
                 eventList.addAll(events);
 
