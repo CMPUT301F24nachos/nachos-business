@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -53,6 +54,15 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         View view = convertView;
+
+        if (events.isEmpty()) {
+            View emptyView = new View(context);
+            emptyView.setLayoutParams(new AbsListView.LayoutParams(
+                    AbsListView.LayoutParams.MATCH_PARENT,
+                    AbsListView.LayoutParams.MATCH_PARENT));
+            emptyView.setBackgroundColor(context.getResources().getColor(android.R.color.white));
+            return emptyView;
+        }
 
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
