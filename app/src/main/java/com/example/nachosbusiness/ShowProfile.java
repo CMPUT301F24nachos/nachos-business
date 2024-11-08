@@ -32,7 +32,7 @@ public class ShowProfile extends AppCompatActivity {
         phoneNumber = findViewById(R.id.user_phone);
         profileImage = findViewById(R.id.profileImage);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
-        View fragmentContainer = findViewById(R.id.fragment_container); // Reference to fragment container
+        View fragmentContainer = findViewById(R.id.organizer_events_container); // Reference to fragment container
 
         // Set the fragment container to GONE initially
         fragmentContainer.setVisibility(View.GONE);
@@ -98,11 +98,11 @@ public class ShowProfile extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, updateProfileFragment)
+                .replace(R.id.organizer_events_container, updateProfileFragment)
                 .addToBackStack(null)
                 .commit();
 
-        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+        findViewById(R.id.organizer_events_container).setVisibility(View.VISIBLE);
     }
 
     private void setDefaultValues() {
