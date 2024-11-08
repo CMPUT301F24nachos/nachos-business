@@ -4,6 +4,7 @@ import android.content.Context;
 import java.util.Date;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,7 +77,11 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
 
-        Event event= events.get(position);
+        Event event = events.get(position);
+        Log.d("EditEvent", "Saved eventID : " + event.getEventID());
+        Log.d("EditEvent", "Position eventID ArrayAdapter: " + events.get(position).getEventID());
+
+
 
         ImageView eventImage = view.findViewById(R.id.event_image);
         TextView eventName = view.findViewById(R.id.event_name);
@@ -102,8 +108,11 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
 
                 args.putString("EVENT_ID", event.getEventID());
                 args.putString("EVENT_NAME", event.getName());
+                args.putString("ORGANIZERID", event.getOrganizerID());
+                Log.d("EditEvent", "Fetched eventID ArrayAdapter: " + event.getEventID());
                 args.putString("EVENT_DESCRIPTION", event.getDescription());
                 args.putString("EVENT_FREQUENCY", event.getFrequency());
+                args.putString("EVENT_POSTER", event.getQrCode());
 
                 // Format the date and time portions for start and end timestamps
                 SimpleDateFormat dateFormatsend = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
