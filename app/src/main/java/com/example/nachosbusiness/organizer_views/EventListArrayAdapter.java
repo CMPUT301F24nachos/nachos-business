@@ -78,10 +78,6 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         }
 
         Event event = events.get(position);
-        Log.d("EditEvent", "Saved eventID : " + event.getEventID());
-        Log.d("EditEvent", "Position eventID ArrayAdapter: " + events.get(position).getEventID());
-
-
 
         ImageView eventImage = view.findViewById(R.id.event_image);
         TextView eventName = view.findViewById(R.id.event_name);

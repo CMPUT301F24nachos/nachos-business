@@ -227,7 +227,6 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String frequency = parent.getItemAtPosition(position).toString();
-                Toast.makeText(getActivity(), "Event Frequency: " + frequency, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -320,7 +319,6 @@ public class CreateEventFragment extends Fragment {
             price = Integer.parseInt(priceText);
         }
 
-
         // checked early in the code doesn't need to be checked again.
         String attendeesText = editMaxAttendees.getText().toString();
         attendees = Integer.parseInt(attendeesText);
@@ -371,18 +369,5 @@ public class CreateEventFragment extends Fragment {
                 dbManager.setEntry(event.getEventID(), event);
             }
         });
-
-        String eventDetails = "Event Name: " + eventName +
-                "\nDescription: " + eventDescription +
-                "\nPrice: " + price +
-                "\nAttendees" + attendees +
-                "\nWaitlist limit: " + waitlist +
-                "\nGeolocation: " + (isGeolocationEnabled ? "Enabled" : "Disabled") +
-                "\nStart Hour: " + startTime +
-                "\nEnd Hour: " + endTime +
-                "\nDate: " + startDate +
-                "\nFrequency: " + frequency +
-                "\nPoster Path: " + uploadedPosterPath;
-        Toast.makeText(getActivity(), "Event Created:\n" + eventDetails, Toast.LENGTH_LONG).show();
     }
 }

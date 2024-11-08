@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.organizer_views;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
@@ -274,7 +276,20 @@ public class EditEventFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requireActivity().getSupportFragmentManager().popBackStack();
+                // Create the confirmation dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Confirm Deletion")
+                        .setMessage("Are you sure you want to delete this branch?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbManager.deleteEntry(eventId);
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        })
+                        .setNegativeButton("No", null)  // If the user cancels, just close the dialog
+                        .create()
+                        .show();
             }
         });
 
