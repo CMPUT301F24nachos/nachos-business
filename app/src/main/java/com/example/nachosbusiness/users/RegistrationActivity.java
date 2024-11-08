@@ -140,7 +140,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 if (username.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegistrationActivity.this, "Please fill out username and email", Toast.LENGTH_LONG).show();
-                } else if (!isValidEmail(email)) {
+                } else if (!Character.isLetter(username.charAt(0))) {
+                    Toast.makeText(RegistrationActivity.this, "Username must start with a letter", Toast.LENGTH_LONG).show();
+                }
+                else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
                     User user = new User(android_id, username, email, phone);
