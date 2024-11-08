@@ -50,8 +50,6 @@ public class Browse extends AppCompatActivity {
         // Fetch all events
         fetchEvents();
 
-
-
         ImageButton profileViewButton = findViewById(R.id.profileview);
         profileViewButton.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
