@@ -11,6 +11,8 @@ public class Event {
     private String organizer;
     private Date startDate;
     private Date endDate;
+    private String eventID;
+    private String androidID;
 
     /**
      * Constructor for an Event object
@@ -45,6 +47,22 @@ public class Event {
 ////    public void setImage(String image) {
 ////        this.image = image;
 ////    }
+
+    public String getAndroidID() {
+        return androidID;
+    }
+
+    public void setAndroidID(String androidID) {
+        this.androidID = androidID;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
 
     /**
      * getter for event description
