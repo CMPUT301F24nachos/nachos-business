@@ -84,7 +84,7 @@ public class EventRegistration extends AppCompatActivity {
                             }
                             updateEventInfoUI();
                             // found an event! Find the wait list and finally update the last of the UI
-                            listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
+                            listManagerDBManager.queryLists(eventId, new ListManagerDBManager.ListManagerCallback() {
                                 @Override
                                 public void onListManagerReceived(ListManager listManager) {
                                     updateWaitListStatusUI();

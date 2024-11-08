@@ -17,9 +17,11 @@ import androidx.fragment.app.Fragment;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -34,17 +36,14 @@ public class WaitlistFragment extends Fragment {
     private WaitlistArrayAdapter adapter;
     private ArrayList<User> entrants;
     private ListManagerDBManager listManagerDBManager;
+    private ListManager listManager;
 
     // event has to be set with a bundle??
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.waitlist, container, false);
-    }
+        View view =  inflater.inflate(R.layout.waitlist, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         ListView waitlistView = view.findViewById(R.id.user_list);
 
@@ -57,11 +56,16 @@ public class WaitlistFragment extends Fragment {
         listManagerDBManager = new ListManagerDBManager();
         loadEntrants();
 
+        entrants = new ArrayList<>();
+
         adapter = new WaitlistArrayAdapter(getActivity(), entrants);
         adapter.setEvent(event);
-        waitlistView.setAdapter(adapter);
 
-        loadEntrants();
+        if (entrants != null)
+        {
+            waitlistView.setAdapter(adapter);
+
+        }
 
         FloatingActionButton menuFab = view.findViewById(R.id.menu_fab);
         menuFab.setOnClickListener(v -> {
@@ -79,27 +83,39 @@ public class WaitlistFragment extends Fragment {
             startActivity(intent);
         });
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+
     }
 
     private void loadEntrants() {
-        listManagerDBManager.queryLists(event.getEventID(), listManager -> {
-            if (listManager!= null) {
-                entrants.clear();
+        listManagerDBManager.queryLists(event.getEventID(), new ListManagerDBManager.ListManagerCallback() {
+            @Override
+            public void onListManagerReceived(ListManager listManager) {
+                if (listManager!= null) {
+                    entrants.clear();
 
-                for (Map<Object, Object> entry : listManager.getWaitList())
-                {
-                    User arr[] = new User[0];
-                    arr = entry.keySet().toArray(arr);
-                    entrants.add(arr[0]);
+                    for (Map<Object, Object> entry : listManager.getWaitList())
+                    {
+                        User arr[] = new User[0];
+                        arr = entry.keySet().toArray(arr);
+                        entrants.add(arr[0]);
+                    }
+
+                    entrants.addAll(listManager.getInvitedList());
+                    entrants.addAll(listManager.getAcceptedList());
+                    entrants.addAll(listManager.getCanceledList());
+
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
                 }
-
-                entrants.addAll(listManager.getInvitedList());
-                entrants.addAll(listManager.getAcceptedList());
-                entrants.addAll(listManager.getCanceledList());
-
-                adapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
             }
         });
     }
