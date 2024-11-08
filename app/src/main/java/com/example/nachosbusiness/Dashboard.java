@@ -116,7 +116,8 @@ public class Dashboard extends AppCompatActivity {
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "profile click!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), ShowProfile.class);
+                startActivity(intent);
             }
         });
 
