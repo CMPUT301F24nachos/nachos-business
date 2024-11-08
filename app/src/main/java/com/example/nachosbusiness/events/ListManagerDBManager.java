@@ -63,23 +63,23 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                                 listManager.setWaitList(waitlistData);
                             }
 
-                            ArrayList<User> invitedListData = (ArrayList<User>) doc.get("invitedlist");
+                            ArrayList<User> invitedListData = (ArrayList<User>) doc.get("invitedList");
                             if (invitedListData != null) {
                                 listManager.setInvitedList(invitedListData);
                             }
 
-                            ArrayList<User> acceptedListData = (ArrayList<User>) doc.get("acceptedlist");
+                            ArrayList<User> acceptedListData = (ArrayList<User>) doc.get("acceptedList");
                             if (acceptedListData != null) {
                                 listManager.setAcceptedList(acceptedListData);
                             }
 
-                            ArrayList<User> canceledListData = (ArrayList<User>) doc.get("canceledlist");
+                            ArrayList<User> canceledListData = (ArrayList<User>) doc.get("canceledList");
                             if (canceledListData != null) {
                                 listManager.setCanceledList(canceledListData);
                             }
+                            Log.d(TAG, String.format("ListManager - ID %s fetched", doc.getId()));
+                            callback.onListManagerReceived(listManager);
                         }
-                        Log.d(TAG, String.format("ListManager - ID %s fetched", doc.getId()));
-                        callback.onListManagerReceived(listManager);
                     }
                 }
             }
