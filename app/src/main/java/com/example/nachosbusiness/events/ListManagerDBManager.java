@@ -46,7 +46,7 @@ public class ListManagerDBManager extends DBManager implements Serializable {
      *
      * @param eventID eventID to query the DB
      */
-    public void queryWaitList(String eventID, ListManagerCallback callback) {
+    public void queryLists(String eventID, ListManagerCallback callback) {
         this.setCollectionReference("lists");
         this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -61,6 +61,21 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                             ArrayList<Map<Object, Object>> waitlistData = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                             if (waitlistData != null) {
                                 listManager.setWaitList(waitlistData);
+                            }
+
+                            ArrayList<User> invitedListData = (ArrayList<User>) doc.get("invitedlist");
+                            if (invitedListData != null) {
+                                listManager.setInvitedList(invitedListData);
+                            }
+
+                            ArrayList<User> acceptedListData = (ArrayList<User>) doc.get("acceptedlist");
+                            if (acceptedListData != null) {
+                                listManager.setAcceptedList(acceptedListData);
+                            }
+
+                            ArrayList<User> canceledListData = (ArrayList<User>) doc.get("canceledlist");
+                            if (canceledListData != null) {
+                                listManager.setCanceledList(canceledListData);
                             }
                         }
                         Log.d(TAG, String.format("ListManager - ID %s fetched", doc.getId()));

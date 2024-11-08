@@ -275,6 +275,8 @@ public class ListManager {
         return invitedList;
     }
 
+    public void setInvitedList(ArrayList<User> invitedList) { this.invitedList = invitedList; }
+
     /**
      * Getter for accepted list
      * @return accepted list
@@ -283,13 +285,15 @@ public class ListManager {
         return acceptedList;
     }
 
+    public void setAcceptedList(ArrayList<User> acceptedList) { this.acceptedList = acceptedList; }
+
     /**
      * Getter for cancelled list
      * @return cancelled list
      */
-    public ArrayList<User> getCanceledList() {
-        return canceledList;
-    }
+    public ArrayList<User> getCanceledList() { return canceledList; }
+
+    public void setCanceledList(ArrayList<User> canceledList) { this.canceledList = canceledList; }
 
     /**
      * Set the number of available spots in the wishlist

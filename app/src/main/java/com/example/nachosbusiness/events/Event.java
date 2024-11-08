@@ -1,13 +1,19 @@
 package com.example.nachosbusiness.events;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.Timestamp;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public class Event {
+public class Event implements Serializable {
     private String eventID;
     private String name;
     private String organizerID;
@@ -292,5 +298,4 @@ public class Event {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
     }
-
 }
