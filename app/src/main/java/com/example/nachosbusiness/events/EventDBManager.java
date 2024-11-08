@@ -140,6 +140,7 @@ public class EventDBManager extends DBManager implements Serializable {
                             Long costLong = doc.getLong("cost");
                             Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
                             Long attendeeSpotsLong = doc.getLong("attendeeSpots");
+                            String eventID = doc.getString("eventID");
 
                             Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
                             Facility facility = new Facility();
@@ -151,6 +152,7 @@ public class EventDBManager extends DBManager implements Serializable {
 
                             if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
                                 Event event = new Event(
+                                        eventID,
                                         name,
                                         organizerID,
                                         facility,

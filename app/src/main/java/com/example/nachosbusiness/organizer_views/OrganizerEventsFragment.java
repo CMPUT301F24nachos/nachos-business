@@ -2,6 +2,7 @@ package com.example.nachosbusiness.organizer_views;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,6 +97,9 @@ public class OrganizerEventsFragment extends Fragment {
             public void onEventsReceived(List<Event> events) {
                 eventList.clear();
                 eventList.addAll(events);
+
+
+                Log.d("OrganizerEventsFragment", "Organizer Event ID: " + events.get(0).getEventID());
 
                 // Update visibility of noEventsMessage based on list size
                 if (eventList.isEmpty()) {

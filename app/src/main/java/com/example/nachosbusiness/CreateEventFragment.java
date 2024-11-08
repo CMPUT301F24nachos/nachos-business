@@ -24,6 +24,7 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * The CreateEventFragment class provides a UI for creating an event by filling out details such as
@@ -361,13 +362,12 @@ public class CreateEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
                 }
                 else
                 {
-                    event = new Event(eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
-                event.setEventID(event.getEventID());
                 dbManager.setEntry(event.getEventID(), event);
             }
         });

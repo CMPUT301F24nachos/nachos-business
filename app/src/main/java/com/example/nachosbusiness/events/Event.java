@@ -52,9 +52,9 @@ public class Event {
      * @param attendeeSpots number of users to accept
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
     {
-        this.eventID = UUID.randomUUID().toString();
+        this.eventID = eventID;
 
         this.name = name;
         this.organizerID = organizerID;
@@ -90,9 +90,9 @@ public class Event {
      * @param attendeeSpots number of users to accept
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
+    public Event(String eventID,String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
     {
-        this.eventID = UUID.randomUUID().toString();
+        this.eventID = eventID;
 
         this.name = name;
         this.organizerID = organizerID;
@@ -127,9 +127,9 @@ public class Event {
      * @param hasGeolocation true if event has a geolocation
      * @param attendeeSpots number of users to accept
      */
-    public Event(String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
     {
-        this.eventID = UUID.randomUUID().toString();
+        this.eventID = eventID;
 
         this.name = name;
         this.organizerID = organizerID;
@@ -165,9 +165,9 @@ public class Event {
      * @param attendeeSpots number of users to accept
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
     {
-        this.eventID = UUID.randomUUID().toString();
+        this.eventID = eventID;
 
         this.name = name;
         this.organizerID = organizerID;
