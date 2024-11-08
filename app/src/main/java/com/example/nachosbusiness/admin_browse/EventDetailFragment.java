@@ -105,6 +105,7 @@ public class EventDetailFragment extends Fragment {
                             // From: https://stackoverflow.com/questions/25350397/android-return-to-previous-fragment-on-back-press
                             assert getFragmentManager() != null;
                             getFragmentManager().popBackStack();  // This pops the current fragment off the back stack
+
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
