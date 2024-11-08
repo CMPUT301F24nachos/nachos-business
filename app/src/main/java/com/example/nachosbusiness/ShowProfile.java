@@ -51,8 +51,8 @@ public class ShowProfile extends AppCompatActivity {
                 email.setText(emailAddress);
                 phoneNumber.setText(phone);
 
-                // Gets profile image
-                dbManager.getProfileImageExtra(android_id, profileImage, ShowProfile.this, new DBManager.ProfileImageCallback() {
+                // Gets profile image using the username
+                dbManager.getProfileImageExtra(android_id, name, profileImage, ShowProfile.this, new DBManager.ProfileImageCallback() {
                     @Override
                     public void onImageLoaded(Bitmap bitmap) {
                         profileImage.setVisibility(View.VISIBLE); // Show image if loaded
