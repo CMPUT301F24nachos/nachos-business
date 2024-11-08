@@ -1,10 +1,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Header Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
@@ -47,7 +45,6 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- No Events Message -->
     <TextView
         android:id="@+id/no_events_message"
         android:layout_width="match_parent"
@@ -60,7 +57,6 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/header_container" />
 
-    <!-- Event List View -->
     <ListView
         android:id="@+id/event_list_view"
         android:layout_width="match_parent"
