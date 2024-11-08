@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handler to query the 'events' database, which holds all event information
@@ -37,6 +39,8 @@ public class EventDBManager extends DBManager implements Serializable {
 
     public interface EventCallback {
         void onEventsReceived(List<Event> eventList);
+
+        void onEventReceived(Event event);
     }
 
     /**
@@ -75,4 +79,53 @@ public class EventDBManager extends DBManager implements Serializable {
             }
         });
     }
+    public void queryEvent(String eventID, EventCallback callback) {
+        this.setCollectionReference("events");
+        this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                    return;
+                }
+
+                if (querySnapshots != null) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        if (doc.getId().equals(eventID)) {
+                            // Create Event object from Firestore data
+                            String name = doc.getString("name");
+                            String description = doc.getString("description");
+                            String organizer = doc.getString("organizer");
+                            Date startDate = doc.getDate("startDateTime");
+                            Date endDate = doc.getDate("endDateTime");
+
+                            // Facility mapping
+                            Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
+                            Facility facility = new Facility();
+                            if (facilityMap != null) {
+                                facility.setName(facilityMap.get("name"));
+                                facility.setLocation(facilityMap.get("location"));
+                                facility.setDesc(facilityMap.get("desc"));
+                            }
+
+                            // Create Event object
+                            Event event = new Event(name, description, organizer, startDate, endDate, facility);
+                            event.setEventID(doc.getId()); // Set Event ID
+                            event.setQrCode(doc.getString("qrCode")); // Set QR Code
+
+                            
+                            // Callback with the fetched event
+                            Log.d(TAG, String.format("Event - ID %s, organizerID %s fetched", doc.getId(), event.getEventID()));
+                            callback.onEventReceived(event);
+                            return;
+                        }
+                    }
+                }
+
+                // If no event is found, return null
+                callback.onEventReceived(null);
+            }
+        });
+    }
+
 }

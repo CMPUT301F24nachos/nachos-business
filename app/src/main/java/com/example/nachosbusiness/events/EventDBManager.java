@@ -14,7 +14,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ import java.util.Map;
 public class EventDBManager extends DBManager implements Serializable {
 
     Event event;
+    ArrayList<Event> adminEventList;
     private static final String TAG = "EventDBManager";
 
     /**
@@ -58,6 +58,13 @@ public class EventDBManager extends DBManager implements Serializable {
      */
     public interface EventsCallback {
         void onEventsReceived(List<Event> eventList);
+    }
+
+    /**
+     *  Callback method to indicate that an event was received.
+     */
+    public interface AdminEventListCallback {
+        void onAdminEventsReceived(List<Event> eventList);
     }
 
 
@@ -175,5 +182,61 @@ public class EventDBManager extends DBManager implements Serializable {
             }
         });
     }
-}
+
+    public void getAdminEvents(EventDBManager.AdminEventListCallback callback) {
+        getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                }
+                adminEventList = new ArrayList<>();
+                if (querySnapshots != null) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        String name = doc.getString("name");
+                        //String image = doc.getString("eventImage");
+                        String eventID = doc.getString("eventID");
+                        String organizerID = doc.getString("organizerID");
+                        String description = doc.getString("description");
+                        Timestamp startDateTime = doc.getTimestamp("startDateTime");
+                        Timestamp endDateTime = doc.getTimestamp("endDateTime");
+                        String frequency = doc.getString("frequency");
+                        Timestamp waitListOpenDate = doc.getTimestamp("waitListOpenDate");
+                        Timestamp waitListCloseDate = doc.getTimestamp("waitListCloseDate");
+                        Long costLong = doc.getLong("cost");
+                        Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
+                        Long attendeeSpotsLong = doc.getLong("attendeeSpots");
+
+                        Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
+                        Facility facility = new Facility();
+                        if (facilityMap != null) {
+                            facility.setName(facilityMap.get("name"));
+                            facility.setLocation(facilityMap.get("location"));
+                            facility.setDesc(facilityMap.get("desc"));
+                        }
+                        if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
+                            Event event = new Event(
+                                    eventID,
+                                    name,
+                                    organizerID,
+                                    facility,
+                                    description,
+                                    startDateTime,
+                                    endDateTime,
+                                    frequency,
+                                    waitListOpenDate,
+                                    waitListCloseDate,
+                                    costLong.intValue(),
+                                    hasGeolocation,
+                                    attendeeSpotsLong.intValue()
+                            );
+                            adminEventList.add(event);
+                    }
+                }
+            }
+                callback.onAdminEventsReceived(adminEventList);
+        }
+    });
+}}
+
 
