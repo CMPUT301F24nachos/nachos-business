@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class UITests {
+public class DashboardUITests {
     @Rule
     public ActivityScenarioRule<Dashboard> scenario = new
             ActivityScenarioRule<Dashboard>(Dashboard.class);
@@ -91,5 +91,37 @@ public class UITests {
     }
 
 
+    @Test
+    public void testProfileNavigationUpdateUser(){
+        onView(withId(R.id.button_profile)).perform(click());
+        onView(withId(R.id.update_profile_button)).perform(click());
 
+        onView(withId(R.id.editTextUsername)).perform(ViewActions.clearText());
+        onView(withId(R.id.editTextUsername)).perform(typeText("UItestingName"));
+
+        onView(withId(R.id.editTextTextEmailAddress)).perform(ViewActions.clearText());
+        onView(withId(R.id.editTextTextEmailAddress)).perform(typeText("UItestingEmail@nachos.co"));
+
+        onView(withId(R.id.editTextPhone)).perform(ViewActions.clearText());
+        onView(withId(R.id.editTextPhone)).perform(typeText("555555"));
+        onView(withId(R.id.signUpButton)).perform(click());
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.user_email)).check(matches(withText("UItestingEmail@nachos.co")));
+
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        onView(withId(R.id.user_phone)).check(matches(withText("555555")));
+
+        onView(withId(R.id.button_profile_home)).perform(click());
+    }
 }
