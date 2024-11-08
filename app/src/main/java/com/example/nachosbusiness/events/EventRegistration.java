@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -79,9 +80,6 @@ public class EventRegistration extends AppCompatActivity {
                     public void onEventReceived(Event e) {
                         if (e != null && e.getEventID() != null) {
                             event = e;
-                            if (eventManager.getEvent().getHasGeolocation()){
-                                initializeLocation();
-                            }
                             updateEventInfoUI();
                             // found an event! Find the wait list and finally update the last of the UI
                             listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
@@ -115,11 +113,9 @@ public class EventRegistration extends AppCompatActivity {
      */
     private void initializeArgs() {
         Bundle args = getIntent().getExtras();
-        if (args != null) {
-            androidID = args.getString("androidID");
-            eventId = args.getString("eventID");
-            eventId = eventId.replace("nachos-business://event/", "");
-        }
+        androidID = args.getString("androidID");
+        eventId = args.getString("eventID");
+        eventId = eventId.replace("nachos-business://event/", "");
     }
 
     /**
@@ -267,6 +263,7 @@ public class EventRegistration extends AppCompatActivity {
 
         waitlistOpenSpotsTV.setText(waitListOpenSpots);
         waitlistTotalSpotsTV.setText(waitListTotalSpots);
+
         signUpButton.setOnClickListener(v -> {
             if (eventManager.getEvent().getHasGeolocation()) {
                 initializeLocation();
@@ -360,9 +357,9 @@ public class EventRegistration extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
-
-                //locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
+            if (latitude == 0 && longitude == 0){
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            }
         }
     }
 
