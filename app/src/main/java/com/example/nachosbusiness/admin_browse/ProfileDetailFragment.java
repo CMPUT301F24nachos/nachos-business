@@ -143,7 +143,7 @@ public class ProfileDetailFragment extends Fragment {
         removeProfile.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Remove Profile ")
-                    .setMessage("Do you want to remove ths users profile?")
+                    .setMessage("Do you want to remove the users profile?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             deleteProfileFromFirestore(profile.getAndroid_id());

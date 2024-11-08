@@ -1,16 +1,26 @@
 package com.example.nachosbusiness.admin_browse;
 
+import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.facilities.Facility;
+
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
+
 /**
  * Class that defines an event with a name, description, organizer, start date, and end date.
  */
-public class Event {
+public class Event implements Serializable {
     private String name;
     //private String image;
     private String description;
     private String organizer;
     private Date startDate;
     private Date endDate;
+    private String eventID;
+    private String qrCode;
+    private Facility facility;
+    private QRUtil qrUtil = new QRUtil();
 
     /**
      * Constructor for an Event object
@@ -30,6 +40,17 @@ public class Event {
         this.startDate = startDate;
         this.endDate = endDate;
 }
+
+    public Event(String name, String description, String organizer, Date startDate, Date endDate,  Facility facility){
+        this.name = name;
+        //this.image = image;
+        this.description = description;
+        this.organizer = organizer;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.eventID = UUID.randomUUID().toString();
+        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
+    }
 //    /**
 //     * getter for event image
 //     * @return image string
@@ -45,6 +66,38 @@ public class Event {
 ////    public void setImage(String image) {
 ////        this.image = image;
 ////    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
+    }
+
+    public QRUtil getQrUtil() {
+        return qrUtil;
+    }
+
+    public void setQrUtil(QRUtil qrUtil) {
+        this.qrUtil = qrUtil;
+    }
 
     /**
      * getter for event description
