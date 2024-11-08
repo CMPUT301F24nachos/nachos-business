@@ -65,8 +65,6 @@ public class EventDetailFragment extends Fragment {
             String startDate = event.getStartDate() != null ? dateFormat.format(event.getStartDate()) : "N/A";
             String endDate = event.getEndDate() != null ? dateFormat.format(event.getEndDate()) : "N/A";
             eventDate.setText(startDate + " - " + endDate);
-
-
         }
 
         return view;
