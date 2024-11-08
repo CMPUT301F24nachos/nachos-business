@@ -21,6 +21,7 @@ public class ShowProfile extends AppCompatActivity {
     private TextView phoneNumber;
     private ImageView profileImage;
     private Bundle userProfileBundle;
+    private ImageButton buttonHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +34,10 @@ public class ShowProfile extends AppCompatActivity {
         email = findViewById(R.id.user_email);
         phoneNumber = findViewById(R.id.user_phone);
         profileImage = findViewById(R.id.profileImage);
-        ImageButton buttonHome = findViewById(R.id.button_profile_home);
         RelativeLayout updateProfileButton = findViewById(R.id.update_profile_button);
         View fragmentContainer = findViewById(R.id.fragment_container); // Reference to fragment container
 
+        buttonHome = findViewById(R.id.button_profile_home);
         // Set the fragment container to GONE initially
         fragmentContainer.setVisibility(View.GONE);
 
@@ -97,7 +98,9 @@ public class ShowProfile extends AppCompatActivity {
                 startActivity(eventIntent);
             }
         });
+
     }
+
 
     private void navigateToUpdateProfile() {
         if (userProfileBundle == null) {
