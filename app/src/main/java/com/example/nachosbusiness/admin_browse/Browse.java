@@ -99,6 +99,11 @@ public class Browse extends AppCompatActivity {
                 eventAdapter = new EventArrayAdapter(Browse.this, eventList);
                 eventListView.setAdapter(eventAdapter);
             }
+
+            @Override
+            public void onEventReceived(Event event) {
+
+            }
         });
     }
     /**
