@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.google.zxing.integration.android.IntentResult;
 public class Dashboard extends AppCompatActivity {
 
     private String androidID;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,13 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.dashboard);
 
         androidID = Settings.Secure.getString(Dashboard.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Bundle args = getIntent().getExtras();
+
+        if (args != null && args.containsKey("name")) {
+            userName = args.getString("name");
+        } else {
+            userName = "Guest";
+        }
 
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
         facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
@@ -60,6 +69,12 @@ public class Dashboard extends AppCompatActivity {
         Button profileButton = findViewById(R.id.button_profile);
         Button eventUpdatesButton = findViewById(R.id.button_event_updates);
         Button joinEventsButton = findViewById(R.id.button_join_events);
+
+        if (!userName.isEmpty()) {
+            userID.setText(userName);
+        } else {
+            userID.setText("Welcome Back!");
+        }
 
         notificationSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -116,7 +131,8 @@ public class Dashboard extends AppCompatActivity {
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "profile click!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), ShowProfile.class);
+                startActivity(intent);
             }
         });
 
@@ -150,19 +166,19 @@ public class Dashboard extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
-                String scannedData = result.getContents();
-                Intent intent = new Intent(Dashboard.this, EventRegistration.class);
-                intent.putExtra("eventID", scannedData);
-                intent.putExtra("androidID", androidID);
-                startActivity(intent);
-            }
+            String scannedData = result.getContents();
+            Intent intent = new Intent(Dashboard.this, EventRegistration.class);
+            intent.putExtra("eventID", scannedData);
+            intent.putExtra("androidID", androidID);
+            startActivity(intent);
+        }
         else{
             Intent intent = new Intent(Dashboard.this, Dashboard.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         }
-        }
+    }
 
     /**
      * Open the specified fragment from the activity. Disabls themain screen buttons as the buttons were
@@ -195,6 +211,7 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_profile).setEnabled(false);
         findViewById(R.id.button_event_updates).setEnabled(false);
         findViewById(R.id.button_join_events).setEnabled(false);
+        findViewById(R.id.notification_switch).setEnabled(false);
     }
 
     /**
@@ -207,5 +224,6 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_profile).setEnabled(true);
         findViewById(R.id.button_event_updates).setEnabled(true);
         findViewById(R.id.button_join_events).setEnabled(true);
+        findViewById(R.id.notification_switch).setEnabled(true);
     }
 }
