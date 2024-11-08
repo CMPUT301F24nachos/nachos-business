@@ -21,12 +21,14 @@ import com.example.nachosbusiness.R;
  * Activity that displays a list of events is ListView and has an option to switch to profile browsing view.
  */
 public class Browse extends AppCompatActivity {
-    private EventDBManager eventDBManager;
+    //private EventDBManager eventDBManager;
     private ListView eventListView;
     private EventArrayAdapter eventAdapter;
-    private ArrayList<Event> eventList;
+    //private ArrayList<Event> eventList;
     private View headerLayout;
     private ImageButton profile;
+
+    private ArrayList<com.example.nachosbusiness.events.Event> adminEventList;
 
     /**
      * Called when the activity is first created.
@@ -42,14 +44,11 @@ public class Browse extends AppCompatActivity {
         setContentView(R.layout.browse_home);
 
         eventListView = findViewById(R.id.event_list_view);
-        eventList = new ArrayList<>();
 
-        // Initialize EventDBManager
-        eventDBManager = new EventDBManager("events");
-
-        // Fetch all events
+        adminEventList = new ArrayList<>();
+        eventAdapter = new EventArrayAdapter(this, adminEventList);
+        eventListView.setAdapter(eventAdapter);
         fetchEvents();
-
 
 
         ImageButton profileViewButton = findViewById(R.id.profileview);
@@ -91,21 +90,19 @@ public class Browse extends AppCompatActivity {
      *
      */
     private void fetchEvents() {
-        eventDBManager.fetchAllEvents(new EventDBManager.EventCallback() {
-            @Override
-            public void onEventsReceived(List<Event> events) {
-                eventList.clear(); // Clear existing items
-                eventList.addAll(events); // Add new items to the list
-                eventAdapter = new EventArrayAdapter(Browse.this, eventList);
-                eventListView.setAdapter(eventAdapter);
-            }
+        com.example.nachosbusiness.events.EventDBManager eventDBInstance = new com.example.nachosbusiness.events.EventDBManager();
 
+        eventDBInstance.getAdminEvents(new com.example.nachosbusiness.events.EventDBManager.AdminEventListCallback() {
             @Override
-            public void onEventReceived(Event event) {
-
+            public void onAdminEventsReceived(List<com.example.nachosbusiness.events.Event> rawDBList) {
+                adminEventList.clear();
+                adminEventList.addAll(rawDBList);
+                eventAdapter.notifyDataSetChanged();
+                //eventListView.setAdapter(eventAdapter);
             }
         });
     }
+
     /**
      * Switches to  BrowseProfileFragment to display profiles. Replaces the current view with the browse profile fragment
      *
