@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
 
@@ -77,7 +80,21 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         eventName.setText(event.getName());
         eventDescription.setText(event.getDescription());
 
+        editEvent.setOnClickListener(v -> {
+            openEventDetailFragment(event);
 
+        });
         return view;
+
+    }
+    private void openEventDetailFragment(Event event) {
+        // Create the fragment
+        EventDetailFragment fragment = EventDetailFragment.newInstance(event);
+
+        // Begin a fragment transaction
+        FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment); // Replace with your container view ID
+        transaction.addToBackStack(null);  // Optional: to add fragment to back stack
+        transaction.commit();
     }
 }
