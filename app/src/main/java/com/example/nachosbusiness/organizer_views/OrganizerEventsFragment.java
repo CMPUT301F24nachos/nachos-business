@@ -1,11 +1,14 @@
 package com.example.nachosbusiness.organizer_views;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,18 +17,38 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.CreateEventFragment;
-import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
+import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.EventDBManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrganizerEventsFragment extends Fragment {
+    private EventDBManager eventDBManager;
+    private ListView eventListView;
+    private EventListArrayAdapter eventAdapter;
+    private ArrayList<Event> eventList;
+    private View headerLayout;
+    private ImageButton profile;
+    private TextView noEventsMessage;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.organizer_events, container, false);
     }
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        eventListView = view.findViewById(R.id.event_list_view);
+        noEventsMessage = view.findViewById(R.id.no_events_message);
+
+        eventList = new ArrayList<>();
+
+        eventDBManager = new EventDBManager();
+
+        fetchEvents();
 
         ImageButton homeButton = view.findViewById(R.id.button_event_home);
         ImageButton menuButton = view.findViewById(R.id.button_org_event_menu);
@@ -57,6 +80,39 @@ public class OrganizerEventsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 requireActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+    }
+    /**
+     * Fetches all events from the database and updates the list view.
+     * Events are added to eventList and displayed with the EventArrayAdapter
+     *
+     */
+    private void fetchEvents() {
+        String androidID = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        eventDBManager.fetchAllUserEvents(androidID, new EventDBManager.EventsCallback() {
+            @Override
+            public void onEventsReceived(List<Event> events) {
+                eventList.clear();
+                eventList.addAll(events);
+
+                // Update visibility of noEventsMessage based on list size
+                if (eventList.isEmpty()) {
+                    noEventsMessage.setVisibility(View.VISIBLE);
+                    eventListView.setVisibility(View.GONE);
+                } else {
+                    noEventsMessage.setVisibility(View.GONE);
+                    eventListView.setVisibility(View.VISIBLE);
+
+                    // Initialize or update the adapter only when there are events
+                    if (eventAdapter == null) {
+                        eventAdapter = new EventListArrayAdapter(requireContext(), eventList);
+                        eventListView.setAdapter(eventAdapter);
+                    } else {
+                        eventAdapter.notifyDataSetChanged();
+                    }
+                }
             }
         });
     }

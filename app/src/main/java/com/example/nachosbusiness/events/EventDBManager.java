@@ -6,12 +6,16 @@ import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.facilities.Facility;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +52,14 @@ public class EventDBManager extends DBManager implements Serializable {
     public interface EventCallback {
         void onEventReceived(Event event);
     }
+
+    /**
+     *  Callback method to indicate that an event was received.
+     */
+    public interface EventsCallback {
+        void onEventsReceived(List<Event> eventList);
+    }
+
 
     /**
      * Query the firebase db for an event with specific eventID.
@@ -102,6 +114,64 @@ public class EventDBManager extends DBManager implements Serializable {
             }
         });
     }
-}
 
+    public void fetchAllUserEvents(String androidID, EventDBManager.EventsCallback callback) {
+        getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                    return;
+                }
+
+                if (querySnapshots != null) {
+                    List<Event> eventsList = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        if (androidID.equals(doc.getString("organizerID"))) {
+                            String name = doc.getString("name");
+                            //String image = doc.getString("eventImage");
+                            String organizerID = doc.getString("organizerID");
+                            String description = doc.getString("description");
+                            Timestamp startDateTime = doc.getTimestamp("startDateTime");
+                            Timestamp endDateTime = doc.getTimestamp("endDateTime");
+                            String frequency = doc.getString("frequency");
+                            Timestamp waitListOpenDate = doc.getTimestamp("waitListOpenDate");
+                            Timestamp waitListCloseDate = doc.getTimestamp("waitListCloseDate");
+                            Long costLong = doc.getLong("cost");
+                            Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
+                            Long attendeeSpotsLong = doc.getLong("attendeeSpots");
+
+                            Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
+                            Facility facility = new Facility();
+                            if (facilityMap != null) {
+                                facility.setName(facilityMap.get("name"));
+                                facility.setLocation(facilityMap.get("location"));
+                                facility.setDesc(facilityMap.get("desc"));
+                            }
+
+                            if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
+                                Event event = new Event(
+                                        name,
+                                        organizerID,
+                                        facility,
+                                        description,
+                                        startDateTime,
+                                        endDateTime,
+                                        frequency,
+                                        waitListOpenDate,
+                                        waitListCloseDate,
+                                        costLong.intValue(),
+                                        hasGeolocation,
+                                        attendeeSpotsLong.intValue()
+                                );
+                                eventsList.add(event);
+                            }
+                        }
+                    }
+                    callback.onEventsReceived(eventsList);
+                }
+            }
+        });
+    }
+}
 
