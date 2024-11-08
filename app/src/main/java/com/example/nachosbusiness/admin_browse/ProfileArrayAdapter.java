@@ -104,23 +104,27 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
                     ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    // Handle image loading errors here
                 }
             }).start();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
-            // Optionally, handle the case where the image could not be retrieved
         });
     }
 
+    /**
+     * Opens the ProfileDetailFragment and with the profile
+     * Replaces the current fragment with the ProfileDetailFragment
+     *
+     * @param profile profile to be displayed
+     *
+     */
     private void openProfileDetailFragment(Profile profile) {
-        // Use newInstance to pass the profile to the fragment
+
         ProfileDetailFragment detailFragment = ProfileDetailFragment.newInstance(profile);
 
-        // Replace the current fragment (or the content in the container) with ProfileDetailFragment
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);  // Use the correct ID for your container
-        transaction.addToBackStack(null); // Add to back stack to allow back navigation
+        transaction.replace(R.id.fragment_container, detailFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
