@@ -138,15 +138,18 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 if (username.isEmpty() || email.isEmpty()) {
                     Toast.makeText(RegistrationActivity.this, "Please fill out username and email", Toast.LENGTH_LONG).show();
+                } else if (!Character.isLetter(username.charAt(0))) {
+                    Toast.makeText(RegistrationActivity.this, "Username must start with a letter", Toast.LENGTH_LONG).show();
                 } else if (!isValidEmail(email)) {
                     Toast.makeText(RegistrationActivity.this, "Invalid email format", Toast.LENGTH_LONG).show();
                 } else {
                     User user = new User(android_id, username, email, phone);
                     dbManager.addEntry(user);
-                    Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-
                     if (selectedImageUri != null) {
                         DBManager.uploadProfileImage(RegistrationActivity.this, android_id, selectedImageUri);
+                        Toast.makeText(RegistrationActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegistrationActivity.this, "Registration successful with default profile pic!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
