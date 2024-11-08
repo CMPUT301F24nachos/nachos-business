@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.users.RegistrationActivity;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private String userName;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                   navigateToDashboard();
+                    navigateToDashboard();
                 }
             }
 

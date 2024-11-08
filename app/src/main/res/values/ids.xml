@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="profile" type="id" />
+    <item name="Username" type="id" />
+    <item name="PhoneLabel" type="id" />
+    <item name="PhoneValue" type="id" />
+    <item name="EmailLabel" type="id" />
+    <item name="EmailValue" type="id" />
+</resources>
