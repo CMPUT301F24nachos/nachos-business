@@ -245,7 +245,7 @@ public class DBManager {
                 });
     }
 
-    public void getProfileImageExtra(String androidId, ImageView imageView, Context context, ProfileImageCallback callback) {
+    public void getProfileImageExtra(String androidId, String username, ImageView imageView, Context context, ProfileImageCallback callback) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
@@ -270,9 +270,55 @@ public class DBManager {
                 }
             }).start();
         }).addOnFailureListener(e -> {
-            e.printStackTrace();
-            if (callback != null) {
-                callback.onImageLoadFailed(e);
+
+            // Check the first character of the username
+            if (username != null && !username.isEmpty()) {
+                char firstChar = Character.toLowerCase(username.charAt(0));
+                StorageReference defaultImageRef;
+
+                if ("abcdefghi".indexOf(firstChar) != -1) {
+                    defaultImageRef = storageRef.child("profile_images/abcdefghi.jpg");
+                } else if ("jklmnopqr".indexOf(firstChar) != -1) {
+                    defaultImageRef = storageRef.child("profile_images/jklmnopqr.jpg");
+                } else if ("stuvwxyz".indexOf(firstChar) != -1) {
+                    defaultImageRef = storageRef.child("profile_images/stuvwxyz.jpg");
+                } else {
+                    if (callback != null) {
+                        callback.onImageLoadFailed(new Exception("No default image available for this username"));
+                    }
+                    return;
+                }
+
+                defaultImageRef.getDownloadUrl().addOnSuccessListener(defaultUri -> {
+                    new Thread(() -> {
+                        try {
+                            InputStream inputStream = new java.net.URL(defaultUri.toString()).openStream();
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            ((Activity) context).runOnUiThread(() -> {
+                                imageView.setImageBitmap(bitmap);
+                                if (callback != null) {
+                                    callback.onImageLoaded(bitmap);
+                                }
+                            });
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            ((Activity) context).runOnUiThread(() -> {
+                                if (callback != null) {
+                                    callback.onImageLoadFailed(ex);
+                                }
+                            });
+                        }
+                    }).start();
+                }).addOnFailureListener(defaultError -> {
+                    defaultError.printStackTrace();
+                    if (callback != null) {
+                        callback.onImageLoadFailed(defaultError);
+                    }
+                });
+            } else {
+                if (callback != null) {
+                    callback.onImageLoadFailed(e);
+                }
             }
         });
     }
