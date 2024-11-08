@@ -26,18 +26,34 @@ public class Profile implements Serializable {
         this.phonenum = phonenum;
     }
 
+    /**
+     * getter for user's profile email
+     * @return name string
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * setter for user's profile email
+     * @param email users email
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * getter for user's phone number
+     * @return name string
+     */
     public String getPhonenum() {
         return phonenum;
     }
 
+    /**
+     * setter for user's phone number
+     * @param phonenum users phone number
+     */
     public void setPhonenum(String phonenum) {
         this.phonenum = phonenum;
     }
