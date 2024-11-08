@@ -26,6 +26,7 @@ import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.ShowProfile;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -269,22 +270,32 @@ public class ProfileDetailFragment extends Fragment {
      */
     private void deleteProfileFromFirestore(String androidId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference profileRef = db.collection("entrants").document(androidId);  // Assuming profiles is the collection name
+        db.collection("entrants")
+                .whereEqualTo("android_id", androidId)  // Find document id based on android id
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                            DocumentReference profileRef = db.collection("entrants").document(document.getId());
+                            profileRef.delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(getActivity(), "Profile deleted successfully", Toast.LENGTH_SHORT).show();
+                                        getFragmentManager().popBackStack();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getActivity(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(getActivity(), "Profile not found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
 
-        profileRef.delete()
-                .addOnSuccessListener(aVoid -> {
-                    // Profile successfully deleted
-                    Toast.makeText(getActivity(), "Profile deleted successfully", Toast.LENGTH_SHORT).show();
-
-                    // Optionally, navigate back to the profile list fragment
-                    getFragmentManager().popBackStack();  // This pops the current fragment off the back stack
-                })
-                .addOnFailureListener(e -> {
-                    // Error occurred while deleting
-                    Toast.makeText(getActivity(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                        Toast.makeText(getActivity(), "Error querying profile", Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
+
 
 
 
