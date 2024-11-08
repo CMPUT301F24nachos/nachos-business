@@ -12,9 +12,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +48,6 @@ public class EventDBManager extends DBManager implements Serializable {
     public interface EventCallback {
         void onEventReceived(Event event);
     }
-
 
     /**
      * Query the firebase db for an event with specific eventID.
@@ -106,7 +102,6 @@ public class EventDBManager extends DBManager implements Serializable {
             }
         });
     }
-
 }
 
 
