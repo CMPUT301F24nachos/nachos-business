@@ -3,8 +3,6 @@ package com.example.nachosbusiness.events;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +25,8 @@ import com.example.nachosbusiness.utils.QRUtil;
 import com.example.nachosbusiness.R;
 
 import com.example.nachosbusiness.users.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
@@ -57,9 +57,8 @@ public class EventRegistration extends AppCompatActivity {
     private String eventId;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
     private double latitude, longitude;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,9 +78,6 @@ public class EventRegistration extends AppCompatActivity {
                     public void onEventReceived(Event e) {
                         if (e != null && e.getEventID() != null) {
                             event = e;
-                            if (eventManager.getEvent().getHasGeolocation()){
-                                initializeLocation();
-                            }
                             updateEventInfoUI();
                             // found an event! Find the wait list and finally update the last of the UI
                             listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
@@ -120,6 +116,7 @@ public class EventRegistration extends AppCompatActivity {
             eventId = args.getString("eventID");
             eventId = eventId.replace("nachos-business://event/", "");
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     /**
@@ -291,6 +288,7 @@ public class EventRegistration extends AppCompatActivity {
                 .setTitle("Geolocation Warning")
                 .setMessage("Organizer will be able to see the location where you joined the Waitlist.")
                 .setPositiveButton("Agree and Join Waitlist", (dialog, which) -> {
+                    initializeLocation();
                     listManagerDBManager.listManager.addToWaitList(user, new GeoPoint(latitude, longitude));
                 })
                 .setNegativeButton("Deny and Do Not Join", (dialog, which) -> {
@@ -328,13 +326,6 @@ public class EventRegistration extends AppCompatActivity {
      * Initialize the location services to get the user's location
      */
     private void initializeLocation() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = location -> {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-        };
-
-        // Check if permissions are granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermissions();
@@ -359,10 +350,13 @@ public class EventRegistration extends AppCompatActivity {
     private void requestUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
-
-                //locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    });
         }
     }
 
