@@ -17,13 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.utils.QRUtil;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 

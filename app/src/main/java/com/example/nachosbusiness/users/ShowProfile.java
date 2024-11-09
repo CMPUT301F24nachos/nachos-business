@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.users;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.R;
 
 public class ShowProfile extends AppCompatActivity {
 
