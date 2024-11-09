@@ -23,7 +23,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.Dashboard;
-import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.utils.QRUtil;
 import com.example.nachosbusiness.R;
 
 import com.example.nachosbusiness.users.User;

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.nachosbusiness.utils.QRUtil;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 

@@ -22,9 +22,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.DatePickerFragment;
+import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.R;
-import com.example.nachosbusiness.TimePickerFragment;
+import com.example.nachosbusiness.utils.TimePickerFragment;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
@@ -33,7 +33,6 @@ import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class EditEventFragment extends Fragment {
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;

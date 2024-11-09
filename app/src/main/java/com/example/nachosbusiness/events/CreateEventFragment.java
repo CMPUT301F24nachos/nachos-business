@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.events;
 
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
@@ -18,9 +18,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
+import com.example.nachosbusiness.utils.DatePickerFragment;
+import com.example.nachosbusiness.utils.TimePickerFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
