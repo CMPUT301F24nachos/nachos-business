@@ -208,6 +208,25 @@ public class DBManager {
         }
     }
 
+    public static void uploadEventImage(Context context, String imageName, Uri selectedImageUri) {
+        if (selectedImageUri != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference profileImagesRef = storageRef.child("event_images/" + imageName + ".jpg");
+            UploadTask uploadTask = profileImagesRef.putFile(selectedImageUri);
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                profileImagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Toast.makeText(context, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(context, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            Toast.makeText(context, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void getProfileImage(String androidId, ImageView imageView, Context context, Runnable onImageLoaded) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");

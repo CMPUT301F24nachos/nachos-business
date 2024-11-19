@@ -1,9 +1,18 @@
 package com.example.nachosbusiness.events;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +35,7 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.utils.TimePickerFragment;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -49,13 +60,16 @@ public class CreateEventFragment extends Fragment {
 
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;
-    private ImageButton btnUploadPoster;
+    private ImageView profileImage;
+    private ImageButton btnUploadPoster, closeButton;
     private CheckBox editGeolocation;
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
     private String startTime, endTime, startDate, endDate, openDate, closeDate;
     private Date startTimeDate, endTimeDate, oDate, cDate;
+    private boolean isImageMarkedForUpload = false;
+    private Uri selectedImageUri;
 
     @Nullable
     @Override
@@ -67,6 +81,37 @@ public class CreateEventFragment extends Fragment {
         setupListeners();
 
         return view;
+    }
+
+    ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null && data.getData() != null) {
+                        selectedImageUri = data.getData();
+                        try {
+                            // Use requireContext() to get the content resolver
+                            Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(
+                                    requireContext().getContentResolver(), selectedImageUri);
+
+                            profileImage.setImageBitmap(selectedImageBitmap);
+                            profileImage.setVisibility(View.VISIBLE);
+                            closeButton.setVisibility(View.VISIBLE);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Failed to load image", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            });
+
+    private void imageChooser() {
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        launchSomeActivity.launch(i);
     }
 
     private void initializeViews(View view) {
@@ -86,6 +131,7 @@ public class CreateEventFragment extends Fragment {
         editOpenDate = view.findViewById(R.id.editOpenDate);
         editCloseDate = view.findViewById(R.id.editCloseDate);
         btnUploadPoster = view.findViewById(R.id.btnUploadPoster);
+        profileImage = view.findViewById(R.id.profileImage);
 
         // View text
         textViewSelectedStartDate = view.findViewById(R.id.textViewSelectedStartDate);
@@ -99,6 +145,7 @@ public class CreateEventFragment extends Fragment {
         createEventText = view.findViewById(R.id.createEventText);
         saveButton = view.findViewById(R.id.event_button_save);
         cancelButton = view.findViewById(R.id.event_button_cancel);
+        closeButton = view.findViewById(R.id.closeButton);
     }
 
     private void setupListeners() {
@@ -252,6 +299,20 @@ public class CreateEventFragment extends Fragment {
             }
         });
 
+        btnUploadPoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageChooser();
+                isImageMarkedForUpload = true;
+            }
+        });
+
+        closeButton.setOnClickListener(v -> {
+            profileImage.setVisibility(View.GONE);
+            closeButton.setVisibility(View.GONE);
+            selectedImageUri = null;
+        });
+
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
     // TODO should find a way to check if the times are correct
@@ -373,6 +434,11 @@ public class CreateEventFragment extends Fragment {
                     event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
                 dbManager.setEntry(event.getEventID(), event);
+                if (selectedImageUri != null) {
+                    Log.d("UpdateProfile", "selectedImageUri: " + selectedImageUri);
+                    dbManager.uploadEventImage(getContext(), event.getEventID(), selectedImageUri);
+                    isImageMarkedForUpload = false;
+                }
             }
         });
     }
