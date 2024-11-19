@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

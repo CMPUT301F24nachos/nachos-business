@@ -1,4 +1,4 @@
-package com.example.nachosbusiness;
+package com.example.nachosbusiness.users;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,7 +22,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.nachosbusiness.users.User;
+import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.R;
 
 import java.io.IOException;
 import java.util.Objects;
