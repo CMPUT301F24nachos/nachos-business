@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.facilities.Facility;
+import com.example.nachosbusiness.users.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +69,52 @@ public class EventDBManager extends DBManager implements Serializable {
         void onAdminEventsReceived(List<Event> eventList);
     }
 
+    /**
+     * Maps a HashMap containing four array lists into a ListManager instance.
+     *
+     * @param o            The object to be converted
+     * @return A ListManager instance populated with the data from the object, or null if mapping fails.
+     */
+    private ListManager mapToListManager(Object o) {
+        if (o instanceof HashMap) {
+            try {
+                // Cast the object to a HashMap
+                HashMap<String, Object> dataMap = (HashMap<String, Object>) o;
+
+                // Initialize lists
+                ArrayList<Map<Object, Object>> waitList = new ArrayList<>();
+                ArrayList<User> invitedList = new ArrayList<>();
+                ArrayList<User> acceptedList = new ArrayList<>();
+                ArrayList<User> canceledList = new ArrayList<>();
+
+                // Extract and safely cast lists from the HashMap
+                if (dataMap.get("waitList") instanceof ArrayList) {
+                    waitList = (ArrayList<Map<Object, Object>>) dataMap.get("waitList");
+                }
+                if (dataMap.get("invitedList") instanceof ArrayList) {
+                    invitedList = (ArrayList<User>) dataMap.get("invitedList");
+                }
+                if (dataMap.get("acceptedList") instanceof ArrayList) {
+                    acceptedList = (ArrayList<User>) dataMap.get("acceptedList");
+                }
+                if (dataMap.get("canceledList") instanceof ArrayList) {
+                    canceledList = (ArrayList<User>) dataMap.get("canceledList");
+                }
+
+                // Create and populate the ListManager instance
+                ListManager listManager = new ListManager();
+                listManager.setWaitList(waitList);
+                listManager.setInvitedList(invitedList);
+                listManager.setAcceptedList(acceptedList);
+                listManager.setCanceledList(canceledList);
+
+                return listManager;
+            } catch (ClassCastException e) {
+                Log.e(TAG, "Failed to map HashMap to ListManager: " + e.getMessage());
+            }
+        }
+        return null;
+    }
 
     /**
      * Query the firebase db for an event with specific eventID.
@@ -89,18 +137,24 @@ public class EventDBManager extends DBManager implements Serializable {
                             event.setCost(costLong.intValue());
                             event.setDescription(doc.getString("description"));
                             event.setEndDateTime(doc.getTimestamp("endDateTime"));
-                            //event.setEndTime(doc.getTimestamp("endTime"));
                             event.setEventID(doc.getId());
+                            event.setFrequency(doc.getString("frequency"));
                             event.setHasGeolocation(doc.getBoolean("hasGeolocation"));
                             event.setName(doc.getString("name"));
-                            event.setOrganizerID(doc.getString("organizer"));
+                            event.setOrganizerID(doc.getString("organizerID"));
                             event.setQrCode(doc.getString("qrCode"));
                             event.setStartDateTime(doc.getTimestamp("startDateTime"));
-                            //event.setStartTime(doc.getTimestamp("startTime"));
                             event.setWaitListCloseDate(doc.getTimestamp("waitListCloseDate"));
                             event.setWaitListOpenDate(doc.getTimestamp("waitListOpenDate"));
+                            Long attendeeSpots = doc.getLong("attendeeSpots");
+                            event.setAttendeeSpots(attendeeSpots.intValue());
                             Long constSpots = doc.getLong("waitListSpots");
                             event.setWaitListSpots(constSpots.intValue());
+                            Object o = doc.get("listManager");
+                            ListManager listManager = mapToListManager(o);
+                            if (listManager != null) {
+                                event.setListManager(listManager);
+                            }
 
                             Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
                             Facility facility = new Facility();

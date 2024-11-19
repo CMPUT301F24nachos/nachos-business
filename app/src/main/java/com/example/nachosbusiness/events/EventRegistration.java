@@ -30,7 +30,9 @@ import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * This Class/Activty is used to sign up for events. User's can navigate to the event by scanning a
@@ -89,8 +91,13 @@ public class EventRegistration extends AppCompatActivity {
                                 public void onListManagerReceived(ListManager listManager) {
                                     updateWaitListStatusUI();
                                 }
+
+                                @Override
+                                public void onSingleListFound(List<String> eventIDs) {
+                                    // will never get here
+                                }
+
                             });
-                        // no event matches the eventID. show does not exist view.
                         } else {
                             displayEventDNE();
                         }

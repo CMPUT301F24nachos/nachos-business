@@ -13,6 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +37,13 @@ public class ListManagerDBManager extends DBManager implements Serializable {
         this.listManager = new ListManager();
     }
 
+    /**
+     * Callback method for list Manager
+     */
     public interface ListManagerCallback {
         void onListManagerReceived(ListManager listManager);
+
+        void onSingleListFound(List<String> eventIDs);
     }
 
     /**
@@ -69,6 +75,74 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                 }
             }
         });
+    }
+
+    public void queryListsByUserID(String androidID, ListManagerCallback callback) {
+        this.setCollectionReference("lists");
+        this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                    return;
+                }
+
+                if (querySnapshots == null || querySnapshots.isEmpty()) {
+                    Log.d(TAG, "No documents found.");
+                    callback.onSingleListFound(new ArrayList<>());
+                    return;
+                }
+
+                List<String> eventIDs = new ArrayList<>();
+
+                for (QueryDocumentSnapshot doc : querySnapshots) {
+                    ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
+                    ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
+                    ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
+                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+
+                    if (isUserInList(waitList, androidID) ||
+                            isUserInList(invitedList, androidID) ||
+                            isUserInList(acceptedList, androidID) ||
+                            isUserInList(cancelledList, androidID)) {
+                        eventIDs.add(doc.getId());
+                        callback.onSingleListFound(eventIDs);
+                    }
+
+                }
+            }
+        });
+    }
+
+    /**
+     * Helper method to check if a user with the given androidID is in the list.
+     *
+     * @param list The list to check (either waitList, invitedList, acceptedList, or cancelledList).
+     * @param androidID The Android ID of the user to find.
+     * @return true if the user is in the list, false otherwise.
+     */
+    private boolean isUserInList(List<?> list, String androidID) {
+        if (list == null) return false;
+
+        for (Object entry : list) {
+            if (entry instanceof Map) {
+
+                Map<String, Object> userEntry = (Map<String, Object>) entry;
+                if (userEntry.containsKey("user")) {
+                    Object o = userEntry.get("user");
+                    HashMap hashedUser = (HashMap) o;
+                    if (hashedUser.get("android_id") != null && androidID.equals(hashedUser.get("android_id"))){
+                        return true;
+                    }
+                }
+            } else if (entry instanceof User) {
+                User user = (User) entry;
+                if (androidID.equals(user.getAndroid_id())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 
