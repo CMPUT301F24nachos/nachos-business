@@ -267,6 +267,18 @@ public class ListManager {
         this.waitList = dBWaitList;
     }
 
+    public void setInvitedList(ArrayList<User> invitedList) {
+        this.invitedList = invitedList;
+    }
+
+    public void setAcceptedList(ArrayList<User> acceptedList) {
+        this.acceptedList = acceptedList;
+    }
+
+    public void setCanceledList(ArrayList<User> canceledList) {
+        this.canceledList = canceledList;
+    }
+
     /**
      * Getter for invited list
      * @return invited list
@@ -314,4 +326,6 @@ public class ListManager {
     public void setDbManager(DBManager dbManager) {
         this.dbManager = dbManager;
     }
+
+
 }
