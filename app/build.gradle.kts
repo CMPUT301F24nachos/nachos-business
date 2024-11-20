@@ -3,9 +3,15 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
 android {
     namespace = "com.example.nachosbusiness"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+        // ...
+    }
 
     defaultConfig {
         applicationId = "com.example.nachosbusiness"
@@ -44,6 +50,12 @@ tasks.withType<Test> {
     useJUnitPlatform() // Correct placement for JUnit 5 support
 }
 
+buildscript {
+    dependencies {
+        classpath("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+    }
+}
+
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
@@ -65,7 +77,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
-
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
