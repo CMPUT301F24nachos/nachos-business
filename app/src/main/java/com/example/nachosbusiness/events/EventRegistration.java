@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -30,7 +31,9 @@ import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * This Class/Activty is used to sign up for events. User's can navigate to the event by scanning a
@@ -55,6 +58,7 @@ public class EventRegistration extends AppCompatActivity {
 
     private String androidID;
     private String eventId;
+    private int currentWaitListCount;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private LocationManager locationManager;
@@ -83,14 +87,37 @@ public class EventRegistration extends AppCompatActivity {
                                 initializeLocation();
                             }
                             updateEventInfoUI();
-                            // found an event! Find the wait list and finally update the last of the UI
-                            listManagerDBManager.queryWaitList(eventId, new ListManagerDBManager.ListManagerCallback() {
-                                @Override
-                                public void onListManagerReceived(ListManager listManager) {
-                                    updateWaitListStatusUI();
-                                }
-                            });
-                        // no event matches the eventID. show does not exist view.
+                            // Finally, query the lists collection and determine the status of the user!
+                            listManagerDBManager.queryEventDetails(eventId, androidID, new ListManagerDBManager.EventDetailsCallback() {
+                                        @Override
+                                        public void onEventDetailsReceived(ListManagerDBManager.userStatus status, ListManager listManager) {
+                                            listManagerDBManager.listManager.setWaitList(listManager.getWaitList());
+                                            listManagerDBManager.listManager.setInvitedList(listManager.getInvitedList());
+                                            listManagerDBManager.listManager.setAcceptedList(listManager.getAcceptedList());
+                                            listManagerDBManager.listManager.setCanceledList(listManager.getCanceledList());
+                                            currentWaitListCount = listManagerDBManager.listManager.getWaitList().size();
+                                            switch (status) {
+                                                case WAITLIST:
+                                                    updateWaitListStatusUI();
+                                                    break;
+                                                case INVITELIST:
+                                                    updateInviteListStatusUI();
+                                                    break;
+                                                case ACCEPTEDLIST:
+                                                    updateAcceptedListStatusUI();
+                                                    break;
+                                                case NOTINALIST:
+                                                    updateNotInListUI();
+                                                    break;
+                                    }
+
+                                        }
+
+                                        @Override
+                                        public void onError(String errorMessage) {
+
+                                        }
+                                    });
                         } else {
                             displayEventDNE();
                         }
@@ -231,42 +258,33 @@ public class EventRegistration extends AppCompatActivity {
     }
 
     /**
-     * Update the event information based on if the user is in the waitlist or not. Will show the
-     * Join WaitList view if user is not currently in the wait list.
+     * Display the ui for a user not in a waitlist
      */
-    private void updateWaitListStatusUI(){
+    private void updateNotInListUI(){
         Button signUpButton = findViewById(R.id.button_event_register);
         Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        String waitListOpenSpots;
         TextView regTitle = findViewById(R.id.textview_register_title);
         TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
         TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
 
-        String waitListOpenSpots;
+        signUpButton.setVisibility(View.VISIBLE);
+        leaveButton.setVisibility(View.GONE);
+        acceptInviteButton.setVisibility(View.GONE);
+        rejectInviteButton.setVisibility(View.GONE);
 
-        if (listManagerDBManager.listManager.getWaitList() == null){
-            regTitle.setText(R.string.event_register_title);
-            signUpButton.setVisibility(View.VISIBLE);
-            leaveButton.setVisibility(View.GONE);
-            waitListOpenSpots = "0";
-        }
-        else if (listManagerDBManager.listManager.inWaitList(user)) {
-            regTitle.setText(R.string.event_leave_waitlist_title);
-            signUpButton.setVisibility(View.GONE);
-            leaveButton.setVisibility(View.VISIBLE);
-            waitListOpenSpots = String.valueOf(listManagerDBManager.listManager.getWaitList().size());
-        } else {
-            regTitle.setText(R.string.event_register_title);
-            signUpButton.setVisibility(View.VISIBLE);
-            leaveButton.setVisibility(View.GONE);
-            waitListOpenSpots = String.valueOf(listManagerDBManager.listManager.getWaitList().size());
-        }
+        regTitle.setText(R.string.event_register_title);
+
         String waitListTotalSpots = "∞";
         if (event.getWaitListSpots() > 0) {
             waitListTotalSpots = String.valueOf(event.getWaitListSpots());
         }
-
+        waitListOpenSpots = String.valueOf(currentWaitListCount);
         waitlistOpenSpotsTV.setText(waitListOpenSpots);
         waitlistTotalSpotsTV.setText(waitListTotalSpots);
+
         signUpButton.setOnClickListener(v -> {
             if (eventManager.getEvent().getHasGeolocation()) {
                 initializeLocation();
@@ -276,11 +294,107 @@ public class EventRegistration extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Join Waitlist", Toast.LENGTH_SHORT).show();
             }
         });
+        }
+
+
+    /**
+     * Update the event information based on if the user is in the waitlist or not. Will show the
+     * Join WaitList view if user is not currently in the wait list.
+     */
+    private void updateWaitListStatusUI(){
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+
+        regTitle.setText(R.string.event_leave_waitlist_title);
+
+        signUpButton.setVisibility(View.GONE);
+        leaveButton.setVisibility(View.VISIBLE);
+        acceptInviteButton.setVisibility(View.GONE);
+        rejectInviteButton.setVisibility(View.GONE);
+
+        String waitListOpenSpots;
+        waitListOpenSpots = String.valueOf(currentWaitListCount);
+        String waitListTotalSpots = "∞";
+        if (event.getWaitListSpots() > 0) {
+            waitListTotalSpots = String.valueOf(event.getWaitListSpots());
+        }
+        waitlistOpenSpotsTV.setText(waitListOpenSpots);
+        waitlistTotalSpotsTV.setText(waitListTotalSpots);
 
         leaveButton.setOnClickListener(v -> {
             showLeaveDialog(user);
+            // Can uncomment the line below to moveto waitlist for the specific event.
+            //listManagerDBManager.listManager.moveToInvitedList(user);
         });
     }
+
+    /**
+     * Update the event information based on if the user is invited.
+     */
+    private void updateInviteListStatusUI(){
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+        TextView textviewSlash = findViewById(R.id.textView17);
+        TextView textSpotsText = findViewById(R.id.textView19);
+
+        regTitle.setText(R.string.event_invite_list_title);
+
+        signUpButton.setVisibility(View.GONE);
+        leaveButton.setVisibility(View.GONE);
+        acceptInviteButton.setVisibility(View.VISIBLE);
+        rejectInviteButton.setVisibility(View.VISIBLE);
+
+        waitlistOpenSpotsTV.setText("");
+        waitlistTotalSpotsTV.setText("");
+        textviewSlash.setVisibility(View.INVISIBLE);
+        textSpotsText.setVisibility(View.INVISIBLE);
+
+        acceptInviteButton.setOnClickListener(v -> {
+            listManagerDBManager.listManager.moveToAcceptedList(user);
+        });
+
+        rejectInviteButton.setOnClickListener(v -> {
+            listManagerDBManager.listManager.moveToCanceledList(user);
+        });
+    }
+
+    /**
+     * Update the event information based on if the user is in the accepted list.
+     */
+    private void updateAcceptedListStatusUI(){
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+        TextView textviewSlash = findViewById(R.id.textView17);
+        TextView textSpotsText = findViewById(R.id.textView19);
+
+        regTitle.setText(R.string.event_accepted_list_title);
+
+        signUpButton.setVisibility(View.GONE);
+        leaveButton.setVisibility(View.GONE);
+        acceptInviteButton.setVisibility(View.GONE);
+        rejectInviteButton.setVisibility(View.GONE);
+
+        waitlistOpenSpotsTV.setText("");
+        waitlistTotalSpotsTV.setText("");
+        textviewSlash.setVisibility(View.INVISIBLE);
+        textSpotsText.setVisibility(View.INVISIBLE);
+    }
+
 
     /**
      * Show the GeoLocation warning. On Positive click, user joins the waitList.
