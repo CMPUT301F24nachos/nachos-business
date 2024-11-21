@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title TextView -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CREATE NEW NOTIFICATION"
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
+
+    <!-- Notification Title EditText -->
+    <EditText
+        android:id="@+id/notificationTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Notification Title"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"/>
+
+    <!-- Description Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <!-- Description EditText -->
+    <EditText
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:hint="Type here"
+        android:gravity="top"
+        android:background="@android:drawable/editbox_background"
+        android:inputType="textMultiLine"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"/>
+
+    <!-- Button Container Layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="#FFFFFF"/>
+
+        <!-- Push Button -->
+        <Button
+            android:id="@+id/push"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:text="Push"
+            android:backgroundTint="@android:color/holo_blue_dark"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+</LinearLayout>
