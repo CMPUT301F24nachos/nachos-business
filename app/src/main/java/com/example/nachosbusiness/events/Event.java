@@ -1,10 +1,5 @@
 package com.example.nachosbusiness.events;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
-
 import com.example.nachosbusiness.QRUtil;
 import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.Timestamp;
@@ -192,29 +187,6 @@ public class Event implements Serializable {
 
         listManager = new ListManager(eventID, waitListSpots);
     }
-
-    public Event(String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
-    {
-        this.eventID = eventID;
-
-        this.name = name;
-        this.organizerID = organizerID;
-        this.facility = facility;
-        this.description = description;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.frequency = frequency;
-        this.waitListOpenDate = waitListOpenDate;
-        this.waitListCloseDate = waitListCloseDate;
-        this.cost = cost;
-        this.hasGeolocation = hasGeolocation;
-        this.attendeeSpots = attendeeSpots;
-        this.waitListSpots = -1;
-        this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
-
-        listManager = new ListManager(eventID);
-    }
-
 
     public String getOrganizerID() { return organizerID; }
 

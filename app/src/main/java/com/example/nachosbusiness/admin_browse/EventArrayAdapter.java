@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
+import com.example.nachosbusiness.events.Event;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -30,9 +31,9 @@ import java.util.Locale;
  * Array Adapter for displaying Event objects in a custom ListView.
  * Each item in the list shows the events's image, description  and name, with an edit button.
  */
-public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.events.Event> {
+public class EventArrayAdapter extends ArrayAdapter<Event> {
 
-    private ArrayList<com.example.nachosbusiness.events.Event> events;
+    private ArrayList<Event> events;
     private Context context;
 
     /**
@@ -41,7 +42,7 @@ public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.e
      * @param context  The current context.
      * @param events The list of Event objects to display.
      */
-    public EventArrayAdapter(Context context, ArrayList<com.example.nachosbusiness.events.Event> events) {
+    public EventArrayAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
         this.events= events;
         this.context = context;
@@ -67,7 +68,7 @@ public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.e
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
 
-        com.example.nachosbusiness.events.Event event = events.get(position);
+        Event event = events.get(position);
 
         ImageView eventImage = view.findViewById(R.id.event_image);
         TextView eventName = view.findViewById(R.id.event_name);
@@ -97,12 +98,11 @@ public class EventArrayAdapter extends ArrayAdapter<com.example.nachosbusiness.e
      * Opens a fragment to display details for the selected event.
      *
      *
-     * @param event  com.example.nachosbusiness.events.Event object
+     * @param event  Event object
      */
-    private void openEventDetailFragment(com.example.nachosbusiness.events.Event event) {
+    private void openEventDetailFragment(Event event) {
 
         EventDetailFragment fragment = EventDetailFragment.newInstance(event);
-
 
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.browse_home_container, fragment); // Replace with your container view ID
