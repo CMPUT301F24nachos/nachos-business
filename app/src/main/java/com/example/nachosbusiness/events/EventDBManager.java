@@ -203,6 +203,7 @@ public class EventDBManager extends DBManager implements Serializable {
                             Long attendeeSpotsLong = doc.getLong("attendeeSpots");
                             String eventID = doc.getString("eventID");
 
+
                             Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
                             Facility facility = new Facility();
                             if (facilityMap != null) {
@@ -212,21 +213,36 @@ public class EventDBManager extends DBManager implements Serializable {
                             }
 
                             if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
-                                Event event = new Event(
-                                        eventID,
-                                        name,
-                                        organizerID,
-                                        facility,
-                                        description,
-                                        startDateTime,
-                                        endDateTime,
-                                        frequency,
-                                        waitListOpenDate,
-                                        waitListCloseDate,
-                                        costLong.intValue(),
-                                        hasGeolocation,
-                                        attendeeSpotsLong.intValue()
-                                );
+                                Event event = new Event();
+                                event.setEventID(eventID);
+                                event.setName(name);
+                                event.setOrganizerID(organizerID);
+                                event.setFacility(facility);
+                                event.setDescription(description);
+                                event.setStartDateTime(startDateTime);
+                                event.setEndDateTime(endDateTime);
+                                event.setFrequency(frequency);
+                                event.setWaitListOpenDate(waitListOpenDate);
+                                event.setWaitListCloseDate(waitListCloseDate);
+                                event.setHasGeolocation(hasGeolocation);
+                                event.setAttendeeSpots(attendeeSpotsLong.intValue());
+
+
+//                                Event event = new Event(
+//                                        eventID,
+//                                        name,
+//                                        organizerID,
+//                                        facility,
+//                                        description,
+//                                        startDateTime,
+//                                        endDateTime,
+//                                        frequency,
+//                                        waitListOpenDate,
+//                                        waitListCloseDate,
+//                                        costLong.intValue(),
+//                                        hasGeolocation,
+//                                        attendeeSpotsLong.intValue()
+//                                );
                                 eventsList.add(event);
                             }
                         }
@@ -269,21 +285,20 @@ public class EventDBManager extends DBManager implements Serializable {
                             facility.setDesc(facilityMap.get("desc"));
                         }
                         if (name != null && organizerID != null && startDateTime != null && endDateTime != null && costLong != null && attendeeSpotsLong != null) {
-                            Event event = new Event(
-                                    eventID,
-                                    name,
-                                    organizerID,
-                                    facility,
-                                    description,
-                                    startDateTime,
-                                    endDateTime,
-                                    frequency,
-                                    waitListOpenDate,
-                                    waitListCloseDate,
-                                    costLong.intValue(),
-                                    hasGeolocation,
-                                    attendeeSpotsLong.intValue()
-                            );
+                            Event event = new Event();
+                            event.setEventID(eventID);
+                            event.setName(name);
+                            event.setFacility(facility);
+                            event.setDescription(description);
+                            event.setStartDateTime(startDateTime);
+                            event.setEndDateTime(endDateTime);
+                            event.setFrequency(frequency);
+                            event.setWaitListOpenDate(waitListOpenDate);
+                            event.setWaitListCloseDate(waitListCloseDate);
+                            event.setHasGeolocation(hasGeolocation);
+                            event.setAttendeeSpots(attendeeSpotsLong.intValue());
+                            event.setCost(costLong.intValue());
+
                             adminEventList.add(event);
                     }
                 }

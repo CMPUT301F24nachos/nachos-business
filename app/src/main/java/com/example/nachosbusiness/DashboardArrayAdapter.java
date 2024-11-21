@@ -78,6 +78,9 @@ public class DashboardArrayAdapter extends ArrayAdapter<Event> {
         eventDate.setText(fStartDate);
         eventFreq.setText(event.getFrequency());
         eventTime.setText(fTime);
+
+        view.setOnClickListener(v -> openEventWaitlistFragment(event));
+
         return view;
     }
 

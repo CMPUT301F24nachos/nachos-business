@@ -17,6 +17,13 @@ public class User {
     private Uri profileImage;
     private List<String> events;
 
+    /**
+     * Empty constructor for firebase adapting
+     */
+    public User(){
+
+    }
+
     public User(String android_id, String username, String email, String phone) {
         this.android_id = android_id;
         this.username = username;
