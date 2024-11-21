@@ -369,7 +369,7 @@ public class EventRegistration extends AppCompatActivity {
     }
 
     /**
-     * Update the event information based on if the user is invited.
+     * Update the event information based on if the user is in the accepted list.
      */
     private void updateAcceptedListStatusUI(){
         Button signUpButton = findViewById(R.id.button_event_register);
