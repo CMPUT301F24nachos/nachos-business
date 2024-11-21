@@ -2,7 +2,6 @@ package com.example.nachosbusiness.organizer_views;
 
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.nachosbusiness.CreateEventFragment;
+import com.example.nachosbusiness.events.CreateEventFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.events.EventDBManager;

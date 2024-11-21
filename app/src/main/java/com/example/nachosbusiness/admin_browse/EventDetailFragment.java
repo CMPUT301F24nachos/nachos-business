@@ -17,13 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.utils.QRUtil;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -44,7 +43,7 @@ public class EventDetailFragment extends Fragment {
      * Edit or remove the event, the QR code, and the facilites
      *
      */
-    public static EventDetailFragment newInstance(com.example.nachosbusiness.events.Event event) {
+    public static EventDetailFragment newInstance(Event event) {
         EventDetailFragment fragment = new EventDetailFragment();
         Bundle args = new Bundle();
         args.putSerializable("event", (Serializable) event) ; // Pass the event object
@@ -62,7 +61,7 @@ public class EventDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance(); // This initializes the Firestore instance
         if (getArguments() != null) {
-            event = (com.example.nachosbusiness.events.Event) getArguments().getSerializable("event");
+            event = (Event) getArguments().getSerializable("event");
         }
         dbManager = new DBManager("events");
     }
@@ -297,6 +296,4 @@ public class EventDetailFragment extends Fragment {
 
         return view;
     }
-
-
 }
