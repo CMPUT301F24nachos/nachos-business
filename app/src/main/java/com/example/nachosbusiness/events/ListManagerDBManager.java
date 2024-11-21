@@ -26,8 +26,15 @@ import java.util.Map;
 public class ListManagerDBManager extends DBManager implements Serializable {
 
     ListManager listManager;
-
     private static final String TAG = "ListManagerDBManager";
+
+    public enum userStatus {
+        WAITLIST,
+        INVITELIST,
+        ACCEPTEDLIST,
+        CANCELLEDLIST,
+        NOTINALIST
+    }
 
     /**
      * Constructor for EventDBManager
@@ -42,40 +49,18 @@ public class ListManagerDBManager extends DBManager implements Serializable {
      */
     public interface ListManagerCallback {
         void onListManagerReceived(ListManager listManager);
-
         void onSingleListFound(List<String> eventIDs);
     }
 
-    /**
-     * Query the firebase db for a waitlist with specific eventID. Sets the waitList to be the eventID's
-     * saved waitlist.
-     *
-     * @param eventID eventID to query the DB
-     */
-    public void queryWaitList(String eventID, ListManagerCallback callback) {
-        this.setCollectionReference("lists");
-        this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e(TAG, error.toString());
-                    return;
-                }
-                if (querySnapshots != null) {
-                    for (QueryDocumentSnapshot doc : querySnapshots) {
-                        if (doc.getId().equals(eventID)) {
-                            ArrayList<Map<Object, Object>> waitlistData = (ArrayList<Map<Object, Object>>) doc.get("waitList");
-                            if (waitlistData != null) {
-                                listManager.setWaitList(waitlistData);
-                            }
-                        }
-                        Log.d(TAG, String.format("ListManager - ID %s fetched", doc.getId()));
-                        callback.onListManagerReceived(listManager);
-                    }
-                }
-            }
-        });
+    public interface EventDetailsCallback {
+        void onEventDetailsReceived(
+                ListManagerDBManager.userStatus status,
+                ListManager listManager
+        );
+
+        void onError(String errorMessage);
     }
+
 
     public void queryListsByUserID(String androidID, ListManagerCallback callback) {
         this.setCollectionReference("lists");
@@ -97,14 +82,13 @@ public class ListManagerDBManager extends DBManager implements Serializable {
 
                 for (QueryDocumentSnapshot doc : querySnapshots) {
                     ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
-                    ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
-                    ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
-                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+                    ArrayList<Object> invitedList = (ArrayList<Object>) doc.get("invitedList");
+                    ArrayList<Object> acceptedList = (ArrayList<Object>) doc.get("acceptedList");
+                    ArrayList<Object> cancelledList = (ArrayList<Object>) doc.get("canceledList");
 
                     if (isUserInList(waitList, androidID) ||
                             isUserInList(invitedList, androidID) ||
-                            isUserInList(acceptedList, androidID) ||
-                            isUserInList(cancelledList, androidID)) {
+                            isUserInList(acceptedList, androidID)) {
                         eventIDs.add(doc.getId());
                         callback.onSingleListFound(eventIDs);
                     }
@@ -113,6 +97,67 @@ public class ListManagerDBManager extends DBManager implements Serializable {
             }
         });
     }
+
+    /**
+     * Queries the list collection to get the current status of a user within the event
+     * and fetches the waitlist and other list details for the event.
+     *
+     * @param eventID eventID of the event
+     * @param androidID androidID of the user
+     * @param callback callback to handle the user status and list details
+     */
+    public void queryEventDetails(String eventID, String androidID, EventDetailsCallback callback) {
+        this.setCollectionReference("lists");
+
+        this.getCollectionReference().addSnapshotListener((querySnapshots, error) -> {
+            if (error != null) {
+                Log.e(TAG, "Firestore Error: " + error.getMessage());
+                callback.onError("Firestore Error: " + error.getMessage());
+                return;
+            }
+
+            if (querySnapshots == null || querySnapshots.isEmpty()) {
+                Log.d(TAG, "No documents found.");
+                callback.onEventDetailsReceived(userStatus.NOTINALIST, new ListManager());
+                return;
+            }
+
+            for (QueryDocumentSnapshot doc : querySnapshots) {
+                if (doc.getId().equals(eventID)) {
+                    // Extract list data
+                    ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
+                    ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
+                    ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
+                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+
+                    // Set data in ListManager
+                    ListManager listManager = new ListManager();
+                    listManager.setWaitList(waitList);
+                    listManager.setInvitedList(invitedList);
+                    listManager.setAcceptedList(acceptedList);
+                    listManager.setCanceledList(cancelledList);
+
+                    // Determine user status
+                    userStatus status = userStatus.NOTINALIST;
+                    if (isUserInList(acceptedList, androidID)) {
+                        status = userStatus.ACCEPTEDLIST;
+                    } else if (isUserInList(invitedList, androidID)) {
+                        status = userStatus.INVITELIST;
+                    } else if (isUserInList(waitList, androidID)) {
+                        status = userStatus.WAITLIST;
+                    }
+
+                    // Pass the result via the callback
+                    callback.onEventDetailsReceived(status, listManager);
+                    return;
+                }
+            }
+
+            // If no matching event is found
+            callback.onEventDetailsReceived(userStatus.NOTINALIST, new ListManager());
+        });
+    }
+
 
     /**
      * Helper method to check if a user with the given androidID is in the list.
@@ -131,19 +176,26 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                 if (userEntry.containsKey("user")) {
                     Object o = userEntry.get("user");
                     HashMap hashedUser = (HashMap) o;
-                    if (hashedUser.get("android_id") != null && androidID.equals(hashedUser.get("android_id"))){
+                    if (hashedUser.get("android_id") != null && androidID.equals(hashedUser.get("android_id"))) {
                         return true;
                     }
                 }
-            } else if (entry instanceof User) {
-                User user = (User) entry;
-                if (androidID.equals(user.getAndroid_id())) {
-                    return true;
+                else if (userEntry.containsKey("android_id")){
+                    HashMap hashedUser = (HashMap) entry;
+                    if (hashedUser.get("android_id") != null && androidID.equals(hashedUser.get("android_id"))) {
+                        return true;
+                    }
+
                 }
             }
+
+
         }
-        return false;
+
+        return false; // User not found
     }
-}
+    }
+
+
 
 

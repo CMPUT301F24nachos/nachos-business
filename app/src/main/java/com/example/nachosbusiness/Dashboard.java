@@ -97,11 +97,6 @@ public class Dashboard extends AppCompatActivity {
 
         listManagerDBManager.queryListsByUserID(androidID, new ListManagerDBManager.ListManagerCallback() {
             @Override
-            public void onListManagerReceived(ListManager listManager) {
-                // not applicable here...
-            }
-
-            @Override
             public void onSingleListFound(List<String> eventIDs) {
                 if (!eventIDs.isEmpty()) {
                     String eventID = eventIDs.get(0);
@@ -136,6 +131,11 @@ public class Dashboard extends AppCompatActivity {
                     }
                 }
             }
+            @Override
+            public void onListManagerReceived(ListManager listManager) {
+                // not applicable here...
+            }
+
         });
 
 
