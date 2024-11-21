@@ -1,5 +1,8 @@
 package com.example.nachosbusiness.events;
 
+import android.net.Uri;
+import android.util.Log;
+
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.CollectionReference;
@@ -156,16 +159,30 @@ public class ListManager {
      */
     public Boolean moveToInvitedList(User user) {
         Map<Object, Object> userEntry = waitList.stream()
-                .filter(entry -> entry.containsKey("userID") && Objects.equals(entry.get("userID"), user.getAndroid_id()))
+                .filter(entry -> entry.containsKey("user"))
+                .filter(entry -> {
+                    Object userObject = entry.get("user");
+
+                    if (userObject instanceof User) {
+                        return Objects.equals(((User) userObject).getAndroid_id(), user.getAndroid_id());
+                    }
+
+                    else if (userObject instanceof Map) {
+                        Object androidId = ((Map<?, ?>) userObject).get("android_id");
+                        return Objects.equals(androidId, user.getAndroid_id());
+                    }
+                    return false;
+                })
                 .findFirst()
                 .orElse(null);
+
         if (userEntry != null) {
             waitList.remove(userEntry);
             invitedList.add(user);
 
             if (!testMode) {
-                dbManager.getCollectionReference().document(listManagerID).update("waitlist", FieldValue.arrayRemove(userEntry));
-                dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayUnion(user.getAndroid_id()));
+                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
+                dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayUnion(user));
             }
             return true;
         }
@@ -177,17 +194,43 @@ public class ListManager {
      * @param user user to transfer
      * @return true for successful transfer
      */
-    public Boolean moveToAcceptedList(User user)
-    {
-        if (invitedList.contains(user))
-        {
-            invitedList.remove(user);
-            acceptedList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayRemove(user.getAndroid_id()));
-            dbManager.getCollectionReference().document(listManagerID).update("acceptedlist", FieldValue.arrayUnion(user.getAndroid_id()));
-            return true;
+    public Boolean moveToAcceptedList(User user) {
+        Object foundEntry = null;
+
+        for (Object entry : invitedList) {
+            if (entry instanceof User) {
+                if (((User) entry).getAndroid_id().equals(user.getAndroid_id())) {
+                    foundEntry = entry;
+                    break;
+                }
+            }
+            // Will always be a map type, but i kept the user stuff just incase???
+            else if (entry instanceof Map) {
+                Map<String, Object> mapEntry = (Map<String, Object>) entry;
+                Object androidId = mapEntry.get("android_id");
+                if (androidId != null && androidId.equals(user.getAndroid_id())) {
+                    foundEntry = entry;
+                    break;
+                }
+            }
         }
-        return false;
+
+        if (foundEntry == null) {
+            return false;
+        }
+
+        invitedList.remove(foundEntry);
+
+        if (acceptedList == null) {
+            acceptedList = new ArrayList<>();
+        }
+        acceptedList.add(user);
+
+        if (!testMode) {
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
+            dbManager.getCollectionReference().document(listManagerID).update("acceptedList", FieldValue.arrayUnion(user));
+        }
+        return true;
     }
 
     /**
@@ -195,18 +238,45 @@ public class ListManager {
      * @param user user to transfer
      * @return true for successful transfer
      */
-    public Boolean moveToCanceledList(User user)
-    {
-        if (invitedList.contains(user))
-        {
-            invitedList.remove(user);
-            canceledList.add(user);
-            dbManager.getCollectionReference().document(listManagerID).update("invitedlist", FieldValue.arrayRemove(user.getAndroid_id()));
-            dbManager.getCollectionReference().document(listManagerID).update("canceledlist", FieldValue.arrayUnion(user.getAndroid_id()));
-            return true;
+    public Boolean moveToCanceledList(User user) {
+        Object foundEntry = null;
+
+        for (Object entry : invitedList) {
+            if (entry instanceof User) {
+                if (((User) entry).getAndroid_id().equals(user.getAndroid_id())) {
+                    foundEntry = entry;
+                    break;
+                }
+            }
+            // Will always be a map type, but i kept the user stuff just incase???
+            else if (entry instanceof Map) {
+                Map<String, Object> mapEntry = (Map<String, Object>) entry;
+                Object androidId = mapEntry.get("android_id");
+                if (androidId != null && androidId.equals(user.getAndroid_id())) {
+                    foundEntry = entry;
+                    break;
+                }
+            }
         }
-        return false;
+
+        if (foundEntry == null) {
+            return false;
+        }
+
+        invitedList.remove(foundEntry);
+
+        if (canceledList == null) {
+            canceledList = new ArrayList<>();
+        }
+        canceledList.add(user);
+
+        if (!testMode) {
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
+            dbManager.getCollectionReference().document(listManagerID).update("canceledList", FieldValue.arrayUnion(user));
+        }
+        return true;
     }
+
 
     /**
      * Randomly selects a given number of users from the wait list
@@ -263,8 +333,36 @@ public class ListManager {
         return waitList;
     }
 
+    /**
+     * Sets the waitlist in the listmanager
+     * @param dBWaitList waitlist from the db
+     */
     public void setWaitList(ArrayList<Map<Object, Object>> dBWaitList) {
         this.waitList = dBWaitList;
+    }
+
+    /**
+     * sets the invitelist in the list manager
+     * @param invitedList invite list from db
+     */
+    public void setInvitedList(ArrayList<User> invitedList) {
+        this.invitedList = invitedList;
+    }
+
+    /**
+     * sets the invitelist in the list manager
+     * @param acceptedList accepted list from db
+     */
+    public void setAcceptedList(ArrayList<User> acceptedList) {
+        this.acceptedList = acceptedList;
+    }
+
+    /**
+     * sets the invitelist in the list manager
+     * @param canceledList cancelled list from db
+     */
+    public void setCanceledList(ArrayList<User> canceledList) {
+        this.canceledList = canceledList;
     }
 
     /**
@@ -314,4 +412,6 @@ public class ListManager {
     public void setDbManager(DBManager dbManager) {
         this.dbManager = dbManager;
     }
+
+
 }
