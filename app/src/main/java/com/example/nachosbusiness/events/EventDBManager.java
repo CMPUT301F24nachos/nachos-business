@@ -226,23 +226,6 @@ public class EventDBManager extends DBManager implements Serializable {
                                 event.setWaitListCloseDate(waitListCloseDate);
                                 event.setHasGeolocation(hasGeolocation);
                                 event.setAttendeeSpots(attendeeSpotsLong.intValue());
-
-
-//                                Event event = new Event(
-//                                        eventID,
-//                                        name,
-//                                        organizerID,
-//                                        facility,
-//                                        description,
-//                                        startDateTime,
-//                                        endDateTime,
-//                                        frequency,
-//                                        waitListOpenDate,
-//                                        waitListCloseDate,
-//                                        costLong.intValue(),
-//                                        hasGeolocation,
-//                                        attendeeSpotsLong.intValue()
-//                                );
                                 eventsList.add(event);
                             }
                         }
