@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.ListManager;
+import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
 
 import java.util.ArrayList;
@@ -59,29 +62,39 @@ public class WaitlistArrayAdapter extends ArrayAdapter<User> {
         this.event = event;
     }
 
-    private void setUserStatusButton(User user, Button userStatusButton)
-    {
-        if (event.getListManager().getInvitedList().contains(user))
-        {
-            userStatusButton.setVisibility(View.VISIBLE);
-            userStatusButton.setText("Not responded...");
-            userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.lightButton)));
-        }
-        else if (event.getListManager().getAcceptedList().contains(user))
-        {
-            userStatusButton.setVisibility(View.VISIBLE);
-            userStatusButton.setText("Accepted");
-            userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.greenButton)));
-        }
-        else if (event.getListManager().getCanceledList().contains(user))
-        {
-            userStatusButton.setVisibility(View.VISIBLE);
-            userStatusButton.setText("Declined");
-            userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.redButton)));
-        }
-        else
-        {
-            userStatusButton.setVisibility(View.GONE);
-        }
+    private void setUserStatusButton(User user, Button userStatusButton) {
+        ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
+        listManagerDBManager.queryEventDetails(event.getEventID(), user.getAndroid_id(), new ListManagerDBManager.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsReceived(ListManagerDBManager.userStatus status, ListManager newListManager) {
+                if (status == ListManagerDBManager.userStatus.INVITELIST)
+                {
+                    userStatusButton.setVisibility(View.VISIBLE);
+                    userStatusButton.setText("Not responded...");
+                    userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.lightButton)));
+                }
+                else if (status == ListManagerDBManager.userStatus.ACCEPTEDLIST)
+                {
+                    userStatusButton.setVisibility(View.VISIBLE);
+                    userStatusButton.setText("Accepted");
+                    userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.greenButton)));
+                }
+                else if (status == ListManagerDBManager.userStatus.CANCELLEDLIST)
+                {
+                    userStatusButton.setVisibility(View.VISIBLE);
+                    userStatusButton.setText("Declined");
+                    userStatusButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.redButton)));
+                }
+                else
+                {
+                    userStatusButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(getContext(), "Could not fetch user status",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

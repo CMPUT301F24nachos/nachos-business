@@ -2,6 +2,7 @@ package com.example.nachosbusiness.events;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.User;
@@ -279,7 +280,7 @@ public class ListManager {
 
 
     /**
-     * Randomly selects a given number of users from the wait list
+     * Randomly selects a given number of users from the wait list and moves them to the invited list
      * @param count number of users to select
      * @return list of selected users
      */
@@ -291,9 +292,27 @@ public class ListManager {
 
         ArrayList<User> selectedUsers = new ArrayList<>();
         for (Map<Object, Object> entry : selectedEntries) {
-            User user = (User) entry.get("user");
-            if (user != null) {
-                selectedUsers.add(user);
+            Object userObject = entry.get("user");
+
+            if (userObject instanceof User) {
+                selectedUsers.add((User) userObject);
+                moveToInvitedList((User) userObject);
+            }
+            else if (userObject instanceof Map)
+            {
+                try {
+                    User user;
+                    Map<?, ?> userMap = (Map<?, ?>)userObject;
+                    user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
+                    selectedUsers.add(user);
+                    moveToInvitedList(user);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
         return selectedUsers;
@@ -323,6 +342,12 @@ public class ListManager {
                 .findFirst()
                 .orElse(null);
         return userEntry != null;
+    }
+
+    public void initializeManagers(String eventID) {
+        this.listManagerID = eventID;
+        this.dbManager = new DBManager("lists");
+        dbManager.setEntry(eventID, this);
     }
 
     /**
@@ -373,8 +398,6 @@ public class ListManager {
         return invitedList;
     }
 
-    public void setInvitedList(ArrayList<User> invitedList) { this.invitedList = invitedList; }
-
     /**
      * Getter for accepted list
      * @return accepted list
@@ -383,15 +406,11 @@ public class ListManager {
         return acceptedList;
     }
 
-    public void setAcceptedList(ArrayList<User> acceptedList) { this.acceptedList = acceptedList; }
-
     /**
      * Getter for cancelled list
      * @return cancelled list
      */
     public ArrayList<User> getCanceledList() { return canceledList; }
-
-    public void setCanceledList(ArrayList<User> canceledList) { this.canceledList = canceledList; }
 
     /**
      * Set the number of available spots in the wishlist
