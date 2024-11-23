@@ -61,6 +61,52 @@ public class ListManagerDBManager extends DBManager implements Serializable {
         void onError(String errorMessage);
     }
 
+    /**
+     * Query the firebase db for a waitlist with specific eventID. Sets the waitList to be the eventID's
+     * saved waitlist.
+     *
+     * @param eventID eventID to query the DB
+     */
+    public void queryLists(String eventID, ListManagerCallback callback) {
+        this.setCollectionReference("lists");
+        this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                    return;
+                }
+                if (querySnapshots != null) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        if (doc.getId().equals(eventID)) {
+                            ArrayList<Map<Object, Object>> waitlistData = (ArrayList<Map<Object, Object>>) doc.get("waitList");
+                            if (waitlistData != null) {
+                                listManager.setWaitList(waitlistData);
+                            }
+
+                            ArrayList<User> invitedListData = (ArrayList<User>) doc.get("invitedList");
+                            if (invitedListData != null) {
+                                listManager.setInvitedList(invitedListData);
+                            }
+
+                            ArrayList<User> acceptedListData = (ArrayList<User>) doc.get("acceptedList");
+                            if (acceptedListData != null) {
+                                listManager.setAcceptedList(acceptedListData);
+                            }
+
+                            ArrayList<User> canceledListData = (ArrayList<User>) doc.get("canceledList");
+                            if (canceledListData != null) {
+                                listManager.setCanceledList(canceledListData);
+                            }
+                            Log.d(TAG, String.format("ListManager - ID %s fetched", doc.getId()));
+
+                        }
+                    }
+                }
+                callback.onListManagerReceived(listManager);
+            }
+        });
+    }
 
     public void queryListsByUserID(String androidID, ListManagerCallback callback) {
         this.setCollectionReference("lists");

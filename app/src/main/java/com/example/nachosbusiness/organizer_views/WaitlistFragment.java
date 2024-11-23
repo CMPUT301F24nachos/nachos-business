@@ -1,13 +1,18 @@
 package com.example.nachosbusiness.organizer_views;
 
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class WaitlistFragment extends Fragment {
@@ -37,6 +43,8 @@ public class WaitlistFragment extends Fragment {
     private ArrayList<User> entrants;
     private ListManagerDBManager listManagerDBManager;
     private ListManager listManager;
+    private ListView waitlistView;
+    private int sampleCount;
 
     // event has to be set with a bundle??
 
@@ -45,7 +53,7 @@ public class WaitlistFragment extends Fragment {
         View view =  inflater.inflate(R.layout.waitlist, container, false);
 
 
-        ListView waitlistView = view.findViewById(R.id.user_list);
+        waitlistView = view.findViewById(R.id.user_list);
 
         // bundle to get selected event in list
         Bundle bundle  = getArguments();
@@ -53,23 +61,18 @@ public class WaitlistFragment extends Fragment {
         event = (Event) bundle.getSerializable("event");
         assert event != null;
 
+        entrants = new ArrayList<>();
         listManagerDBManager = new ListManagerDBManager();
         loadEntrants();
 
-        entrants = new ArrayList<>();
-
-        adapter = new WaitlistArrayAdapter(getActivity(), entrants);
-        adapter.setEvent(event);
-
-        if (entrants != null)
-        {
-            waitlistView.setAdapter(adapter);
-
-        }
 
         FloatingActionButton menuFab = view.findViewById(R.id.menu_fab);
         menuFab.setOnClickListener(v -> {
-            // send invites
+            if (sampleCount > 0) {
+                resampleDialog();
+            } else {
+                sampleDialog();
+            }
         });
 
         ImageButton menuButton = view.findViewById(R.id.menu);
@@ -94,40 +97,136 @@ public class WaitlistFragment extends Fragment {
 
     }
 
+    private void sampleDialog() {
+        final EditText countInput = new EditText(getContext());
+        countInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        builder.setView(countInput)
+                .setTitle("Sample Entrants")
+                .setPositiveButton("Ok", (dialog, which) ->{
+                    if (listManager == null)
+                    {
+                        Toast.makeText(getContext(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    int count = Integer.parseInt(countInput.getText().toString());
+                    if (count > listManager.getWaitList().size())
+                    {
+                        Toast.makeText(getContext(), "Sample cannot be greater than number of entrants in waitlist!", Toast.LENGTH_SHORT).show();
+                    } else if (count < 0) {
+                        Toast.makeText(getContext(), "Sample must be greater than zero!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        sampleCount = count;
+                        sampleWaitlist(count);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        builder.show();
+    }
+
+    private void resampleDialog() {
+        final TextView resampleWarning = new TextView(getContext());
+        resampleWarning.setText("WARNING: Cancel all declined and not-replied entrants and resample from waitlist?");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        builder.setView(resampleWarning)
+                .setTitle("Resample Entrants")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    resampleWaitlist();
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        builder.show();
+    }
+
+
+    // sample for the count
+    // needs some sort of resample as well
+    private void sampleWaitlist(int count) {
+        if (listManager != null) {
+            if (listManager.sampleWaitList(count) != null)
+            {
+                sampleCount = count;
+                adapter.notifyDataSetChanged();
+            }
+        } else {
+            Toast.makeText(getActivity(), "Failed to sample entrants", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // cancel all of the declined users, then resample based on how many declined
+    // count - accepted should be the number to resample (the issue with this, is that not-replied users are ignored)
+    private void resampleWaitlist() {
+        if (listManager != null) {
+            if (sampleCount - listManager.getAcceptedList().size() < 0)
+            {
+                Toast.makeText(getContext(), "There are no spots remaining!", Toast.LENGTH_SHORT).show();
+            } else if (listManager.sampleWaitList(sampleCount - listManager.getAcceptedList().size()) != null) {
+                adapter.notifyDataSetChanged();
+            }
+        } else {
+            Toast.makeText(getContext(), "Failed to resample entrants", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void loadEntrants() {
         listManagerDBManager.queryLists(event.getEventID(), new ListManagerDBManager.ListManagerCallback() {
             @Override
-            public void onListManagerReceived(ListManager listManager) {
-                if (listManager!= null) {
+            public void onListManagerReceived(ListManager newListManager) {
+                if (newListManager!= null) {
+                    listManager = newListManager;
+                    listManager.initializeManagers(event.getEventID());
                     entrants.clear();
 
-                    for (Map<Object, Object> entry : listManager.getWaitList())
+                    for (Map<Object, Object> entry : newListManager.getWaitList())
                     {
-                        User arr[] = new User[0];
-                        arr = entry.keySet().toArray(arr);
-                        entrants.add(arr[0]);
+                        Object userObject = entry.get("user");
+                        User user;
+
+                        if (userObject instanceof User) {
+                            entrants.add((User) userObject);
+                        }
+                        else if (userObject instanceof Map)
+                        {
+                            try {
+                                Map<?, ?> userMap = (Map<?, ?>)userObject;
+                                user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
+                                entrants.add(user);
+                            } catch (Exception e) {
+                                Toast.makeText(getActivity(), "Failed to load entrant from waitlist", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(), "Failed to load entrant from waitlist", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
-                    entrants.addAll(listManager.getInvitedList());
-                    entrants.addAll(listManager.getAcceptedList());
-                    entrants.addAll(listManager.getCanceledList());
+                    entrants.addAll(newListManager.getInvitedList());
+                    entrants.addAll(newListManager.getAcceptedList());
+                    entrants.addAll(newListManager.getCanceledList());
 
-                    adapter.notifyDataSetChanged();
+                    if (adapter == null) {
+                        adapter = new WaitlistArrayAdapter(getActivity(), entrants);
+                        adapter.setEvent(event);
+                        waitlistView.setAdapter(adapter);
+                    } else {
+                        adapter.notifyDataSetChanged();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
                 }
             }
+
+            @Override
+            public void onSingleListFound(List<String> eventIDs) {
+                // not applicable
+            }
         });
-    }
-
-    // create new instance of the view book fragment
-    static WaitlistFragment newInstance(Event event)
-    {
-        Bundle args = new Bundle();
-        args.putSerializable("event", event);
-
-        WaitlistFragment fragment = new WaitlistFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 }
