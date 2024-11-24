@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.users.UpdateProfile;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.utils.TimePickerFragment;
@@ -121,11 +123,6 @@ public class EditEventFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // TODO This needs to correctly open up images and save it. Likely give it its own method.
-        btnUploadPoster.setOnClickListener(v -> {
-            uploadedPosterPath = "path/to/uploaded/poster";
-            Toast.makeText(getActivity(), "Poster uploaded", Toast.LENGTH_SHORT).show();
-        });
 
         editGeolocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -289,6 +286,13 @@ public class EditEventFragment extends Fragment {
                         .setNegativeButton("No", null)  // If the user cancels, just close the dialog
                         .create()
                         .show();
+            }
+        });
+
+        btnUploadPoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToUpdateProfile();
             }
         });
 
@@ -493,5 +497,31 @@ public class EditEventFragment extends Fragment {
                 dbManager.setEntry(eventId, event);
             }
         });
+    }
+
+    private void navigateToUpdateProfile() {
+        if (TextUtils.isEmpty(eventId)) {
+            Log.e("UploadPoster", "Event ID is null or empty");
+            Toast.makeText(getActivity(), "Event ID is missing!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putString("POSTER_PATH", eventId);
+
+        EditEventImageFragment eventImageFragment = new EditEventImageFragment();
+        eventImageFragment.setArguments(bundle);
+
+        requireActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, eventImageFragment) // Ensure the ID matches your layout
+                .addToBackStack(null)
+                .commit();
+
+        View fragmentContainer = getView().findViewById(R.id.fragment_container);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+        }
     }
 }

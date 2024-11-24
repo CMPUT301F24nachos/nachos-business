@@ -263,6 +263,30 @@ public class DBManager {
         });
     }
 
+    public void getEventImage(String eventId, ImageView imageView, Context context, Runnable onImageLoaded) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    ((Activity) context).runOnUiThread(() -> {
+                        imageView.setImageBitmap(bitmap);
+                        if (onImageLoaded != null) {
+                            onImageLoaded.run();  // Execute the callback only if it's provided
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+        });
+    }
+
     public void deleteProfileImage(String androidId, ShowProfile context) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
@@ -273,6 +297,20 @@ public class DBManager {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to delete profile image.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
+    }
+
+    public void deleteEventImage(String eventId, Context context) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        profileImageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Event poster deleted successfully.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to delete event poster.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 });
     }
