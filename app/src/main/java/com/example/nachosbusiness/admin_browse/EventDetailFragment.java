@@ -36,8 +36,6 @@ public class EventDetailFragment extends Fragment {
     private FirebaseFirestore db;
     private DBManager dbManager;
 
-
-
     /**
      * A fragment that displays the details of a specific event.
      * Edit or remove the event, the QR code, and the facilites
@@ -88,7 +86,6 @@ public class EventDetailFragment extends Fragment {
         removeFacility.setVisibility(GONE);
         TextView eventName = view.findViewById(R.id.event_name);
         TextView eventDescription = view.findViewById(R.id.event_description);
-//            TextView eventOrganizer = view.findViewById(R.id.event_organizer);
         TextView eventDate = view.findViewById(R.id.event_date);
         ImageView qrCode = view.findViewById(R.id.event_qr_code);
         TextView facilityLocation = view.findViewById(R.id.facility_location);
@@ -97,7 +94,7 @@ public class EventDetailFragment extends Fragment {
         backButton.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Return to Admin List")
-                    .setMessage("Do you want to go back to the Admin list?")
+                    .setMessage("Do you want to go back?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Navigate back to Profile List Fragment
@@ -123,6 +120,7 @@ public class EventDetailFragment extends Fragment {
                             removeQR.setVisibility(View.VISIBLE);
                             removeEvent.setVisibility(View.VISIBLE);
                             removeFacility.setVisibility(View.VISIBLE);
+
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -146,17 +144,10 @@ public class EventDetailFragment extends Fragment {
                                     .get()
                                     .addOnSuccessListener(querySnapshot -> {
                                         if (!querySnapshot.isEmpty()) {
-                                            // Document found, proceed to delete
                                             DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
                                             String documentID = documentSnapshot.getId(); // Get the document ID
-
-                                            // Create an instance of DBManager for the "events" collection
                                             DBManager dbManager = new DBManager("events");
-
-                                            // Delete the event document
                                             dbManager.deleteEntry(documentID);
-
-                                            // Optionally, update the UI or give a success message
                                             Toast.makeText(getActivity(), "Event removed successfully.", Toast.LENGTH_SHORT).show();
 
                                             getActivity().getSupportFragmentManager().popBackStack();
@@ -195,14 +186,13 @@ public class EventDetailFragment extends Fragment {
                                             // Document found, proceed to update QR code field
                                             DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
                                             String documentID = documentSnapshot.getId();
-
                                             // Update the 'qrCode' field to null in the event document
                                             db.collection("events").document(documentID)
                                                     .update("qrCode", null)
                                                     .addOnSuccessListener(aVoid -> {
                                                         // Hide the QR code ImageView
                                                         qrCode.setVisibility(View.GONE); // Hide the QR code image
-
+                                                        removeQR.setVisibility(View.GONE);
                                                         Toast.makeText(getActivity(), "QR removed successfully.", Toast.LENGTH_SHORT).show();
                                                     })
                                                     .addOnFailureListener(e -> {
@@ -232,6 +222,8 @@ public class EventDetailFragment extends Fragment {
                         if (event != null) {
                             String eventID = event.getEventID();
                             Log.d("RemoveFacility", "Attempting to remove Facility for eventID: " + eventID);
+// TODO: change what happens when facility is deleted
+                            //TODO: Cascade deletes
 
                             // Query Firestore for the event document
                             db.collection("events")
@@ -251,6 +243,7 @@ public class EventDetailFragment extends Fragment {
 
                                                         facilityLocation.setText("No Facility");
                                                         facilityName.setText("No Facility");
+                                                        removeFacility.setVisibility(GONE);
 
                                                         Toast.makeText(getActivity(), "Facility removed successfully.", Toast.LENGTH_SHORT).show();
                                                     })
@@ -277,7 +270,6 @@ public class EventDetailFragment extends Fragment {
 
             eventName.setText(event.getName());
             eventDescription.setText(event.getDescription());
-//            eventOrganizer.setText(event.getOrganizerID());
 
             facilityLocation.setText(event.getFacility().getLocation());
             facilityName.setText(event.getFacility().getName());

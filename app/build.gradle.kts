@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.rules)
 
     testImplementation(libs.junit)
