@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,6 +15,7 @@ import java.util.List;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 
 
@@ -74,7 +76,11 @@ public class Browse extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Return to Dashboard")
                     .setMessage("Do you want to go back to the dashboard?")
-                    .setPositiveButton("Yes", (dialog, which) -> finish())
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        Intent intent = new Intent(Browse.this, Dashboard.class);
+                        startActivity(intent);
+                        finish();
+                    })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
