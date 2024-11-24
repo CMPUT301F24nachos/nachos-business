@@ -91,10 +91,9 @@ public class CreateEventFragment extends Fragment {
                                         requireContext().getContentResolver().openInputStream(selectedImageUri));
                                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true); // Example size
                                 profileImage.setImageBitmap(resizedBitmap);
-
+                                uploadedPosterPath = UUID.randomUUID().toString();
                                 profileImage.setVisibility(View.VISIBLE);
                                 closeButton.setVisibility(View.VISIBLE);
-                                uploadedPosterPath = "hi";
 
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -330,7 +329,7 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        if (uploadedPosterPath == null) {
+        if (uploadedPosterPath == null || uploadedPosterPath.isEmpty()) {
             Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -429,19 +428,17 @@ public class CreateEventFragment extends Fragment {
                 Event event;
                 if (waitlist > 0)
                 {
-                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+                    event = new Event(uploadedPosterPath, eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
                 }
                 else
                 {
-                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+                    event = new Event(uploadedPosterPath, eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
                 }
                 dbManager.setEntry(event.getEventID(), event);
-                if (selectedImageUri != null) {
-                    Log.d("Created event", "selectedImageUri: " + selectedImageUri);
-                    dbManager.uploadEventImage(getContext(), event.getEventID(), selectedImageUri);
-                    isImageMarkedForUpload = false;
-                }
             }
         });
+        if (selectedImageUri != null) {
+            dbManager.uploadEventImage(getContext(), uploadedPosterPath, selectedImageUri);
+        }
     }
 }
