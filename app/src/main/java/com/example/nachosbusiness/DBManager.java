@@ -217,13 +217,25 @@ public class DBManager {
 
             uploadTask.addOnSuccessListener(taskSnapshot -> {
                 profileImagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    Toast.makeText(context, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    // Use getApplicationContext() to avoid null context issues
+                    Context appContext = context.getApplicationContext();
+                    if (appContext != null) {
+                        Toast.makeText(appContext, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    }
                 });
             }).addOnFailureListener(e -> {
-                Toast.makeText(context, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Use getApplicationContext() to avoid null context issues
+                Context appContext = context.getApplicationContext();
+                if (appContext != null) {
+                    Toast.makeText(appContext, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             });
         } else {
-            Toast.makeText(context, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            // Use getApplicationContext() to avoid null context issues
+            Context appContext = context.getApplicationContext();
+            if (appContext != null) {
+                Toast.makeText(appContext, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
