@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -164,19 +165,28 @@ public class Dashboard extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
-            String scannedData = result.getContents();
-            Intent intent = new Intent(Dashboard.this, EventRegistration.class);
-            intent.putExtra("eventID", scannedData);
-            intent.putExtra("androidID", androidID);
-            startActivity(intent);
-        }
-        else{
-            Intent intent = new Intent(Dashboard.this, Dashboard.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
+
+        if (result != null) {
+            Log.d("Dashboard", "QR Scan Result: " + result.toString());
+            Log.d("Dashboard", "QR Scan Contents: " + result.getContents());
+            if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
+                String scannedData = result.getContents();
+                Intent intent = new Intent(Dashboard.this, EventRegistration.class);
+                intent.putExtra("eventID", scannedData);
+                intent.putExtra("androidID", androidID);
+                startActivity(intent);
+            } else {
+                // Invalid or no QR code scanned
+                Intent intent = new Intent(Dashboard.this, Dashboard.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        } else {
+            Log.d("Dashboard", "IntentResult is null.");
+            Toast.makeText(this, "Scan cancelled or failed", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -70,11 +71,38 @@ public class CreateEventFragment extends Fragment {
     private Date startTimeDate, endTimeDate, oDate, cDate;
     private boolean isImageMarkedForUpload = false;
     private Uri selectedImageUri;
+    private ActivityResultLauncher<Intent> launchSomeActivity;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.activity_create_event, container, false);
+
+        launchSomeActivity = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null && data.getData() != null) {
+                            selectedImageUri = data.getData();
+                            try {
+                                Bitmap bitmap = BitmapFactory.decodeStream(
+                                        requireContext().getContentResolver().openInputStream(selectedImageUri));
+                                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true); // Example size
+                                profileImage.setImageBitmap(resizedBitmap);
+
+                                profileImage.setVisibility(View.VISIBLE);
+                                closeButton.setVisibility(View.VISIBLE);
+                                uploadedPosterPath = "hi";
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Toast.makeText(requireContext(), "Failed to load image", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
 
         initializeViews(view);
 
@@ -83,35 +111,14 @@ public class CreateEventFragment extends Fragment {
         return view;
     }
 
-    ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data != null && data.getData() != null) {
-                        selectedImageUri = data.getData();
-                        try {
-                            // Use requireContext() to get the content resolver
-                            Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(
-                                    requireContext().getContentResolver(), selectedImageUri);
-
-                            profileImage.setImageBitmap(selectedImageBitmap);
-                            profileImage.setVisibility(View.VISIBLE);
-                            closeButton.setVisibility(View.VISIBLE);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(requireContext(), "Failed to load image", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
-
     private void imageChooser() {
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
-        launchSomeActivity.launch(i);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        if (intent.resolveActivity(requireContext().getPackageManager()) != null) {
+            launchSomeActivity.launch(intent);
+        } else {
+            Toast.makeText(requireContext(), "No app available to handle image selection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initializeViews(View view) {
@@ -150,11 +157,6 @@ public class CreateEventFragment extends Fragment {
 
     private void setupListeners() {
         // TODO This needs to correctly open up images and save it. Likely give it its own method.
-        btnUploadPoster.setOnClickListener(v -> {
-            uploadedPosterPath = "path/to/uploaded/poster";
-            Toast.makeText(getActivity(), "Poster uploaded", Toast.LENGTH_SHORT).show();
-        });
-
         editGeolocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 Toast.makeText(getActivity(), "Geolocation enabled", Toast.LENGTH_SHORT).show();
@@ -435,7 +437,7 @@ public class CreateEventFragment extends Fragment {
                 }
                 dbManager.setEntry(event.getEventID(), event);
                 if (selectedImageUri != null) {
-                    Log.d("UpdateProfile", "selectedImageUri: " + selectedImageUri);
+                    Log.d("Created event", "selectedImageUri: " + selectedImageUri);
                     dbManager.uploadEventImage(getContext(), event.getEventID(), selectedImageUri);
                     isImageMarkedForUpload = false;
                 }
