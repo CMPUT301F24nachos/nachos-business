@@ -1,13 +1,8 @@
 package com.example.nachosbusiness.events;
 
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.User;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -39,7 +34,7 @@ public class ListManager {
     private DBManager dbManager;
 
     /**
-     * Empty Constructor forfirebase db queries.
+     * Empty Constructor for firebase db queries.
      */
     public ListManager(){
 
@@ -182,8 +177,13 @@ public class ListManager {
             invitedList.add(user);
 
             if (!testMode) {
-                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
-                dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayUnion(user));
+                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayUnion(user));
+                            }
+                        });
             }
             return true;
         }
@@ -297,21 +297,17 @@ public class ListManager {
             if (userObject instanceof User) {
                 selectedUsers.add((User) userObject);
                 moveToInvitedList((User) userObject);
-            }
-            else if (userObject instanceof Map)
-            {
+            } else if (userObject instanceof Map) {
                 try {
                     User user;
-                    Map<?, ?> userMap = (Map<?, ?>)userObject;
+                    Map<?, ?> userMap = (Map<?, ?>) userObject;
                     user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
                     selectedUsers.add(user);
                     moveToInvitedList(user);
                 } catch (Exception e) {
                     return null;
                 }
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
