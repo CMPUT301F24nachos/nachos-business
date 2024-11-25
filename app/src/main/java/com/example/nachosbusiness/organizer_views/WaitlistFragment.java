@@ -146,9 +146,7 @@ public class WaitlistFragment extends Fragment {
 //            listManager.addToWaitList(user, geoPoint);
 
             if (cancelNotReplied) {
-                for (User entrant : listManager.getInvitedList()) {
-                    listManager.moveToCanceledList(entrant);
-                }
+                listManager.moveAllToCanceledList();
             }
 
             if (event.getAttendeeSpots() - listManager.getAcceptedList().size() <= 0) {

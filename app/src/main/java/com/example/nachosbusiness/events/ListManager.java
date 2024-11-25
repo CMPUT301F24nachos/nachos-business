@@ -228,8 +228,16 @@ public class ListManager {
         acceptedList.add(user);
 
         if (!testMode) {
-            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
-            dbManager.getCollectionReference().document(listManagerID).update("acceptedList", FieldValue.arrayUnion(user));
+            /* TODO: This probably won't work because to remove an element from an array in firebase the exact value must be given, however foundEntry is likely not the exact value.
+                A possible solution is to retrieve the value from the db, then use the retrieved value to remove it. (this also applies to moveToCanceledList())
+             */
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("acceptedList", FieldValue.arrayUnion(user));
+                        }
+                    });
         }
         return true;
     }
@@ -272,9 +280,31 @@ public class ListManager {
         canceledList.add(user);
 
         if (!testMode) {
-            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
-            dbManager.getCollectionReference().document(listManagerID).update("canceledList", FieldValue.arrayUnion(user));
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(user))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("canceledList", FieldValue.arrayUnion(user));
+                        }
+                    });
         }
+        return true;
+    }
+
+    public boolean moveAllToCanceledList() {
+        canceledList.addAll(invitedList);
+        invitedList.clear();
+
+        if (!testMode) {
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", invitedList)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("canceledList", canceledList);
+                        }
+                    });
+        }
+
         return true;
     }
 
