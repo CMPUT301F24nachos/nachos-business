@@ -1,6 +1,6 @@
 package com.example.nachosbusiness.events;
 
-import com.example.nachosbusiness.QRUtil;
+import com.example.nachosbusiness.utils.QRUtil;
 import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.Timestamp;
 

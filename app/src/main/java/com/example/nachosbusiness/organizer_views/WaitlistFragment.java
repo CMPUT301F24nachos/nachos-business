@@ -2,7 +2,6 @@ package com.example.nachosbusiness.organizer_views;
 
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,22 +17,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.GeoPoint;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
 
 public class WaitlistFragment extends Fragment {
 
@@ -46,7 +41,6 @@ public class WaitlistFragment extends Fragment {
     private ListView waitlistView;
     private int sampleCount;
 
-    // event has to be set with a bundle??
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,10 +62,15 @@ public class WaitlistFragment extends Fragment {
 
         FloatingActionButton menuFab = view.findViewById(R.id.menu_fab);
         menuFab.setOnClickListener(v -> {
-            if (sampleCount > 0) {
-                resampleDialog();
-            } else {
+            if (listManager == null)
+            {
+                Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (listManager.getInvitedList().isEmpty()) {
                 sampleDialog();
+            } else {
+                resampleDialog();
             }
         });
 
@@ -82,8 +81,7 @@ public class WaitlistFragment extends Fragment {
 
         ImageButton backButton = view.findViewById(R.id.back);
         backButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), Dashboard.class);
-            startActivity(intent);
+            requireActivity().getSupportFragmentManager().popBackStack();
         });
 
         return view;
@@ -112,15 +110,25 @@ public class WaitlistFragment extends Fragment {
                         return;
                     }
 
-                    int count = Integer.parseInt(countInput.getText().toString());
-                    if (count > listManager.getWaitList().size())
-                    {
-                        Toast.makeText(getContext(), "Sample cannot be greater than number of entrants in waitlist!", Toast.LENGTH_SHORT).show();
-                    } else if (count < 0) {
-                        Toast.makeText(getContext(), "Sample must be greater than zero!", Toast.LENGTH_SHORT).show();
+                    String countText = countInput.getText().toString();
+                    if (countText.isEmpty()) {
+                        Toast.makeText(getContext(), "Sample size must be chosen!", Toast.LENGTH_SHORT).show();
                     } else {
-                        sampleCount = count;
-                        sampleWaitlist(count);
+                        try {
+                            int count = Integer.parseInt(countText);
+                            if (count > listManager.getWaitList().size())
+                            {
+                                Toast.makeText(getContext(), "Sample cannot be greater than number of entrants in waitlist!", Toast.LENGTH_SHORT).show();
+                            } else if (count < 0) {
+                                Toast.makeText(getContext(), "Sample must be greater than zero!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                sampleCount = count;
+                                sampleWaitlist(count);
+                            }
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), "Sample size is too large!", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -163,6 +171,16 @@ public class WaitlistFragment extends Fragment {
     // count - accepted should be the number to resample (the issue with this, is that not-replied users are ignored)
     private void resampleWaitlist() {
         if (listManager != null) {
+            User user = new User("waitlistTestID", "test", "test@test.com", "");
+            GeoPoint geoPoint = new GeoPoint(10, 10);
+            listManager.addToWaitList(user, geoPoint);
+
+
+            // TODO: the sampleCount is NOT saved, so resampling doesn't actually work.
+            // 1: only use sampleWaitlist() and allow users to choose how many to sample every time
+            // 2: save sampleCount in db
+            // 3: use the predetermined sample count that was chosen during event creation.
+
             if (sampleCount - listManager.getAcceptedList().size() < 0)
             {
                 Toast.makeText(getContext(), "There are no spots remaining!", Toast.LENGTH_SHORT).show();
@@ -207,6 +225,12 @@ public class WaitlistFragment extends Fragment {
                         }
                     }
 
+                    // items in each list must be converted to the User class since the retrieved users differ from the actual User class
+//                    for (Map<?, ?> entry  : newListManager.getInvitedList())
+//                    {
+//                        User actualUser = new User(entry.get("android_id").toString(), entry.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
+//                        entrants.add(actualUser);
+//                    }
                     entrants.addAll(newListManager.getInvitedList());
                     entrants.addAll(newListManager.getAcceptedList());
                     entrants.addAll(newListManager.getCanceledList());
