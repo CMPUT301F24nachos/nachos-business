@@ -2,11 +2,13 @@ package com.example.nachosbusiness.organizer_views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.events.ListManager;
@@ -50,6 +53,20 @@ public class WaitlistArrayAdapter extends ArrayAdapter<User> {
 
         usernameText.setText(user.getUsername());
         setUserStatusButton(user, userStatusButton);
+
+        DBManager dbManager = new DBManager("entrants");
+        ImageView profileImage = view.findViewById(R.id.waitlist_profile_image);
+        dbManager.getProfileImageExtra(user.getAndroid_id(), user.getUsername(), profileImage, getContext(), new DBManager.ProfileImageCallback() {
+            @Override
+            public void onImageLoaded(Bitmap bitmap) {
+                profileImage.setVisibility(View.VISIBLE); // Show image if loaded
+            }
+
+            @Override
+            public void onImageLoadFailed(Exception e) {
+                profileImage.setVisibility(View.GONE); // Hide image if loading failed
+            }
+        });
 
         userStatusButton.setOnClickListener(v -> {
             setUserStatusButton(user, userStatusButton);
