@@ -1,24 +1,39 @@
 package com.example.nachosbusiness;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
+import android.Manifest;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.events.EventRegistration;
+import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.RegistrationActivity;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
     private String userName;
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+
+        initializeNotifications();
+
+        // Request notification permission
+        requestNotificationPermission();
 
         DBManager dbManager = new DBManager("entrants");
         String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -68,5 +83,45 @@ public class MainActivity extends AppCompatActivity {
         Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
         eventIntent.putExtra("name", userName);
         startActivity(eventIntent);
+    }
+
+    private void initializeNotifications() {
+        // Create notification channel (if applicable)
+        NotificationHandler.createNotificationChannel(this);
+
+        // Retrieve the FCM token
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String token = task.getResult();
+                        Log.d("MainActivity", "FCM Token: " + token);
+                        // You can send this token to your server for user management
+                    } else {
+                        Log.e("MainActivity", "Failed to retrieve FCM token", task.getException());
+                    }
+                });
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATION_PERMISSION);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Notification permission granted.");
+            } else {
+                Log.w("MainActivity", "Notification permission denied.");
+            }
+        }
     }
 }

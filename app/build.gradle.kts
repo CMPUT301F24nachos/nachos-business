@@ -58,6 +58,7 @@ dependencies {
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     implementation(libs.rules)
+    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:3.+")
