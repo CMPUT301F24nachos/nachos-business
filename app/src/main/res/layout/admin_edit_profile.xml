@@ -34,10 +34,10 @@
 
     <ImageButton
         android:id="@+id/back"
-        android:layout_width="25dp"
+        android:layout_width="0dp"
         android:layout_height="33dp"
-        android:layout_marginStart="4dp"
-        android:background="@android:color/transparent"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/white"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
