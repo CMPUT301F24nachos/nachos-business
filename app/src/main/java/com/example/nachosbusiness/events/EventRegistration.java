@@ -42,9 +42,8 @@ import java.util.Map;
  * details and if the user is already registered in the event. User's can register/unregister on this
  * page. If the event has "Geolocation Required", a warning will be shown to the user before they
  * agree to join the event waitlist.
- *
+ * <p>
  * Outstanding items: Need to update the logic on when we are outside of the waitlist open time range.
- *
  */
 
 public class EventRegistration extends AppCompatActivity {
@@ -85,41 +84,44 @@ public class EventRegistration extends AppCompatActivity {
                             updateEventInfoUI();
                             // Finally, query the lists collection and determine the status of the user!
                             listManagerDBManager.queryEventDetails(eventId, androidID, new ListManagerDBManager.EventDetailsCallback() {
-                                        @Override
-                                        public void onEventDetailsReceived(ListManagerDBManager.userStatus status, ListManager listManager) {
-                                            listManagerDBManager.listManager.setWaitList(listManager.getWaitList());
-                                            listManagerDBManager.listManager.setInvitedList(listManager.getInvitedList());
-                                            listManagerDBManager.listManager.setAcceptedList(listManager.getAcceptedList());
-                                            listManagerDBManager.listManager.setCanceledList(listManager.getCanceledList());
-                                            currentWaitListCount = listManagerDBManager.listManager.getWaitList().size();
-                                            switch (status) {
-                                                case WAITLIST:
-                                                    updateWaitListStatusUI();
-                                                    break;
-                                                case INVITELIST:
-                                                    updateInviteListStatusUI();
-                                                    break;
-                                                case ACCEPTEDLIST:
-                                                    updateAcceptedListStatusUI();
-                                                    break;
-                                                case NOTINALIST:
-                                                    updateNotInListUI();
-                                                    break;
+                                @Override
+                                public void onEventDetailsReceived(ListManagerDBManager.userStatus status, ListManager listManager) {
+                                    listManagerDBManager.listManager.setWaitList(listManager.getWaitList());
+                                    listManagerDBManager.listManager.setInvitedList(listManager.getInvitedList());
+                                    listManagerDBManager.listManager.setAcceptedList(listManager.getAcceptedList());
+                                    listManagerDBManager.listManager.setCanceledList(listManager.getCanceledList());
+                                    currentWaitListCount = listManagerDBManager.listManager.getWaitList().size();
+                                    switch (status) {
+                                        case WAITLIST:
+                                            updateWaitListStatusUI();
+                                            break;
+                                        case INVITELIST:
+                                            updateInviteListStatusUI();
+                                            break;
+                                        case ACCEPTEDLIST:
+                                            updateAcceptedListStatusUI();
+                                            break;
+                                        case NOTINALIST:
+                                            updateNotInListUI();
+                                            break;
+                                        case CANCELLEDLIST:
+                                            updateCancelledListUI();
+                                            break;
                                     }
+                                }
 
-                                        }
+                                @Override
+                                public void onError(String errorMessage) {
 
-                                        @Override
-                                        public void onError(String errorMessage) {
-
-                                        }
-                                    });
+                                }
+                            });
                         } else {
                             displayEventDNE();
                         }
                     }
                 });
             }
+
             // not a legal user, so do not allow them to sign up.
             @Override
             public void onEntryNotFound() {
@@ -134,7 +136,7 @@ public class EventRegistration extends AppCompatActivity {
     }
 
     /**
-     *  Get the bundled arguments
+     * Get the bundled arguments
      */
     private void initializeArgs() {
         Bundle args = getIntent().getExtras();
@@ -147,9 +149,9 @@ public class EventRegistration extends AppCompatActivity {
     }
 
     /**
-     *  Initialize the base UI, mainly just the home button as this will always be shown
+     * Initialize the base UI, mainly just the home button as this will always be shown
      */
-    private void initializeBaseUI(){
+    private void initializeBaseUI() {
         ImageButton buttonHome = findViewById(R.id.button_event_home);
         buttonHome.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -162,7 +164,7 @@ public class EventRegistration extends AppCompatActivity {
      * Display the error string that the event does not exist. Hides everything else. Probably better way
      * to do this... A much better way to do this....
      */
-    private void displayEventDNE(){
+    private void displayEventDNE() {
         TextView eventTitle = findViewById(R.id.textview_event_reg_title);
         TextView eventOrg = findViewById(R.id.textview_event_reg_organizer_name);
         TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
@@ -215,7 +217,7 @@ public class EventRegistration extends AppCompatActivity {
     /**
      * Display the specific event information for the event queried from the db
      */
-    private void updateEventInfoUI(){
+    private void updateEventInfoUI() {
         TextView eventTitle = findViewById(R.id.textview_event_reg_title);
         TextView eventStart = findViewById(R.id.textview_event_reg_start_date);
         TextView eventEnd = findViewById(R.id.textview_event_reg_event_end);
@@ -257,7 +259,7 @@ public class EventRegistration extends AppCompatActivity {
     /**
      * Display the ui for a user not in a waitlist
      */
-    private void updateNotInListUI(){
+    private void updateNotInListUI() {
         Button signUpButton = findViewById(R.id.button_event_register);
         Button leaveButton = findViewById(R.id.button_event_leave_button);
         Button acceptInviteButton = findViewById(R.id.button_accept_invite);
@@ -291,14 +293,14 @@ public class EventRegistration extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Join Waitlist", Toast.LENGTH_SHORT).show();
             }
         });
-        }
+    }
 
 
     /**
      * Update the event information based on if the user is in the waitlist or not. Will show the
      * Join WaitList view if user is not currently in the wait list.
      */
-    private void updateWaitListStatusUI(){
+    private void updateWaitListStatusUI() {
         Button signUpButton = findViewById(R.id.button_event_register);
         Button leaveButton = findViewById(R.id.button_event_leave_button);
         Button acceptInviteButton = findViewById(R.id.button_accept_invite);
@@ -333,7 +335,7 @@ public class EventRegistration extends AppCompatActivity {
     /**
      * Update the event information based on if the user is invited.
      */
-    private void updateInviteListStatusUI(){
+    private void updateInviteListStatusUI() {
         Button signUpButton = findViewById(R.id.button_event_register);
         Button leaveButton = findViewById(R.id.button_event_leave_button);
         Button acceptInviteButton = findViewById(R.id.button_accept_invite);
@@ -362,13 +364,19 @@ public class EventRegistration extends AppCompatActivity {
 
         rejectInviteButton.setOnClickListener(v -> {
             listManagerDBManager.listManager.moveToCanceledList(user);
+            listManagerDBManager.getRandomUser(eventId, new ListManagerDBManager.RandomUserReceived() {
+                @Override
+                public void onRandomUserReceived(User randomUser) {
+                    listManagerDBManager.listManager.moveToInvitedList(randomUser);
+                }
+            });
         });
     }
 
     /**
      * Update the event information based on if the user is in the accepted list.
      */
-    private void updateAcceptedListStatusUI(){
+    private void updateAcceptedListStatusUI() {
         Button signUpButton = findViewById(R.id.button_event_register);
         Button leaveButton = findViewById(R.id.button_event_leave_button);
         Button acceptInviteButton = findViewById(R.id.button_accept_invite);
@@ -392,9 +400,36 @@ public class EventRegistration extends AppCompatActivity {
         textSpotsText.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Displays the view for a user in the cancelled list.
+     */
+    private void updateCancelledListUI() {
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+        TextView textviewSlash = findViewById(R.id.textView17);
+        TextView textSpotsText = findViewById(R.id.textView19);
+
+        regTitle.setText("You Rejected This Event!");
+
+        signUpButton.setVisibility(View.GONE);
+        leaveButton.setVisibility(View.GONE);
+        acceptInviteButton.setVisibility(View.GONE);
+        rejectInviteButton.setVisibility(View.GONE);
+
+        waitlistOpenSpotsTV.setText("");
+        waitlistTotalSpotsTV.setText("");
+        textviewSlash.setVisibility(View.INVISIBLE);
+        textSpotsText.setVisibility(View.INVISIBLE);
+    }
 
     /**
      * Show the GeoLocation warning. On Positive click, user joins the waitList.
+     *
      * @param user User to join the waitList
      */
     private void showGeolocationDialog(User user) {
@@ -413,9 +448,10 @@ public class EventRegistration extends AppCompatActivity {
 
     /**
      * Show the Leave Confirmation warning. On Positive click, user leaves the waitlist;
+     *
      * @param user User to leave the waitList.
      */
-    private void showLeaveDialog(User user){
+    private void showLeaveDialog(User user) {
         new AlertDialog.Builder(this)
                 .setMessage("Confirm that you want to leave the Wait List for this event.")
                 .setPositiveButton("Confirm", (dialog, which) -> {
@@ -431,7 +467,7 @@ public class EventRegistration extends AppCompatActivity {
     /**
      * Navigate to the Dashboard activity
      */
-    private void navigateToDashboard(){
+    private void navigateToDashboard() {
         Intent dashboardIntent = new Intent(EventRegistration.this, Dashboard.class);
         startActivity(dashboardIntent);
     }
@@ -476,11 +512,11 @@ public class EventRegistration extends AppCompatActivity {
 
     /**
      * Based on the user's permissions, take action
-     * @param permissions The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      *
+     * @param permissions  The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *                     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *                     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

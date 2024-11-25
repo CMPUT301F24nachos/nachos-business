@@ -13,6 +13,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,10 @@ public class ListManagerDBManager extends DBManager implements Serializable {
         );
 
         void onError(String errorMessage);
+    }
+
+    public interface RandomUserReceived {
+        void onRandomUserReceived(User randomUser);
     }
 
 
@@ -128,7 +134,7 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                     ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                     ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
                     ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
-                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("canceledList");
 
                     // Set data in ListManager
                     ListManager listManager = new ListManager();
@@ -145,9 +151,10 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                         status = userStatus.INVITELIST;
                     } else if (isUserInList(waitList, androidID)) {
                         status = userStatus.WAITLIST;
+                    } else if (isUserInList(cancelledList, androidID)) {
+                        status = userStatus.CANCELLEDLIST;
                     }
 
-                    // Pass the result via the callback
                     callback.onEventDetailsReceived(status, listManager);
                     return;
                 }
@@ -194,7 +201,63 @@ public class ListManagerDBManager extends DBManager implements Serializable {
 
         return false; // User not found
     }
+
+
+    public void getRandomUser(String eventID, RandomUserReceived callback) {
+        this.setCollectionReference("lists");
+
+        this.getCollectionReference().get()
+                .addOnSuccessListener(querySnapshots -> {
+                    if (querySnapshots == null || querySnapshots.isEmpty()) {
+                        Log.d(TAG, "No documents found.");
+                        callback.onRandomUserReceived(null);
+                        return;
+                    }
+
+                    boolean found = false;
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        if (doc.getId().equals(eventID)) {
+                            found = true;
+                            ArrayList<Map<Object, Object>> waitList =
+                                    (ArrayList<Map<Object, Object>>) doc.get("waitList");
+                            if (waitList != null && !waitList.isEmpty()) {
+                                Collections.shuffle(waitList);
+                                Map<Object, Object> randomUser = waitList.get(0);
+                                if (randomUser.containsKey("user")) {
+                                    Object o = randomUser.get("user");
+                                    if (o instanceof HashMap) {
+                                        HashMap hashedUser = (HashMap) o;
+                                        if (hashedUser.containsKey("android_id") &&
+                                                hashedUser.get("android_id") != null) {
+                                                User u = new User();
+                                                u.setAdmin((Boolean)(hashedUser.get("admin")));
+                                                u.setAndroid_id((String)(hashedUser.get("android_id")));
+                                                u.setEmail((String)(hashedUser.get("email")));
+                                                u.setPhone((String)(hashedUser.get("phone")));
+                                                u.setUsername((String)(hashedUser.get("username")));
+                                            callback.onRandomUserReceived(u);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            break; // Exit loop once event is found
+                        }
+                    }
+
+                    if (!found) {
+                        Log.d(TAG, "Event ID not found in collection.");
+                        callback.onRandomUserReceived(null);
+                    }
+                })
+                .addOnFailureListener(error -> {
+                    Log.e(TAG, "Firestore Error: " + error.getMessage());
+                });
     }
+    }
+
+
+
 
 
 
