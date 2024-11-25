@@ -124,7 +124,7 @@ public class WaitlistFragment extends Fragment {
      */
     private void sampleWaitlist() {
         if (listManager != null) {
-            if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots(), listManager.getInvitedList().size())) != null)
+            if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots(), listManager.getWaitList().size())) != null)
             {
                 adapter.notifyDataSetChanged();
             }
@@ -141,9 +141,9 @@ public class WaitlistFragment extends Fragment {
     private void resampleWaitlist(boolean cancelNotReplied) {
         if (listManager != null) {
             //TODO: remove this bit
-            User user = new User("waitlistTestID", "test", "test@test.com", "");
+            User user = new User("finalTest", "testFinal", "test@test.com", "");
             GeoPoint geoPoint = new GeoPoint(10, 10);
-            listManager.addToWaitList(user, geoPoint);
+//            listManager.addToWaitList(user, geoPoint);
 
             if (cancelNotReplied) {
                 for (User entrant : listManager.getInvitedList()) {
@@ -151,11 +151,11 @@ public class WaitlistFragment extends Fragment {
                 }
             }
 
-            if (event.getAttendeeSpots() - listManager.getAcceptedList().size() < 0) {
+            if (event.getAttendeeSpots() - listManager.getAcceptedList().size() <= 0) {
                 Toast.makeText(getContext(), "There are no spots remaining!", Toast.LENGTH_SHORT).show();
             } else if (listManager.getWaitList().isEmpty()) {
                 Toast.makeText(getContext(), "There are no entrants in the waitlist remaining!", Toast.LENGTH_SHORT).show();
-            } else if (listManager.sampleWaitList(event.getAttendeeSpots() - listManager.getAcceptedList().size()) != null) {
+            } else if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots() - listManager.getAcceptedList().size(), listManager.getWaitList().size())) != null) {
                 adapter.notifyDataSetChanged();
             }
         } else {
