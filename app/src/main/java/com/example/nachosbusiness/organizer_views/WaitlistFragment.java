@@ -39,7 +39,6 @@ public class WaitlistFragment extends Fragment {
     private ListManagerDBManager listManagerDBManager;
     private ListManager listManager;
     private ListView waitlistView;
-    private int sampleCount;
 
 
     @Override
@@ -76,7 +75,7 @@ public class WaitlistFragment extends Fragment {
 
         ImageButton menuButton = view.findViewById(R.id.menu);
         menuButton.setOnClickListener(v -> {
-
+            // TODO: create sorting functionality to see only invited, waiting, accepted, or cancelled
         });
 
         ImageButton backButton = view.findViewById(R.id.back);
@@ -90,46 +89,14 @@ public class WaitlistFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
     }
 
     private void sampleDialog() {
-        final EditText countInput = new EditText(getContext());
-        countInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setView(countInput)
-                .setTitle("Sample Entrants")
+        builder.setTitle("Sample Entrants")
                 .setPositiveButton("Ok", (dialog, which) ->{
-                    if (listManager == null)
-                    {
-                        Toast.makeText(getContext(), "Failed to load entrants", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    String countText = countInput.getText().toString();
-                    if (countText.isEmpty()) {
-                        Toast.makeText(getContext(), "Sample size must be chosen!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            int count = Integer.parseInt(countText);
-                            if (count > listManager.getWaitList().size())
-                            {
-                                Toast.makeText(getContext(), "Sample cannot be greater than number of entrants in waitlist!", Toast.LENGTH_SHORT).show();
-                            } else if (count < 0) {
-                                Toast.makeText(getContext(), "Sample must be greater than zero!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                sampleCount = count;
-                                sampleWaitlist(count);
-                            }
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(getContext(), "Sample size is too large!", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
+                    sampleWaitlist();
                 })
                 .setNegativeButton("Cancel", null)
                 .create();
@@ -137,29 +104,28 @@ public class WaitlistFragment extends Fragment {
     }
 
     private void resampleDialog() {
-        final TextView resampleWarning = new TextView(getContext());
-        resampleWarning.setText("WARNING: Cancel all declined and not-replied entrants and resample from waitlist?");
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setView(resampleWarning)
-                .setTitle("Resample Entrants")
-                .setPositiveButton("Ok", (dialog, which) -> {
-                    resampleWaitlist();
+        builder.setTitle("Resample Entrants")
+                .setPositiveButton("Resample", (dialog, which) -> {
+                    resampleWaitlist(false);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel not-replied and resample", (dialog, which) -> {
+                    resampleWaitlist(true);
+                })
+                .setNeutralButton("Cancel", null)
                 .create();
         builder.show();
     }
 
 
-    // sample for the count
-    // needs some sort of resample as well
-    private void sampleWaitlist(int count) {
+    /**
+     * Sample entrants from waitlist, number of entrants is the event's attendee spots determined at event creation
+     */
+    private void sampleWaitlist() {
         if (listManager != null) {
-            if (listManager.sampleWaitList(count) != null)
+            if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots(), listManager.getInvitedList().size())) != null)
             {
-                sampleCount = count;
                 adapter.notifyDataSetChanged();
             }
         } else {
@@ -167,24 +133,29 @@ public class WaitlistFragment extends Fragment {
         }
     }
 
-    // cancel all of the declined users, then resample based on how many declined
-    // count - accepted should be the number to resample (the issue with this, is that not-replied users are ignored)
-    private void resampleWaitlist() {
+
+    /**
+     * Resample entrants from waitlist if there are spots remaining
+     * @param cancelNotReplied true if entrants that have not replied should be cancelled and resampled as well
+     */
+    private void resampleWaitlist(boolean cancelNotReplied) {
         if (listManager != null) {
+            //TODO: remove this bit
             User user = new User("waitlistTestID", "test", "test@test.com", "");
             GeoPoint geoPoint = new GeoPoint(10, 10);
             listManager.addToWaitList(user, geoPoint);
 
+            if (cancelNotReplied) {
+                for (User entrant : listManager.getInvitedList()) {
+                    listManager.moveToCanceledList(entrant);
+                }
+            }
 
-            // TODO: the sampleCount is NOT saved, so resampling doesn't actually work.
-            // 1: only use sampleWaitlist() and allow users to choose how many to sample every time
-            // 2: save sampleCount in db
-            // 3: use the predetermined sample count that was chosen during event creation.
-
-            if (sampleCount - listManager.getAcceptedList().size() < 0)
-            {
+            if (event.getAttendeeSpots() - listManager.getAcceptedList().size() < 0) {
                 Toast.makeText(getContext(), "There are no spots remaining!", Toast.LENGTH_SHORT).show();
-            } else if (listManager.sampleWaitList(sampleCount - listManager.getAcceptedList().size()) != null) {
+            } else if (listManager.getWaitList().isEmpty()) {
+                Toast.makeText(getContext(), "There are no entrants in the waitlist remaining!", Toast.LENGTH_SHORT).show();
+            } else if (listManager.sampleWaitList(event.getAttendeeSpots() - listManager.getAcceptedList().size()) != null) {
                 adapter.notifyDataSetChanged();
             }
         } else {
@@ -192,6 +163,9 @@ public class WaitlistFragment extends Fragment {
         }
     }
 
+    /**
+     * Load entrants from each list in the db and set adapter
+     */
     private void loadEntrants() {
         listManagerDBManager.queryLists(event.getEventID(), new ListManagerDBManager.ListManagerCallback() {
             @Override
@@ -225,12 +199,6 @@ public class WaitlistFragment extends Fragment {
                         }
                     }
 
-                    // items in each list must be converted to the User class since the retrieved users differ from the actual User class
-//                    for (Map<?, ?> entry  : newListManager.getInvitedList())
-//                    {
-//                        User actualUser = new User(entry.get("android_id").toString(), entry.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
-//                        entrants.add(actualUser);
-//                    }
                     entrants.addAll(newListManager.getInvitedList());
                     entrants.addAll(newListManager.getAcceptedList());
                     entrants.addAll(newListManager.getCanceledList());
