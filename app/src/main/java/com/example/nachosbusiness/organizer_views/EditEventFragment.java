@@ -34,6 +34,10 @@ import com.google.firebase.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Fragment to edit events. Utilizes
+ */
+
 public class EditEventFragment extends Fragment {
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;

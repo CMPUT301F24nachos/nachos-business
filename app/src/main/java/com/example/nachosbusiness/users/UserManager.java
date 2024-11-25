@@ -12,6 +12,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Used to interact with the db for users to add.
+ */
+
 public class UserManager {
 
     private FirebaseFirestore db;
