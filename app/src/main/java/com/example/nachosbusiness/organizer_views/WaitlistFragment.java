@@ -2,15 +2,15 @@ package com.example.nachosbusiness.organizer_views;
 
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.PopupMenu;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
@@ -56,10 +57,10 @@ public class WaitlistFragment extends Fragment {
 
         entrants = new ArrayList<>();
         listManagerDBManager = new ListManagerDBManager();
-        loadEntrants();
+        loadEntrants("all");
 
 
-        FloatingActionButton menuFab = view.findViewById(R.id.menu_fab);
+        FloatingActionButton menuFab = view.findViewById(R.id.sample_fab);
         menuFab.setOnClickListener(v -> {
             if (listManager == null)
             {
@@ -73,9 +74,48 @@ public class WaitlistFragment extends Fragment {
             }
         });
 
+        RadioGroup listsRadioGroup = view.findViewById(R.id.radioGroup_lists);
+        listsRadioGroup.check(R.id.radio_all_lists);
+        listsRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedID) {
+                if (checkedID == R.id.radio_all_lists) {
+                    loadEntrants("all");
+                } else if (checkedID == R.id.radio_waitlist) {
+                    loadEntrants("waitlist");
+                } else if (checkedID == R.id.radio_invitedlist) {
+                    loadEntrants("invited");
+                } else if (checkedID == R.id.radio_acceptedList) {
+                    loadEntrants("accepted");
+                } else if (checkedID == R.id.radio_canceled) {
+                    loadEntrants("canceled");
+                }
+            }
+        });
+
         ImageButton menuButton = view.findViewById(R.id.menu);
         menuButton.setOnClickListener(v -> {
-            // TODO: create sorting functionality to see only invited, waiting, accepted, or cancelled
+            PopupMenu popupMenu = new PopupMenu(requireContext(), v);  // Use requireContext() instead of this.getContext()
+            popupMenu.getMenuInflater().inflate(R.menu.event_waitlist_menu, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_nav_event) {
+                    Intent intent = new Intent(getActivity(), EventRegistration.class);
+                    intent.putExtra("eventID", event.getEventID());
+                    intent.putExtra("androidID", event.getOrganizerID());
+                    startActivity(intent);
+                    return true;
+                } else if (item.getItemId() == R.id.action_nav_map) {
+                    // TODO: Add navigation to map
+                    return true;
+                } else if (item.getItemId() == R.id.action_send_invites) {
+                    // TODO: Add send invites (Do we need this?)
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            popupMenu.show(); // Show the popup menu
         });
 
         ImageButton backButton = view.findViewById(R.id.back);
@@ -91,6 +131,9 @@ public class WaitlistFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    /**
+     * Alert Dialog for sampling entrants
+     */
     private void sampleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -103,6 +146,9 @@ public class WaitlistFragment extends Fragment {
         builder.show();
     }
 
+    /**
+     * Alert Dialog for resampling entrants
+     */
     private void resampleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -141,7 +187,7 @@ public class WaitlistFragment extends Fragment {
     private void resampleWaitlist(boolean cancelNotReplied) {
         if (listManager != null) {
             //TODO: remove this bit
-            User user = new User("finalTest", "testFinal", "test@test.com", "");
+            User user = new User("waitlistTest", "testWaitlist", "test@test.com", "");
             GeoPoint geoPoint = new GeoPoint(10, 10);
 //            listManager.addToWaitList(user, geoPoint);
 
@@ -163,8 +209,9 @@ public class WaitlistFragment extends Fragment {
 
     /**
      * Load entrants from each list in the db and set adapter
+     * @param displayedLists select which lists to display
      */
-    private void loadEntrants() {
+    private void loadEntrants(String displayedLists) {
         listManagerDBManager.queryLists(event.getEventID(), new ListManagerDBManager.ListManagerCallback() {
             @Override
             public void onListManagerReceived(ListManager newListManager) {
@@ -173,33 +220,50 @@ public class WaitlistFragment extends Fragment {
                     listManager.initializeManagers(event.getEventID());
                     entrants.clear();
 
-                    for (Map<Object, Object> entry : newListManager.getWaitList())
-                    {
-                        Object userObject = entry.get("user");
-                        User user;
-
-                        if (userObject instanceof User) {
-                            entrants.add((User) userObject);
-                        }
-                        else if (userObject instanceof Map)
+                    if (displayedLists.equals("waitlist") || displayedLists.equals("all")) {
+                        for (Map<Object, Object> entry : newListManager.getWaitList())
                         {
-                            try {
-                                Map<?, ?> userMap = (Map<?, ?>)userObject;
-                                user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
-                                entrants.add(user);
-                            } catch (Exception e) {
+                            Object userObject = entry.get("user");
+                            User user;
+
+                            if (userObject instanceof User) {
+                                entrants.add((User) userObject);
+                            }
+                            else if (userObject instanceof Map)
+                            {
+                                try {
+                                    Map<?, ?> userMap = (Map<?, ?>)userObject;
+                                    user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
+                                    entrants.add(user);
+                                } catch (Exception e) {
+                                    Toast.makeText(getActivity(), "Failed to load entrant from waitlist", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else
+                            {
                                 Toast.makeText(getActivity(), "Failed to load entrant from waitlist", Toast.LENGTH_SHORT).show();
                             }
                         }
-                        else
-                        {
-                            Toast.makeText(getActivity(), "Failed to load entrant from waitlist", Toast.LENGTH_SHORT).show();
-                        }
                     }
 
-                    entrants.addAll(newListManager.getInvitedList());
-                    entrants.addAll(newListManager.getAcceptedList());
-                    entrants.addAll(newListManager.getCanceledList());
+                    switch (displayedLists) {
+                        case "invited":
+                            entrants.addAll(newListManager.getInvitedList());
+                            break;
+                        case "accepted":
+                            entrants.addAll(newListManager.getAcceptedList());
+                            break;
+                        case "canceled":
+                            entrants.addAll(newListManager.getCanceledList());
+                            break;
+                        case "all":
+                            entrants.addAll(newListManager.getInvitedList());
+                            entrants.addAll(newListManager.getAcceptedList());
+                            entrants.addAll(newListManager.getCanceledList());
+                            break;
+                        default:
+                            break;
+                    }
 
                     if (adapter == null) {
                         adapter = new WaitlistArrayAdapter(getActivity(), entrants);
