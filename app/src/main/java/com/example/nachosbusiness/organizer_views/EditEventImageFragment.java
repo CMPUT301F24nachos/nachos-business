@@ -51,14 +51,11 @@ public class EditEventImageFragment extends Fragment {
 
         // Initialize UI elements
         imageButton = view.findViewById(R.id.imageButton);
-        eventImage = view.findViewById(R.id.profileImage);
+        eventImage = view.findViewById(R.id.eventImage);
         closeButton = view.findViewById(R.id.closeButton);
         saveChangesButton = view.findViewById(R.id.signUpButton);
         cancelChangesButton = view.findViewById(R.id.cancelButton);
         dbManager = new DBManager("events");
-
-        eventImage.setVisibility(View.GONE);
-        closeButton.setVisibility(View.GONE);
 
         String eventId;
         if (getArguments() != null) {

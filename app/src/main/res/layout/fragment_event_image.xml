@@ -68,8 +68,8 @@
         android:contentDescription="Close Button"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/profileImage"
-        app:layout_constraintTop_toTopOf="@+id/profileImage" />
+        app:layout_constraintEnd_toEndOf="@+id/eventImage"
+        app:layout_constraintTop_toTopOf="@+id/eventImage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
