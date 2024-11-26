@@ -24,7 +24,6 @@ import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.GeoPoint;
 
 
 import java.util.ArrayList;
@@ -186,11 +185,6 @@ public class WaitlistFragment extends Fragment {
      */
     private void resampleWaitlist(boolean cancelNotReplied) {
         if (listManager != null) {
-            //TODO: remove this bit
-            User user = new User("waitlistTest", "testWaitlist", "test@test.com", "");
-            GeoPoint geoPoint = new GeoPoint(10, 10);
-//            listManager.addToWaitList(user, geoPoint);
-
             if (cancelNotReplied) {
                 listManager.moveAllToCanceledList();
             }
