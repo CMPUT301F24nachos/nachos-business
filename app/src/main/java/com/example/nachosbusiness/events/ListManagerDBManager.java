@@ -188,14 +188,14 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                     ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                     ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
                     ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
-                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+                    ArrayList<User> canceledList = (ArrayList<User>) doc.get("canceledList");
 
                     // Set data in ListManager
                     ListManager listManager = new ListManager();
                     listManager.setWaitList(waitList);
                     listManager.setInvitedList(invitedList);
                     listManager.setAcceptedList(acceptedList);
-                    listManager.setCanceledList(cancelledList);
+                    listManager.setCanceledList(canceledList);
 
                     // Determine user status
                     userStatus status = userStatus.NOTINALIST;
@@ -205,6 +205,8 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                         status = userStatus.INVITELIST;
                     } else if (isUserInList(waitList, androidID)) {
                         status = userStatus.WAITLIST;
+                    } else if (isUserInList(canceledList, androidID)) {
+                        status = userStatus.CANCELLEDLIST;
                     }
 
                     // Pass the result via the callback

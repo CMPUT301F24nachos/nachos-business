@@ -169,7 +169,9 @@ public class WaitlistFragment extends Fragment {
      */
     private void sampleWaitlist() {
         if (listManager != null) {
-            if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots(), listManager.getWaitList().size())) != null)
+            if (listManager.getWaitList().isEmpty()) {
+                Toast.makeText(getContext(), "There are no entrants in the waitlist remaining!", Toast.LENGTH_SHORT).show();
+            } else if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots(), listManager.getWaitList().size())) != null)
             {
                 adapter.notifyDataSetChanged();
             }
