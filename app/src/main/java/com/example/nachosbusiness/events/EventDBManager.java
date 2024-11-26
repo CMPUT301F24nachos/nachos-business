@@ -259,6 +259,7 @@ public class EventDBManager extends DBManager implements Serializable {
                         Long costLong = doc.getLong("cost");
                         Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
                         Long attendeeSpotsLong = doc.getLong("attendeeSpots");
+                        String qrCode = doc.getString("qrCode");
 
                         Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
                         Facility facility = new Facility();
@@ -281,6 +282,7 @@ public class EventDBManager extends DBManager implements Serializable {
                             event.setHasGeolocation(hasGeolocation);
                             event.setAttendeeSpots(attendeeSpotsLong.intValue());
                             event.setCost(costLong.intValue());
+                            event.setQrCode(qrCode);
 
                             adminEventList.add(event);
                     }
