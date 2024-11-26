@@ -1,6 +1,8 @@
 package com.example.nachosbusiness.organizer_views;
 
 import android.content.Context;
+
+import java.util.Arrays;
 import java.util.Date;
 
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,10 +24,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.notifications.NotificationHandler;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Array Adapter for displaying Event objects in a custom ListView.
@@ -74,7 +83,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         }
 
         if(view == null){
-            view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
+            view = LayoutInflater.from(context).inflate(R.layout.organizer_event_list, parent,false);
         }
 
         Event event = events.get(position);
@@ -84,6 +93,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         ImageButton editEvent = view.findViewById(R.id.edit_icon);
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
+        Button inviteEvent = view.findViewById(R.id.invite_icon);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, hh:mm");
 
@@ -94,6 +104,11 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         eventDate.setText(displayText);
         eventName.setText(event.getName());
         eventDescription.setText(event.getDescription());
+
+        // Debugging logs
+        Log.d("EventListArrayAdapter", "Event Name: " + event.getName()); // Check if the event name is retrieved correctly
+        Log.d("EventListArrayAdapter", "User Name: " + (context instanceof AppCompatActivity ? ((AppCompatActivity) context).getIntent().getStringExtra("name") : "Context not AppCompatActivity"));
+
 
         editEvent.setOnClickListener(v -> {
             if (context instanceof AppCompatActivity) {
@@ -143,6 +158,42 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
                         .addToBackStack(null)
                         .commit();
             }
+        });
+
+        inviteEvent.setOnClickListener(v -> {
+            // Replace userAndroidId with the correct `android_id` of the user
+            String userAndroidId = "f8879d1628496630"; // Replace this with the actual android_id you want to target
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("entrants")
+                    .whereEqualTo("android_id", userAndroidId) // Query using android_id field
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                String userName = document.getString("username");
+                                boolean notificationsEnabled = true; // Assume true if not stored in Firestore
+
+                                if (notificationsEnabled) {
+                                    String title = "Event Sign-Up Confirmation";
+                                    String body = "You have successfully signed up for the event: " + event.getName();
+
+                                    Map<String, Object> user = new HashMap<>();
+                                    user.put("name", userName);
+                                    user.put("notificationsEnabled", true);
+
+                                    NotificationHandler.sendNotification(user, context, title, body);
+                                    Toast.makeText(context, "Notification sent to: " + userName, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "User has notifications disabled.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        } else {
+                            Toast.makeText(context, "User not found.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("EventListArrayAdapter", "Error fetching user data", e));
         });
 
         return view;

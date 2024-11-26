@@ -68,4 +68,14 @@
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/ic_action_name" />
 
+    <Button
+        android:id="@+id/invite_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="8dp"
+        android:text="Invite"
+        android:textColor="@android:color/black"
+        android:textSize="14sp" />
+
 </FrameLayout>

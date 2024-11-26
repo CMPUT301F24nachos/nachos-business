@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -16,23 +17,47 @@ import java.util.Objects;
  */
 public class FirebaseMessagingHandler extends FirebaseMessagingService {
 
-    private static final String TAG = "MyFirebaseMessaging";
+    private static final String TAG = "FirebaseMessagingHandler";
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String title = Objects.requireNonNull(remoteMessage.getNotification()).getTitle();
-        String body = remoteMessage.getNotification().getBody();
-        Log.d(TAG, "Message received: " + title + " - " + body);
+        if (remoteMessage.getNotification() != null) {
+            String title = remoteMessage.getNotification().getTitle();
+            String body = remoteMessage.getNotification().getBody();
+            if (title != null && body != null) {
+                Log.d(TAG, "Message received: " + title + " - " + body);
 
-        // Example user data for notification
-        Map<String, Object> user = new HashMap<>();
-        user.put("name", "John Doe");
-        user.put("notificationsEnabled", true);
+                // Fetch dynamic user data
+                String userId = "f8879d1628496630"; // Replace with actual user ID
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Use NotificationService to display and save the notification
-        NotificationHandler.sendNotification(user, this, title, body);
+                db.collection("entrants")
+                        .document(userId)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String userName = documentSnapshot.getString("name");
+                                boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
+
+                                if (notificationsEnabled) {
+                                    Map<String, Object> user = new HashMap<>();
+                                    user.put("name", userName);
+                                    user.put("notificationsEnabled", true);
+
+                                    // Use NotificationHandler to display and save the notification
+                                    NotificationHandler.sendNotification(user, this, title, body);
+                                } else {
+                                    Log.d(TAG, "Notifications disabled for user: " + userId);
+                                }
+                            } else {
+                                Log.w(TAG, "User not found for ID: " + userId);
+                            }
+                        })
+                        .addOnFailureListener(e -> Log.e(TAG, "Error fetching user data", e));
+            }
+        }
     }
 
     @Override

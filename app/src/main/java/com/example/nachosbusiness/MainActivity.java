@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.notifications.NotificationHandler;
+import com.example.nachosbusiness.notifications.NotificationHelper;
 import com.example.nachosbusiness.users.RegistrationActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         // Create notification channel (if applicable)
         NotificationHandler.createNotificationChannel(this);
 
+        NotificationHelper.registerForNotifications();
         // Retrieve the FCM token
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {

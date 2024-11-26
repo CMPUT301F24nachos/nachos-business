@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class NotificationHandler {
 
-    private static final String TAG = "NotificationService";
+    private static final String TAG = "NotificationHandler";
     private static final String CHANNEL_ID = "default_channel_id";
 
     /**
@@ -121,9 +121,11 @@ public class NotificationHandler {
         notificationData.put("timestamp", FieldValue.serverTimestamp());
         notificationData.put("userName", user.get("name"));
 
+        Log.d(TAG, "Saving notification to Firestore: " + notificationData);
+
         db.collection("notifications")
                 .add(notificationData)
-                .addOnSuccessListener(docRef -> Log.d(TAG, "Notification saved successfully"))
+                .addOnSuccessListener(docRef -> Log.d(TAG, "Notification saved successfully: " + docRef.getId()))
                 .addOnFailureListener(e -> Log.e(TAG, "Error saving notification", e));
     }
 }
