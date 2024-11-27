@@ -1,6 +1,7 @@
 package com.example.nachosbusiness;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.net.Uri;
@@ -112,5 +113,49 @@ public class WaitListUnitTest {
 
         sampleList = listManager.sampleWaitList(testSampleCount);
         assertEquals(sampleList.size(), testSampleCount);
+    }
+
+    @Test
+    public void testInviteUser() {
+        assertEquals(listManager.getWaitList().size(), 0);
+
+        listManager.addToWaitList(mockUser, geoPoint);
+        assertEquals(listManager.getWaitList().size(), 1);
+
+        listManager.moveToInvitedList(mockUser);
+        assertTrue(listManager.getInvitedList().contains(mockUser));
+        assertFalse(listManager.getWaitList().contains(mockUser));
+    }
+
+    @Test
+    public void testAcceptUser() {
+        assertEquals(listManager.getWaitList().size(), 0);
+
+        listManager.addToWaitList(mockUser, geoPoint);
+        assertEquals(listManager.getWaitList().size(), 1);
+
+        listManager.moveToInvitedList(mockUser);
+        assertTrue(listManager.getInvitedList().contains(mockUser));
+
+        listManager.moveToAcceptedList(mockUser);
+        assertTrue(listManager.getAcceptedList().contains(mockUser));
+        assertFalse(listManager.getInvitedList().contains(mockUser));
+        assertFalse(listManager.getWaitList().contains(mockUser));
+    }
+
+    @Test
+    public void testCancelUser() {
+        assertEquals(listManager.getWaitList().size(), 0);
+
+        listManager.addToWaitList(mockUser, geoPoint);
+        assertEquals(listManager.getWaitList().size(), 1);
+
+        listManager.moveToInvitedList(mockUser);
+        assertTrue(listManager.getInvitedList().contains(mockUser));
+
+        listManager.moveToCanceledList(mockUser);
+        assertTrue(listManager.getCanceledList().contains(mockUser));
+        assertFalse(listManager.getInvitedList().contains(mockUser));
+        assertFalse(listManager.getWaitList().contains(mockUser));
     }
 }

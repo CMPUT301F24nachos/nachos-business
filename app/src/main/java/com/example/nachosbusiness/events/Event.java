@@ -406,5 +406,4 @@ public class Event implements Serializable {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
     }
-
 }
