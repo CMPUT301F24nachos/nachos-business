@@ -190,20 +190,18 @@ public class ListManagerDBManager extends DBManager implements Serializable {
 
             for (QueryDocumentSnapshot doc : querySnapshots) {
                 if (doc.getId().equals(eventID)) {
-                    // Extract list data
                     ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                     ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
                     ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
-                    ArrayList<User> canceledList = (ArrayList<User>) doc.get("canceledList");
+                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("canceledList");
 
                     // Set data in ListManager
                     ListManager listManager = new ListManager();
                     listManager.setWaitList(waitList);
                     listManager.setInvitedList(invitedList);
                     listManager.setAcceptedList(acceptedList);
-                    listManager.setCanceledList(canceledList);
+                    listManager.setCanceledList(cancelledList);
 
-                    // Determine user status
                     userStatus status = userStatus.NOTINALIST;
                     if (isUserInList(acceptedList, androidID)) {
                         status = userStatus.ACCEPTEDLIST;
@@ -211,17 +209,14 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                         status = userStatus.INVITELIST;
                     } else if (isUserInList(waitList, androidID)) {
                         status = userStatus.WAITLIST;
-                    } else if (isUserInList(canceledList, androidID)) {
+                    } else if (isUserInList(cancelledList, androidID)) {
                         status = userStatus.CANCELLEDLIST;
                     }
 
-                    // Pass the result via the callback
                     callback.onEventDetailsReceived(status, listManager);
                     return;
                 }
             }
-
-            // If no matching event is found
             callback.onEventDetailsReceived(userStatus.NOTINALIST, new ListManager());
         });
     }
@@ -253,16 +248,12 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                     if (hashedUser.get("android_id") != null && androidID.equals(hashedUser.get("android_id"))) {
                         return true;
                     }
-
                 }
             }
-
-
         }
-
-        return false; // User not found
+        return false;
     }
-    }
+}
 
 
 
