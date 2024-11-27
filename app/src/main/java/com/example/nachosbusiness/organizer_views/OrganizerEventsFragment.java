@@ -24,6 +24,11 @@ import com.example.nachosbusiness.events.EventDBManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Display the organizer's events in this fragment. Allows organizer's to see their current event,
+ * create a new event, or edit an existing event.
+ */
+
 public class OrganizerEventsFragment extends Fragment {
     private EventDBManager eventDBManager;
     private ListView eventListView;

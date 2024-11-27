@@ -38,7 +38,9 @@ import java.util.Map;
 
 /**
  * This Activity is the main dashboard activity for user's to navigate through the functionality
- * of the app.
+ * of the app. Allows user's so see the event's that they are signed up for (waitlist, invited list,
+ * accepted list). User's can navigate to all portions of this app from this activity. Will load
+ * onto this screen after you register.
  *
  */
 
