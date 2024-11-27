@@ -62,6 +62,67 @@ public class ListManagerDBManager extends DBManager implements Serializable {
     }
 
     /**
+     * Query the firebase db for a waitlist with specific eventID. Sets the waitList to be the eventID's
+     * saved waitlist.
+     * NOTE: the objects/users retrieved in each list will differ from the actual User class.
+     *
+     * @param eventID eventID to query the DB
+     */
+    public void queryLists(String eventID, ListManagerCallback callback) {
+        this.setCollectionReference("lists");
+        this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e(TAG, error.toString());
+                    return;
+                }
+                if (querySnapshots != null) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        if (doc.getId().equals(eventID)) {
+                            ArrayList<Map<Object, Object>> waitlistData = (ArrayList<Map<Object, Object>>) doc.get("waitList");
+                            if (waitlistData != null) {
+                                listManager.setWaitList(waitlistData);
+                            }
+
+                            ArrayList<Map<?, ?>> invitedListData = (ArrayList<Map<?, ?>>) doc.get("invitedList");
+                            if (invitedListData != null) {
+                                ArrayList<User> invitedList = new ArrayList<>();
+                                for (Map<?, ?> entry : invitedListData) {
+                                    User user = new User(entry.get("android_id").toString(), entry.get("username").toString(), entry.get("email").toString(), entry.get("phone").toString());
+                                    invitedList.add(user);
+                                }
+                                listManager.setInvitedList(invitedList);
+                            }
+
+                            ArrayList<Map<?, ?>> acceptedListData = (ArrayList<Map<?, ?>>) doc.get("acceptedList");
+                            if (acceptedListData != null) {
+                                ArrayList<User> acceptedList = new ArrayList<>();
+                                for (Map<?, ?> entry : acceptedListData) {
+                                    User user = new User(entry.get("android_id").toString(), entry.get("username").toString(), entry.get("email").toString(), entry.get("phone").toString());
+                                    acceptedList.add(user);
+                                }
+                                listManager.setAcceptedList(acceptedList);
+                            }
+
+                            ArrayList<Map<?, ?>> canceledListData = (ArrayList<Map<?, ?>>) doc.get("canceledList");
+                            if (canceledListData != null) {
+                                ArrayList<User> canceledList = new ArrayList<>();
+                                for (Map<?, ?> entry : canceledListData) {
+                                    User user = new User(entry.get("android_id").toString(), entry.get("username").toString(), entry.get("email").toString(), entry.get("phone").toString());
+                                    canceledList.add(user);
+                                }
+                                listManager.setCanceledList(canceledList);
+                            }
+                        }
+                    }
+                }
+                callback.onListManagerReceived(listManager);
+            }
+        });
+    }
+
+    /**
      * Queries the list manager by  a specific androidID. This returns all of the lists that a user
      * is in including which type of list.
      * @param androidID android ID of the user
@@ -133,14 +194,14 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                     ArrayList<Map<Object, Object>> waitList = (ArrayList<Map<Object, Object>>) doc.get("waitList");
                     ArrayList<User> invitedList = (ArrayList<User>) doc.get("invitedList");
                     ArrayList<User> acceptedList = (ArrayList<User>) doc.get("acceptedList");
-                    ArrayList<User> cancelledList = (ArrayList<User>) doc.get("cancelledList");
+                    ArrayList<User> canceledList = (ArrayList<User>) doc.get("canceledList");
 
                     // Set data in ListManager
                     ListManager listManager = new ListManager();
                     listManager.setWaitList(waitList);
                     listManager.setInvitedList(invitedList);
                     listManager.setAcceptedList(acceptedList);
-                    listManager.setCanceledList(cancelledList);
+                    listManager.setCanceledList(canceledList);
 
                     // Determine user status
                     userStatus status = userStatus.NOTINALIST;
@@ -150,6 +211,8 @@ public class ListManagerDBManager extends DBManager implements Serializable {
                         status = userStatus.INVITELIST;
                     } else if (isUserInList(waitList, androidID)) {
                         status = userStatus.WAITLIST;
+                    } else if (isUserInList(canceledList, androidID)) {
+                        status = userStatus.CANCELLEDLIST;
                     }
 
                     // Pass the result via the callback
