@@ -297,6 +297,7 @@ public class EventDBManager extends DBManager implements Serializable {
                             event.setHasGeolocation(hasGeolocation);
                             event.setAttendeeSpots(attendeeSpotsLong.intValue());
                             event.setCost(costLong.intValue());
+                            event.setOrganizerID(organizerID);
                             event.setQrCode(qrCode);
 
                             adminEventList.add(event);
