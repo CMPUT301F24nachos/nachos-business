@@ -79,7 +79,7 @@ public class FacilityFragment extends Fragment {
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
                     editFacility.setName(facilityName.getText().toString());
-                    editFacility.setLocation((facilityLocation.getText().toString()));
+                    editFacility.setLocation(facilityLocation.getText().toString());
                     editFacility.setDesc(facilityDescription.getText().toString());
 
                     if (facilityManager.getFacility().getName()!=null){
