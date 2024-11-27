@@ -229,19 +229,28 @@ public class Dashboard extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // Handle null or unexpected data early
+        if (data == null) {
+            // Log the issue or notify the user
+            Log.e("onActivityResult", "Received null data");
+            return;
+        }
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
+
+        // Check if the result is valid and contains expected data
+        if (result != null && result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
             String scannedData = result.getContents();
+
+            // Navigate to EventRegistration activity
             Intent intent = new Intent(Dashboard.this, EventRegistration.class);
             intent.putExtra("eventID", scannedData);
             intent.putExtra("androidID", androidID);
             startActivity(intent);
-        }
-        else{
-            Intent intent = new Intent(Dashboard.this, Dashboard.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
+        } else {
+            // Provide feedback instead of restarting the Dashboard
+            Toast.makeText(this, "Invalid QR code or action canceled", Toast.LENGTH_SHORT).show();
         }
     }
 
