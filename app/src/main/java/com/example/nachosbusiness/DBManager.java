@@ -28,6 +28,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This class is used to send data to the DB. Using the set function allows us to specify the docid
+ * we want. Updates the record in firestore.
+ */
+
 public class DBManager {
 
     private FirebaseFirestore db;

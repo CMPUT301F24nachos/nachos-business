@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@+id/editCloseDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.952"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintStart_toEndOf="@+id/listview_dashboard_event_date"
         app:layout_constraintTop_toBottomOf="@+id/facility_header_const"
         app:layout_constraintVertical_bias="0.551" />
 
@@ -166,7 +166,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/listview_dashboard_event_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -178,7 +178,7 @@
         app:layout_constraintTop_toBottomOf="@+id/createEventText" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/listview_dashboard_event_freq"
         android:layout_width="91dp"
         android:layout_height="15dp"
         android:layout_marginStart="8dp"
@@ -224,7 +224,7 @@
         android:inputType="number"
         android:singleLine="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/listview_dashboard_event_freq" />
 
     <ImageButton
         android:id="@+id/btnUploadPoster"
@@ -274,7 +274,7 @@
         android:hint="@string/event_name"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/listview_dashboard_event_date" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
