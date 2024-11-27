@@ -227,7 +227,7 @@ public class EventDetailFragment extends Fragment {
                                                                     Toast.makeText(getActivity(), "Facility removed successfully.", Toast.LENGTH_SHORT).show();
                                                                 })
                                                                 .addOnFailureListener(e -> {
-                                                                    Toast.makeText(getActivity(), "Failed to remove facility document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                                    Toast.makeText(getActivity(), "Failed to remove facility document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                                     Log.e("RemoveFacility", "Error removing facility document: ", e);
                                                                 });
                                                         removeEvent();
@@ -243,7 +243,7 @@ public class EventDetailFragment extends Fragment {
                                         }
                                     })
                                     .addOnFailureListener(e -> {
-                                        Toast.makeText(getActivity(), "Error querying Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "Error querying Firestore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         Log.e("RemoveFacility", "Error querying Firestore: ", e);
                                     });
                         }
@@ -334,7 +334,7 @@ public class EventDetailFragment extends Fragment {
                         }
                     }
                     // Optionally, show a toast that events have been deleted
-                    Toast.makeText(getActivity(), "All events for this organizer have been deleted.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "All events for this organizer have been deleted.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("RemoveFacility", "Error deleting events for organizer: " + e.getMessage());
