@@ -29,6 +29,11 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * This fragment is where user's can edit their profile information, update their user profile,
+ * or navigate back to the view page. Any changes will be updated in the DB.
+ */
+
 public class UpdateProfile extends Fragment {
     private DBManager dbManager;
     private EditText phoneNumber;

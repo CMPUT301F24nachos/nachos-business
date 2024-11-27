@@ -7,6 +7,12 @@ import com.google.firebase.Timestamp;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * The event class is used to create events. The event-id is a random unique id, which creates a
+ * list manager having the same id. The event is associated with an organizer, of which they must
+ * have a facility to create a new event.
+ */
+
 public class Event implements Serializable {
     private String eventID;
     private String name;
@@ -187,108 +193,216 @@ public class Event implements Serializable {
         listManager = new ListManager(eventID, waitListSpots);
     }
 
+    /**
+     * getter for organizer id
+     * @return organizer's id
+     */
     public String getOrganizerID() { return organizerID; }
 
     public void setOrganizerID(String organizerID) { this.organizerID = organizerID; }
 
+    /**
+     * getter for the event name
+     * @return event name
+     */
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
 
+    /**
+     * getter for event id
+     * @return event id
+     */
     public String getEventID() { return eventID; }
 
     public void setEventID(String eventID) { this.eventID = eventID; }
 
+    /**
+     * getter for event description
+     * @return event
+     */
     public String getDescription() { return description; }
 
     public void setDescription(String description) { this.description = description; }
 
+    /**
+     * getter for the event facility
+     * @return event facility
+     */
     public Facility getFacility() { return facility; }
 
     public void setFacility(Facility facility) { this.facility = facility; }
 
+    /**
+     * getter for the event lists
+     * @return event list manager
+     */
     public ListManager getListManager() { return listManager; }
 
+    /**
+     * getter for the event starttime
+     * @return event datetime for start of event
+     */
     public Timestamp getStartDateTime() {
         return startDateTime;
     }
 
+    /**
+     * setter for startdate time
+     * @param startDateTime datetime
+     */
     public void setStartDateTime(Timestamp startDateTime) {
         this.startDateTime = startDateTime;
     }
 
+    /**
+     * getter for the event endtime
+     * @return event datetime for end of event
+     */
     public Timestamp getEndDateTime() {
         return endDateTime;
     }
 
+    /**
+     * end date for event
+     * @param endDateTime datetime value
+     */
     public void setEndDateTime(Timestamp endDateTime) {
         this.endDateTime = endDateTime;
     }
 
+    /**
+     * getter for the event waitlist starttime
+     * @return event datetime for start of eventwaitlist opendate
+     */
     public Timestamp getWaitListOpenDate() {
         return waitListOpenDate;
     }
 
+    /**
+     * Open date for the waitlit
+     * @param waitListOpenDate datetime
+     */
     public void setWaitListOpenDate(Timestamp waitListOpenDate) {
         this.waitListOpenDate = waitListOpenDate;
     }
 
+    /**
+     * getter for the event waitlist close time
+     * @return event datetime for waitlist close date
+     */
     public Timestamp getWaitListCloseDate() {
         return waitListCloseDate;
     }
 
+    /**
+     * title says what it does...
+     * @param waitListCloseDate the date you want to close the wait list
+     */
     public void setWaitListCloseDate(Timestamp waitListCloseDate) {
         this.waitListCloseDate = waitListCloseDate;
     }
 
+    /**
+     * getter for the event frequency
+     * @return event frequecy
+     */
     public String getFrequency() {
         return frequency;
     }
 
+    /**
+     * frequency of the event
+     * @param frequency choose from the drop down
+     */
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
 
+    /**
+     * getter for the event qr code
+     * @return event event qr string
+     */
     public String getQrCode() {
         return qrCode;
     }
 
+    /**
+     * QR string
+     * @param qrCode string value of hashed event id
+     */
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
     }
 
+    /**
+     * getter for the event cost
+     * @return event cost
+     */
     public int getCost() {
         return cost;
     }
 
+    /**
+     * how much you are charingg people to attend your awesome event
+     * @param cost money
+     */
     public void setCost(int cost) {
         this.cost = cost;
     }
 
+    /**
+     * getter for the event attendees spots
+     * @return event spots
+     */
     public int getAttendeeSpots() {
         return attendeeSpots;
     }
 
+    /**
+     * setter for if the event atendee spots
+     * @param attendeeSpots num of peeps you want to come
+     */
     public void setAttendeeSpots(int attendeeSpots) {
         this.attendeeSpots = attendeeSpots;
     }
 
+    /**
+     * set list manager
+     * @param listManager where the lists at!
+     */
     public void setListManager(ListManager listManager) {
         this.listManager = listManager;
     }
 
+    /**
+     * getter for the waitlist spots
+     * @return event waitlist spots
+     */
     public int getWaitListSpots() {
         return waitListSpots;
     }
 
+    /**
+     * setter for if the waitlist spots
+     * @param waitListSpots num of users who can join waitlist
+     */
     public void setWaitListSpots(int waitListSpots) {
         this.waitListSpots = waitListSpots;
     }
 
+    /**
+     * getter for if the event requires geolocation
+     * @return bool value
+     */
     public Boolean getHasGeolocation() {
         return hasGeolocation;
     }
 
+    /**
+     * setter for if the waitlist requires geolocation
+     * @param hasGeolocation boolean true or false
+     */
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
     }

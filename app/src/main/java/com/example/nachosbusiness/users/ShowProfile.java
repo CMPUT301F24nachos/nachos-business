@@ -17,6 +17,10 @@ import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 
+/**
+ * Displays the profile for the user. From this activity, user's can navigate to edit their profile,
+ * or navigate back to the dashboard. This is just to hold the edit fragment!
+ */
 public class ShowProfile extends AppCompatActivity {
 
     private DBManager dbManager;

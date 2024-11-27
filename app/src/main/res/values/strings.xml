@@ -45,6 +45,8 @@
     <!--event registration strings-->
     <string name="event_leave_waitlist_title">Currently Registered on Waitlist</string>
     <string name="event_entrant_leave">Leave Waiting List</string>
+    <string name="event_invite_list_title">You have been Invited!</string>
+    <string name="event_accepted_list_title">You are Confirmed!!</string>
 
     <!--Crate event strings!-->
     <string name="event_button_save">Create Event</string>
