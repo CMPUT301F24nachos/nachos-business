@@ -1,9 +1,11 @@
 package com.example.nachosbusiness.organizer_views;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.users.UpdateProfile;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.utils.TimePickerFragment;
@@ -34,6 +38,10 @@ import com.google.firebase.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Fragment to edit events. Utilizes
+ */
+
 public class EditEventFragment extends Fragment {
     private EditText editTextEventName, editEventDescription, editPrice, editMaxAttendees, editMaxWaitlist;
     private Spinner editEventFrequency;
@@ -42,10 +50,11 @@ public class EditEventFragment extends Fragment {
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton, deleteButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID, androidID;
     private Date startTimeDate, endTimeDate, oDate, cDate;
     private int eventCost, attendeeSpots, waitlistSpots;
     private Boolean hasGeolocation;
+    private Facility facility;
 
 
     DBManager dbManager = new DBManager("events");
@@ -55,6 +64,8 @@ public class EditEventFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_edit_event, container, false);
+
+        androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         initializeViews(view);
 
@@ -121,11 +132,6 @@ public class EditEventFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // TODO This needs to correctly open up images and save it. Likely give it its own method.
-        btnUploadPoster.setOnClickListener(v -> {
-            uploadedPosterPath = "path/to/uploaded/poster";
-            Toast.makeText(getActivity(), "Poster uploaded", Toast.LENGTH_SHORT).show();
-        });
 
         editGeolocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -292,6 +298,21 @@ public class EditEventFragment extends Fragment {
             }
         });
 
+        btnUploadPoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToUpdateProfile();
+            }
+        });
+
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility1) {
+                facility = facility1;
+            }
+        });
+
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
 
@@ -397,7 +418,6 @@ public class EditEventFragment extends Fragment {
     private void saveEvent() {
 
         DBManager dbManager = new DBManager("events");
-        String androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         int price, waitlist, attendees;
         String eventName = editTextEventName.getText().toString();
@@ -445,53 +465,70 @@ public class EditEventFragment extends Fragment {
             return;
         }
 
-        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
-            @Override
-            public void onFacilityReceived(Facility facility) {
-                // add event to db
-                Event event;
-                if (waitlist > 0)
-                {
-                    event = new Event(
-                            eventId,
-                            eventName,
-                            organizerID,
-                            facility,
-                            eventDescription,
-                            new Timestamp(startTimeDate),  // Convert Date to Timestamp
-                            new Timestamp(endTimeDate),    // Convert Date to Timestamp
-                            frequency,
-                            new Timestamp(oDate),  // Convert Date to Timestamp
-                            new Timestamp(cDate), // Convert Date to Timestamp
-                            price,
-                            isGeolocationEnabled,
-                            attendees,
-                            waitlist
-                    );
 
-                }
-                else
-                {
-                    event = new Event(
-                            eventId,
-                            eventName,
-                            organizerID,
-                            facility,
-                            eventDescription,
-                            new Timestamp(startTimeDate),  // Convert Date to Timestamp
-                            new Timestamp(endTimeDate),    // Convert Date to Timestamp
-                            frequency,
-                            new Timestamp(oDate),  // Convert Date to Timestamp
-                            new Timestamp(cDate), // Convert Date to Timestamp
-                            price,
-                            isGeolocationEnabled,
-                            attendees
-                    );
+        Event event;
+        if (waitlist > 0) {
+            event = new Event(
+                    eventId,
+                    eventName,
+                    organizerID,
+                    facility,
+                    eventDescription,
+                    new Timestamp(startTimeDate),  // Convert Date to Timestamp
+                    new Timestamp(endTimeDate),    // Convert Date to Timestamp
+                    frequency,
+                    new Timestamp(oDate),  // Convert Date to Timestamp
+                    new Timestamp(cDate), // Convert Date to Timestamp
+                    price,
+                    isGeolocationEnabled,
+                    attendees,
+                    waitlist
+            );
 
-                }
-                dbManager.setEntry(eventId, event);
-            }
-        });
+        } else {
+            event = new Event(
+                    eventId,
+                    eventName,
+                    organizerID,
+                    facility,
+                    eventDescription,
+                    new Timestamp(startTimeDate),  // Convert Date to Timestamp
+                    new Timestamp(endTimeDate),    // Convert Date to Timestamp
+                    frequency,
+                    new Timestamp(oDate),  // Convert Date to Timestamp
+                    new Timestamp(cDate), // Convert Date to Timestamp
+                    price,
+                    isGeolocationEnabled,
+                    attendees
+            );
+
+        }
+        dbManager.setEntry(eventId, event);
+    }
+
+    private void navigateToUpdateProfile() {
+        if (TextUtils.isEmpty(eventId)) {
+            Log.e("UploadPoster", "Event ID is null or empty");
+            Toast.makeText(getActivity(), "Event ID is missing!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putString("POSTER_PATH", eventId);
+
+        EditEventImageFragment eventImageFragment = new EditEventImageFragment();
+        eventImageFragment.setArguments(bundle);
+
+        requireActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, eventImageFragment) // Ensure the ID matches your layout
+                .addToBackStack(null)
+                .commit();
+
+        View fragmentContainer = getView().findViewById(R.id.fragment_container);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+        }
     }
 }

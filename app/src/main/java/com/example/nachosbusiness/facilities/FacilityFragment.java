@@ -18,6 +18,10 @@ import com.example.nachosbusiness.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+
+/**
+ * Fragment for organizers to create/edit their facilities.
+ */
 public class FacilityFragment extends Fragment {
 
     private FacilityDBManager facilityManager;
@@ -79,7 +83,7 @@ public class FacilityFragment extends Fragment {
 
                 if (isNameValid && isLocationValid && isDescriptionValid) {
                     editFacility.setName(facilityName.getText().toString());
-                    editFacility.setLocation((facilityLocation.getText().toString()));
+                    editFacility.setLocation(facilityLocation.getText().toString());
                     editFacility.setDesc(facilityDescription.getText().toString());
 
                     if (facilityManager.getFacility().getName()!=null){
