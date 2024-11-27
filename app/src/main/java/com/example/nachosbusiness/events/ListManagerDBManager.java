@@ -61,7 +61,12 @@ public class ListManagerDBManager extends DBManager implements Serializable {
         void onError(String errorMessage);
     }
 
-
+    /**
+     * Queries the list manager by  a specific androidID. This returns all of the lists that a user
+     * is in including which type of list.
+     * @param androidID android ID of the user
+     * @param callback ListManagerCallback
+     */
     public void queryListsByUserID(String androidID, ListManagerCallback callback) {
         this.setCollectionReference("lists");
         this.getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
