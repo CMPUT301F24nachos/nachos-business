@@ -28,6 +28,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This class is used to send data to the DB. Using the set function allows us to specify the docid
+ * we want. Updates the record in firestore.
+ */
+
 public class DBManager {
 
     private FirebaseFirestore db;
@@ -208,9 +213,64 @@ public class DBManager {
         }
     }
 
+    public static void uploadEventImage(Context context, String imageName, Uri selectedImageUri) {
+        if (selectedImageUri != null) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference profileImagesRef = storageRef.child("event_images/" + imageName + ".jpg");
+            UploadTask uploadTask = profileImagesRef.putFile(selectedImageUri);
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                profileImagesRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    // Use getApplicationContext() to avoid null context issues
+                    Context appContext = context.getApplicationContext();
+                    if (appContext != null) {
+                        Toast.makeText(appContext, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).addOnFailureListener(e -> {
+                // Use getApplicationContext() to avoid null context issues
+                Context appContext = context.getApplicationContext();
+                if (appContext != null) {
+                    Toast.makeText(appContext, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Use getApplicationContext() to avoid null context issues
+            Context appContext = context.getApplicationContext();
+            if (appContext != null) {
+                Toast.makeText(appContext, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     public void getProfileImage(String androidId, ImageView imageView, Context context, Runnable onImageLoaded) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    ((Activity) context).runOnUiThread(() -> {
+                        imageView.setImageBitmap(bitmap);
+                        if (onImageLoaded != null) {
+                            onImageLoaded.run();  // Execute the callback only if it's provided
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+        });
+    }
+
+    public void getEventImage(String eventId, ImageView imageView, Context context, Runnable onImageLoaded) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("event_images/" + eventId + ".jpg");
 
         profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             new Thread(() -> {
@@ -242,6 +302,20 @@ public class DBManager {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(context, "Failed to delete profile image.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
+    }
+
+    public void deleteEventImage(String eventId, Context context) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        profileImageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Event poster deleted successfully.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to delete event poster.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 });
     }

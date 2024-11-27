@@ -23,11 +23,19 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.MainActivity;
 import com.example.nachosbusiness.R;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+
+/**
+ * Registration activity is used to register a new user to the system. The user will be tracked using
+ * their device's android ID, and after registration, the user will be identified by the android
+ * ID and will not be required to register again.
+ */
 public class RegistrationActivity extends AppCompatActivity {
     private DBManager dbManager;
     private ImageView imageView;
@@ -151,6 +159,10 @@ public class RegistrationActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(RegistrationActivity.this, "Registration successful with default profile pic!", Toast.LENGTH_SHORT).show();
                     }
+                    Intent eventIntent = new Intent(RegistrationActivity.this, Dashboard.class);
+                    String name = editUsername.getText().toString();
+                    eventIntent.putExtra("name", name);
+                    startActivity(eventIntent);
                 }
             }
         });

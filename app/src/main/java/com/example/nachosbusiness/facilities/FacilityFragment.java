@@ -18,6 +18,10 @@ import com.example.nachosbusiness.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+
+/**
+ * Fragment for organizers to create/edit their facilities.
+ */
 public class FacilityFragment extends Fragment {
 
     private FacilityDBManager facilityManager;
