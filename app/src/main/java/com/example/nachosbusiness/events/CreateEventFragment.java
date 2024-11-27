@@ -1,6 +1,8 @@
 package com.example.nachosbusiness.events;
 
 import androidx.fragment.app.Fragment;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -19,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
@@ -54,13 +57,16 @@ public class CreateEventFragment extends Fragment {
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, androidID;
     private Date startTimeDate, endTimeDate, oDate, cDate;
+    private Facility facility;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_create_event, container, false);
+
+        androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         initializeViews(view);
 
@@ -111,8 +117,7 @@ public class CreateEventFragment extends Fragment {
         editGeolocation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 Toast.makeText(getActivity(), "Geolocation enabled", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(getActivity(), "Geolocation disabled", Toast.LENGTH_SHORT).show();
             }
         });
@@ -252,6 +257,15 @@ public class CreateEventFragment extends Fragment {
             }
         });
 
+        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
+        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
+            @Override
+            public void onFacilityReceived(Facility facility1) {
+                facility = facility1;
+            }
+        });
+
+
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
     // TODO should find a way to check if the times are correct
@@ -311,7 +325,6 @@ public class CreateEventFragment extends Fragment {
     private void saveEvent() {
 
         DBManager dbManager = new DBManager("events");
-        String androidID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         int price, waitlist, attendees;
         String eventName = editTextEventName.getText().toString();
@@ -358,22 +371,13 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        FacilityDBManager facilityManager = new FacilityDBManager("facilities");
-        facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
-            @Override
-            public void onFacilityReceived(Facility facility) {
-                // add event to db
-                Event event;
-                if (waitlist > 0)
-                {
-                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
-                }
-                else
-                {
-                    event = new Event(UUID.randomUUID().toString(), eventName, androidID, facilityManager.getFacility(), eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
-                }
-                dbManager.setEntry(event.getEventID(), event);
-            }
-        });
+
+        Event event;
+        if (waitlist > 0) {
+            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+        } else {
+            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+        }
+        dbManager.setEntry(event.getEventID(), event);
     }
 }
