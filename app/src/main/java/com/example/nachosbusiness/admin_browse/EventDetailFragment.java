@@ -298,12 +298,11 @@ public class EventDetailFragment extends Fragment {
 
                             getActivity().getSupportFragmentManager().popBackStack();
                         } else {
-                            // If the query doesn't return any documents
+
                             Toast.makeText(getActivity(), "Event not found.", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // Handle the error case when querying the collection fails
                         Toast.makeText(getActivity(), "Error fetching event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         }
@@ -320,7 +319,6 @@ public class EventDetailFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Loop through the results and delete each event (skipping the one already deleted)
                         for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
                             String eventID = eventDoc.getId();
                             db.collection("events").document(eventID)
@@ -333,7 +331,6 @@ public class EventDetailFragment extends Fragment {
                                     });
                         }
                     }
-                    // Optionally, show a toast that events have been deleted
                     //Toast.makeText(getActivity(), "All events for this organizer have been deleted.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
