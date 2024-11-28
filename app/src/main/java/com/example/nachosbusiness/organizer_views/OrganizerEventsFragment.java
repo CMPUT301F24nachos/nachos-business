@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.events.CreateEventFragment;
@@ -23,6 +25,11 @@ import com.example.nachosbusiness.events.EventDBManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Display the organizer's events in this fragment. Allows organizer's to see their current event,
+ * create a new event, or edit an existing event.
+ */
 
 public class OrganizerEventsFragment extends Fragment {
     private EventDBManager eventDBManager;
@@ -62,7 +69,7 @@ public class OrganizerEventsFragment extends Fragment {
                     //Toast.makeText(requireContext(), "create a new event", Toast.LENGTH_SHORT).show();
                         CreateEventFragment createEventFragment = new CreateEventFragment();
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, createEventFragment);
+                        transaction.replace(R.id.organizer_events_container, createEventFragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                     return true;

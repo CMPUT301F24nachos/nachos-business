@@ -1,12 +1,8 @@
 package com.example.nachosbusiness.events;
 
-import android.net.Uri;
-import android.util.Log;
-
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.User;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -38,7 +34,7 @@ public class ListManager {
     private DBManager dbManager;
 
     /**
-     * Empty Constructor forfirebase db queries.
+     * Empty Constructor for firebase db queries.
      */
     public ListManager(){
 
@@ -181,8 +177,13 @@ public class ListManager {
             invitedList.add(user);
 
             if (!testMode) {
-                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry));
-                dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayUnion(user));
+                dbManager.getCollectionReference().document(listManagerID).update("waitList", FieldValue.arrayRemove(userEntry))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayUnion(user));
+                            }
+                        });
             }
             return true;
         }
@@ -227,8 +228,16 @@ public class ListManager {
         acceptedList.add(user);
 
         if (!testMode) {
-            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
-            dbManager.getCollectionReference().document(listManagerID).update("acceptedList", FieldValue.arrayUnion(user));
+            /* TODO: This probably won't work because to remove an element from an array in firebase the exact value must be given, however foundEntry is likely not the exact value.
+                A possible solution is to retrieve the value from the db, then use the retrieved value to remove it. (this also applies to moveToCanceledList())
+             */
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("acceptedList", FieldValue.arrayUnion(user));
+                        }
+                    });
         }
         return true;
     }
@@ -271,15 +280,37 @@ public class ListManager {
         canceledList.add(user);
 
         if (!testMode) {
-            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry));
-            dbManager.getCollectionReference().document(listManagerID).update("canceledList", FieldValue.arrayUnion(user));
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(user))
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("canceledList", FieldValue.arrayUnion(user));
+                        }
+                    });
         }
+        return true;
+    }
+
+    public boolean moveAllToCanceledList() {
+        canceledList.addAll(invitedList);
+        invitedList.clear();
+
+        if (!testMode) {
+            dbManager.getCollectionReference().document(listManagerID).update("invitedList", invitedList)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            dbManager.getCollectionReference().document(listManagerID).update("canceledList", canceledList);
+                        }
+                    });
+        }
+
         return true;
     }
 
 
     /**
-     * Randomly selects a given number of users from the wait list
+     * Randomly selects a given number of users from the wait list and moves them to the invited list
      * @param count number of users to select
      * @return list of selected users
      */
@@ -291,9 +322,23 @@ public class ListManager {
 
         ArrayList<User> selectedUsers = new ArrayList<>();
         for (Map<Object, Object> entry : selectedEntries) {
-            User user = (User) entry.get("user");
-            if (user != null) {
-                selectedUsers.add(user);
+            Object userObject = entry.get("user");
+
+            if (userObject instanceof User) {
+                selectedUsers.add((User) userObject);
+                moveToInvitedList((User) userObject);
+            } else if (userObject instanceof Map) {
+                try {
+                    User user;
+                    Map<?, ?> userMap = (Map<?, ?>) userObject;
+                    user = new User(userMap.get("android_id").toString(), userMap.get("username").toString(), userMap.get("email").toString(), userMap.get("phone").toString());
+                    selectedUsers.add(user);
+                    moveToInvitedList(user);
+                } catch (Exception e) {
+                    return null;
+                }
+            } else {
+                return null;
             }
         }
         return selectedUsers;
@@ -323,6 +368,12 @@ public class ListManager {
                 .findFirst()
                 .orElse(null);
         return userEntry != null;
+    }
+
+    public void initializeManagers(String eventID) {
+        this.listManagerID = eventID;
+        this.dbManager = new DBManager("lists");
+        dbManager.setEntry(eventID, this);
     }
 
     /**
@@ -385,9 +436,7 @@ public class ListManager {
      * Getter for cancelled list
      * @return cancelled list
      */
-    public ArrayList<User> getCanceledList() {
-        return canceledList;
-    }
+    public ArrayList<User> getCanceledList() { return canceledList; }
 
     /**
      * Set the number of available spots in the wishlist

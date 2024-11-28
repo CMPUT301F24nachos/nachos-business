@@ -21,6 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * Array adapter for the dashboard. Shows the specific user's events they are in a waitlist, invitedlist
+ * or accepted list for. On click navigate to that event page.
+ */
 public class DashboardArrayAdapter extends ArrayAdapter<Event> {
 
     private ArrayList<Event> events;

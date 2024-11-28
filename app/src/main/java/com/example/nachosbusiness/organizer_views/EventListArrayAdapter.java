@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
@@ -82,6 +86,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         ImageView eventImage = view.findViewById(R.id.event_image);
         TextView eventName = view.findViewById(R.id.event_name);
         ImageButton editEvent = view.findViewById(R.id.edit_icon);
+        Button waitlistButton = view.findViewById(R.id.waitlist_button);
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
 
@@ -139,10 +144,29 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
                 editEventFragment.setArguments(args);
 
                 activity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, editEventFragment)
+                        .replace(R.id.organizer_events_container, editEventFragment)
                         .addToBackStack(null)
                         .commit();
             }
+        });
+
+        // show event waitlist upon event click
+        waitlistButton.setOnClickListener(v -> {
+            if (context instanceof AppCompatActivity) {
+                AppCompatActivity activity = (AppCompatActivity) context;
+
+                WaitlistFragment waitlistFragment = new WaitlistFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                waitlistFragment.setArguments(bundle);
+
+                activity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.organizer_events_container, waitlistFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+
         });
 
         return view;
