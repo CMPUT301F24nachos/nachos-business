@@ -96,27 +96,27 @@ public class NotificationHandler {
 
 
 
-    /**
-     * Saves the notification data to Firestore for audit purposes.
-     *
-     * @param user        A map containing user data.
-     * @param title       The notification title.
-     * @param description The notification description.
-     */
-    private static void saveNotificationToFirestore(Map<String, Object> user, String title, String description) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Map<String, Object> notificationData = new HashMap<>();
-        notificationData.put("title", title);
-        notificationData.put("description", description);
-        notificationData.put("timestamp", FieldValue.serverTimestamp());
-        notificationData.put("userName", user.get("name"));
-
-        Log.d(TAG, "Saving notification to Firestore: " + notificationData);
-
-        db.collection("notifications")
-                .add(notificationData)
-                .addOnSuccessListener(docRef -> Log.d(TAG, "Notification saved successfully: " + docRef.getId()))
-                .addOnFailureListener(e -> Log.e(TAG, "Error saving notification", e));
-    }
+//    /**
+//     * Saves the notification data to Firestore for audit purposes.
+//     *
+//     * @param user        A map containing user data.
+//     * @param title       The notification title.
+//     * @param description The notification description.
+//     */
+//    private static void saveNotificationToFirestore(Map<String, Object> user, String title, String description) {
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//        Map<String, Object> notificationData = new HashMap<>();
+//        notificationData.put("title", title);
+//        notificationData.put("description", description);
+//        notificationData.put("timestamp", FieldValue.serverTimestamp());
+//        notificationData.put("userName", user.get("name"));
+//
+//        Log.d(TAG, "Saving notification to Firestore: " + notificationData);
+//
+//        db.collection("notifications")
+//                .add(notificationData)
+//                .addOnSuccessListener(docRef -> Log.d(TAG, "Notification saved successfully: " + docRef.getId()))
+//                .addOnFailureListener(e -> Log.e(TAG, "Error saving notification", e));
+//    }
 }

@@ -161,7 +161,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         });
 
         inviteEvent.setOnClickListener(v -> {
-            String userAndroidId = "f8879d1628496630"; // Replace with the target Android ID
+            String userAndroidId = "de63df4ca98ebdc8"; // Replace with the target Android ID
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             Log.d("Debug", "Querying Firestore for android_id: " + userAndroidId);
