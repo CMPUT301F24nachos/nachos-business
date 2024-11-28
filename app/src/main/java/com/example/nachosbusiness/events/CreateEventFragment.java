@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.text.SimpleDateFormat;
+
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.Dashboard;
@@ -42,6 +44,7 @@ import com.example.nachosbusiness.utils.TimePickerFragment;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -330,7 +333,7 @@ public class CreateEventFragment extends Fragment {
 
         createEventText.setOnClickListener(v -> validateAndCreateEvent());
     }
-    // TODO should find a way to check if the times are correct
+
     private void validateAndCreateEvent() {
 
         if (TextUtils.isEmpty(editTextEventName.getText())) {
@@ -343,10 +346,10 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        if (uploadedPosterPath == null || uploadedPosterPath.isEmpty()) {
-            Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        //if (uploadedPosterPath == null || uploadedPosterPath.isEmpty()) {
+        //    Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
+        //    return;
+        //}
 
         String attendeesStr = editMaxAttendees.getText().toString();
         if (!TextUtils.isEmpty(attendeesStr)) {
@@ -374,6 +377,52 @@ public class CreateEventFragment extends Fragment {
             }
         }
 
+        // Parse Dates
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        Date currentDate = new Date();
+        try {
+            Date startDateParsed = dateFormat.parse(startDate);
+            Date endDateParsed = dateFormat.parse(endDate);
+
+            Date openDateParsed = dateFormat.parse(openDate);
+            Date closeDateParsed = dateFormat.parse(closeDate);
+
+            if (startDateParsed.before(currentDate)) {
+                Toast.makeText(getActivity(), "Start date cannot be before today", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (endDateParsed.before(startDateParsed)) {
+                Toast.makeText(getActivity(), "End date cannot be before start date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (closeDateParsed.before(openDateParsed)) {
+                Toast.makeText(getActivity(), "Close date cannot be before open date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Invalid date selection", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Date startTimeParsed = timeFormat.parse(startTime);
+            Date endTimeParsed = timeFormat.parse(endTime);
+
+            if (startDate.equals(endDate)) {
+                if (endTimeParsed.before(startTimeParsed)) {
+                    Toast.makeText(getActivity(), "End time must be after start time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Invalid time selection", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 
         saveEvent();
