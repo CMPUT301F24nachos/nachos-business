@@ -105,6 +105,9 @@ public class EventRegistration extends AppCompatActivity {
                                                 case NOTINALIST:
                                                     updateNotInListUI();
                                                     break;
+                                                case CANCELLEDLIST:
+                                                    updateCancelledListUI();
+                                                    break;
                                     }
 
                                         }
@@ -380,6 +383,33 @@ public class EventRegistration extends AppCompatActivity {
         TextView textSpotsText = findViewById(R.id.textView19);
 
         regTitle.setText(R.string.event_accepted_list_title);
+
+        signUpButton.setVisibility(View.GONE);
+        leaveButton.setVisibility(View.GONE);
+        acceptInviteButton.setVisibility(View.GONE);
+        rejectInviteButton.setVisibility(View.GONE);
+
+        waitlistOpenSpotsTV.setText("");
+        waitlistTotalSpotsTV.setText("");
+        textviewSlash.setVisibility(View.INVISIBLE);
+        textSpotsText.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Displays the view for a user in the cancelled list.
+     */
+    private void updateCancelledListUI() {
+        Button signUpButton = findViewById(R.id.button_event_register);
+        Button leaveButton = findViewById(R.id.button_event_leave_button);
+        Button acceptInviteButton = findViewById(R.id.button_accept_invite);
+        Button rejectInviteButton = findViewById(R.id.button_reject_invite);
+        TextView regTitle = findViewById(R.id.textview_register_title);
+        TextView waitlistOpenSpotsTV = findViewById(R.id.textview_event_reg_open_spots);
+        TextView waitlistTotalSpotsTV = findViewById(R.id.textview_event_reg_total_spots);
+        TextView textviewSlash = findViewById(R.id.textView17);
+        TextView textSpotsText = findViewById(R.id.textView19);
+
+        regTitle.setText("You Rejected This Event!");
 
         signUpButton.setVisibility(View.GONE);
         leaveButton.setVisibility(View.GONE);
