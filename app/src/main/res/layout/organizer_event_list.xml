@@ -46,13 +46,6 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etToken"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:text="Name" />
     </LinearLayout>
 
     <TextView

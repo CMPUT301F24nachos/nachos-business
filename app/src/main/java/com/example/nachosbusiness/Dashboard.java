@@ -29,6 +29,8 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -74,6 +76,36 @@ public class Dashboard extends AppCompatActivity {
         });
 
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
+
+        // Set the initial state of the switch from Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userDoc = db.collection("users").document(androidID);
+
+        userDoc.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
+                if (notificationsEnabled != null) {
+                    notificationSwitch.setChecked(notificationsEnabled);
+                } else {
+                    notificationSwitch.setChecked(false); // Default to off if the field doesn't exist
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("Dashboard", "Failed to fetch notification preference", e);
+        });
+
+        // Handle toggle changes
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            userDoc.update("notificationsEnabled", isChecked)
+                    .addOnSuccessListener(aVoid -> {
+                        String message = isChecked ? "Notifications enabled" : "Notifications disabled";
+                        Toast.makeText(Dashboard.this, message, Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Dashboard", "Failed to update notification preference", e);
+                        Toast.makeText(Dashboard.this, "Failed to update preference", Toast.LENGTH_SHORT).show();
+                    });
+        });
 
         TextView userID = findViewById(R.id.dashboard_user_id);
 

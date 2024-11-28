@@ -39,29 +39,16 @@ public class MainActivity extends AppCompatActivity {
         // Request notification permission
         requestNotificationPermission();
 
+
+
         DBManager dbManager = new DBManager("entrants");
         String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
+        // Register the device for notifications and save the FCM token
+        NotificationHelper.registerForNotifications(androidID);
+
         Intent intent = getIntent();
         Uri data = intent.getData();
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            System.out.println("Fetching FCM registration token failed");
-                            return;
-                        }
-
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        // Log and toast
-                        System.out.println(token);
-                        Toast.makeText(MainActivity.this, "Your device registration tokne is" + token, Toast.LENGTH_SHORT).show();
-                    }
-                });
 
         // navigate to dashboard if the user is already registered (device id is recognized). Redirect to registration page otherwise
         dbManager.getUser(androidID, new DBManager.EntryRetrievalCallback() {
@@ -111,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
         // Create notification channel (if applicable)
         NotificationHandler.createNotificationChannel(this);
 
-        NotificationHelper.registerForNotifications();
+        String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        NotificationHelper.registerForNotifications(androidID);
         // Retrieve the FCM token
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {

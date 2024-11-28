@@ -161,40 +161,51 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         });
 
         inviteEvent.setOnClickListener(v -> {
-            // Replace userAndroidId with the correct `android_id` of the user
-            String userAndroidId = "f8879d1628496630"; // Replace this with the actual android_id you want to target
-
+            String userAndroidId = "f8879d1628496630"; // Replace with the target Android ID
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            Log.d("Debug", "Querying Firestore for android_id: " + userAndroidId);
+
+            // Query the entrants collection for the user
             db.collection("entrants")
-                    .whereEqualTo("android_id", userAndroidId) // Query using android_id field
+                    .whereEqualTo("android_id", userAndroidId)
                     .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        if (!querySnapshot.isEmpty()) {
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                String userName = document.getString("username");
-                                boolean notificationsEnabled = true; // Assume true if not stored in Firestore
-
-                                if (notificationsEnabled) {
-                                    String title = "Event Sign-Up Confirmation";
-                                    String body = "You have successfully signed up for the event: " + event.getName();
-
-                                    Map<String, Object> user = new HashMap<>();
-                                    user.put("name", userName);
-                                    user.put("notificationsEnabled", true);
-
-                                    NotificationHandler.sendNotification(user, context, title, body);
-                                    Toast.makeText(context, "Notification sent to: " + userName, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(context, "User has notifications disabled.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
+                    .addOnSuccessListener(entrantSnapshot -> {
+                        if (!entrantSnapshot.isEmpty()) {
+                            Log.d("Debug", "User found in entrants collection.");
+                            // Now query the users collection for the FCM token
+                            db.collection("users")
+                                    .document(userAndroidId) // android_id matches the document ID in users
+                                    .get()
+                                    .addOnSuccessListener(userDocument -> {
+                                        if (userDocument.exists()) {
+                                            String fcmToken = userDocument.getString("fcmToken");
+                                            if (fcmToken != null) {
+                                                // Display local notification
+                                                NotificationHandler.displayNotification(context, userAndroidId, "Event Update", "New event created!");
+                                                Toast.makeText(context, "Notification displayed!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(context, "FCM token not found for user.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "User document not found in users collection.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("Debug", "Error fetching user data from users collection", e);
+                                        Toast.makeText(context, "Error fetching user data.", Toast.LENGTH_SHORT).show();
+                                    });
                         } else {
-                            Toast.makeText(context, "User not found.", Toast.LENGTH_SHORT).show();
+                            Log.w("Debug", "No user found for android_id: " + userAndroidId);
+                            Toast.makeText(context, "User not found in entrants.", Toast.LENGTH_SHORT).show();
                         }
                     })
-                    .addOnFailureListener(e -> Log.e("EventListArrayAdapter", "Error fetching user data", e));
+                    .addOnFailureListener(e -> {
+                        Log.e("Debug", "Error fetching user data from entrants collection", e);
+                        Toast.makeText(context, "Error fetching user data.", Toast.LENGTH_SHORT).show();
+                    });
         });
+
 
         return view;
     }

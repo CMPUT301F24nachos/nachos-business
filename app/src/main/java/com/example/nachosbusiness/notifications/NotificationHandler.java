@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Handles both local and push notifications, as well as saving notification data to Firestore.
+ * Handles local OS notifications and saving notification data to Firestore.
  */
 public class NotificationHandler {
 
@@ -58,55 +58,46 @@ public class NotificationHandler {
      * @param title   The notification title.
      * @param content The notification content.
      */
-    public static void displayNotification(Context context, String title, String content) {
-        createNotificationChannel(context);
+    public static void displayNotification(Context context, String userId, String title, String content) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Boolean notificationsEnabled = documentSnapshot.getBoolean("notificationsEnabled");
+                    if (Boolean.TRUE.equals(notificationsEnabled)) {
+                        createNotificationChannel(context);
 
-        // Check if the permission is granted
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                Log.w(TAG, "Permission not granted to post notifications.");
-                return; // Exit if permission is not granted
-            }
-        }
+                        Intent intent = new Intent(context, MainActivity.class);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        Intent intent = new Intent(context, MainActivity.class); // Redirect to MainActivity or desired activity
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+                        // Check if the permission is granted
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                Log.w(TAG, "Permission not granted to post notifications.");
+                                return; // Exit if permission is not granted
+                            }
+                        }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setSmallIcon(R.drawable.ic_notification)
+                                .setContentTitle(title)
+                                .setContentText(content)
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                    } else {
+                        Log.d("NotificationHandler", "Notifications are disabled for this user.");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("NotificationHandler", "Failed to check notification preference", e));
     }
 
-    /**
-     * Sends a notification and saves it to Firestore.
-     *
-     * @param user        A map containing user data, including "userId" and "name".
-     * @param context     The application context.
-     * @param title       The notification title.
-     * @param description The notification description.
-     */
-    public static void sendNotification(Map<String, Object> user, Context context, String title, String description) {
-        if (user == null || !Boolean.TRUE.equals(user.get("notificationsEnabled"))) {
-            Log.d(TAG, "Notifications are disabled for this user.");
-            return;
-        }
 
-        // Display the notification locally
-        displayNotification(context, title, description);
-
-        // Save the notification to Firestore
-        saveNotificationToFirestore(user, title, description);
-    }
 
     /**
-     * Saves the notification data to Firestore.
+     * Saves the notification data to Firestore for audit purposes.
      *
      * @param user        A map containing user data.
      * @param title       The notification title.
