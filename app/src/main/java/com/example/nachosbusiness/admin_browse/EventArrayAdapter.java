@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -75,6 +76,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         ImageButton editEvent = view.findViewById(R.id.edit_icon);
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
+
+        Button waitlistButton = view.findViewById(R.id.waitlist_button);
+        waitlistButton.setVisibility(View.GONE);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
