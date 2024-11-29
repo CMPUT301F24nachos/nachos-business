@@ -98,13 +98,7 @@ public class WaitlistFragment extends Fragment {
             popupMenu.getMenuInflater().inflate(R.menu.event_waitlist_menu, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_nav_event) {
-                    Intent intent = new Intent(getActivity(), EventRegistration.class);
-                    intent.putExtra("eventID", event.getEventID());
-                    intent.putExtra("androidID", event.getOrganizerID());
-                    startActivity(intent);
-                    return true;
-                } else if (item.getItemId() == R.id.action_nav_map) {
+                if (item.getItemId() == R.id.action_nav_map) {
                     // TODO: Add navigation to map
                     return true;
                 } else if (item.getItemId() == R.id.action_send_invites) {
