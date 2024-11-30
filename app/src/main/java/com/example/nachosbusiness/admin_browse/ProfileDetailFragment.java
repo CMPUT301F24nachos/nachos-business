@@ -108,6 +108,7 @@ public class ProfileDetailFragment extends Fragment {
                             removeProfileImage.setVisibility(View.VISIBLE);
                             removeProfile.setVisibility(View.VISIBLE);
                             EditMode.setVisibility(View.VISIBLE);
+                            editButton.setVisibility(GONE);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -137,7 +138,7 @@ public class ProfileDetailFragment extends Fragment {
                     .show();
         });
 
-        // Remove Profile Image
+        // Remove Profile
         removeProfile.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Remove Profile ")
@@ -167,7 +168,7 @@ public class ProfileDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.view_profile, container, false);
+        View view = inflater.inflate(R.layout.admin_edit_profile, container, false);
 
 
         ImageView profileImage = view.findViewById(R.id.profile);

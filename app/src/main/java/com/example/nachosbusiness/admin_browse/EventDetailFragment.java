@@ -399,8 +399,8 @@ public class EventDetailFragment extends Fragment {
                     // Success: Image deleted from Firebase Storage
                     Toast.makeText(getActivity(), "Event image removed", Toast.LENGTH_SHORT).show();
                     // Remove the image from UI as well
-                    ImageView profileImage = getView().findViewById(R.id.profile);
-                    profileImage.setImageResource(R.drawable.emptyevent); // Use a default placeholder image
+                    ImageView eventImage = getView().findViewById(R.id.Image);
+                    eventImage.setImageResource(R.drawable.emptyevent); // Use a default placeholder image
                 })
                 .addOnFailureListener(e -> {
                     // Failure: Something went wrong
