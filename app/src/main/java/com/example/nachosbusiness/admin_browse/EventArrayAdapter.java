@@ -1,6 +1,9 @@
 package com.example.nachosbusiness.admin_browse;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +21,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -86,12 +93,41 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         eventName.setText(event.getName());
         eventDescription.setText(event.getDescription());
 
+        String EventId = event.getEventID();
+        loadEventImage(EventId, eventImage);
+
         editEvent.setOnClickListener(v -> {
             openEventDetailFragment(event);
 
         });
         return view;
 
+    }
+    /**
+     * Loads the event image from Firebase Storage using the attached event  ID
+     *
+     * @param eventId   The unique event ID for each event
+     * @param imageView   The ImageView to display the event image.
+     */
+    private void loadEventImage(String eventId, ImageView imageView) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profileImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        profileImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            ((Activity) context).runOnUiThread(() -> imageView.setImageResource(R.drawable.emptyevent));
+        });
     }
 
     /**

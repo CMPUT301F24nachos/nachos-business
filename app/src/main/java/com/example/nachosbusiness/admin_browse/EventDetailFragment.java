@@ -5,6 +5,7 @@ import static android.view.View.GONE;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +26,11 @@ import com.example.nachosbusiness.events.Event;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
@@ -80,18 +85,23 @@ public class EventDetailFragment extends Fragment {
         ImageButton editButton = view.findViewById(R.id.edit);
         Button removeEvent = view.findViewById(R.id.removeEvent);
         Button removeQR = view.findViewById(R.id.RemoveQR);
+        Button removeImage = view.findViewById(R.id.removeImage);
         ImageButton removeFacility = view.findViewById(R.id.trash);
         removeQR.setVisibility(GONE);
         removeEvent.setVisibility(GONE);
         removeFacility.setVisibility(GONE);
+        removeImage.setVisibility(GONE);
         TextView EditMode = view.findViewById(R.id.editmode);
         EditMode.setVisibility(GONE);
         TextView eventName = view.findViewById(R.id.event_name);
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
         ImageView qrCode = view.findViewById(R.id.event_qr_code);
+        ImageView eventImage = view.findViewById(R.id.Image);
         TextView facilityLocation = view.findViewById(R.id.facility_location);
         TextView facilityName = view.findViewById(R.id.facility_name);
+
+
 
         backButton.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
@@ -122,6 +132,7 @@ public class EventDetailFragment extends Fragment {
                             removeQR.setVisibility(View.VISIBLE);
                             removeEvent.setVisibility(View.VISIBLE);
                             removeFacility.setVisibility(View.VISIBLE);
+                            removeImage.setVisibility(View.VISIBLE);
                             editButton.setVisibility(GONE);
                             EditMode.setVisibility(View.VISIBLE);
 
@@ -149,6 +160,23 @@ public class EventDetailFragment extends Fragment {
                     .show();
         });
 
+
+        removeImage.setOnClickListener(v -> {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Remove Event Image")
+                    .setMessage("Do you want to remove the event image?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            removeEventImageFromFirebase(event.getEventID());
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        });
 
         removeQR.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
@@ -258,7 +286,7 @@ public class EventDetailFragment extends Fragment {
 
             eventName.setText(event.getName());
             eventDescription.setText(event.getDescription());
-
+            loadEventImage(event.getEventID(), eventImage);
             facilityLocation.setText(event.getFacility().getLocation());
             facilityName.setText(event.getFacility().getName());
             if (event.getQrCode() != null) {
@@ -335,6 +363,49 @@ public class EventDetailFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("RemoveFacility", "Error deleting events for organizer: " + e.getMessage());
+                });
+    }
+
+    private void loadEventImage(String eventId, ImageView imageView) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference eventImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        eventImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(uri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    getActivity().runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
+            }).start();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            getActivity().runOnUiThread(() -> {
+                imageView.setImageResource(R.drawable.emptyevent);
+                Toast.makeText(getActivity(), "No event image found", Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    private void removeEventImageFromFirebase(String eventId) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference eventImageRef = storageRef.child("event_images/" + eventId + ".jpg");
+
+        eventImageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Success: Image deleted from Firebase Storage
+                    Toast.makeText(getActivity(), "Event image removed", Toast.LENGTH_SHORT).show();
+                    // Remove the image from UI as well
+                    ImageView profileImage = getView().findViewById(R.id.profile);
+                    profileImage.setImageResource(R.drawable.emptyevent); // Use a default placeholder image
+                })
+                .addOnFailureListener(e -> {
+                    // Failure: Something went wrong
+                    Toast.makeText(getActivity(), "Failed to remove event image", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 });
     }
 }

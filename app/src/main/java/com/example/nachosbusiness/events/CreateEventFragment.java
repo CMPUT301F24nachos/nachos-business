@@ -442,7 +442,7 @@ public class CreateEventFragment extends Fragment {
         }
         dbManager.setEntry(event.getEventID(), event);
         if (selectedImageUri != null) {
-            dbManager.uploadEventImage(getContext(), uploadedPosterPath, selectedImageUri);
+            dbManager.uploadEventImage(getContext(), event.getEventID(), selectedImageUri);
         }
     }
 }
