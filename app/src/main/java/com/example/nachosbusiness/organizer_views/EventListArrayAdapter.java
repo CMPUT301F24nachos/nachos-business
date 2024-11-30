@@ -87,6 +87,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         TextView eventName = view.findViewById(R.id.event_name);
         ImageButton editEvent = view.findViewById(R.id.edit_icon);
         Button waitlistButton = view.findViewById(R.id.waitlist_button);
+        Button mapButton = view.findViewById(R.id.map_button);
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
 
@@ -145,6 +146,23 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
 
                 activity.getSupportFragmentManager().beginTransaction()
                         .replace(R.id.organizer_events_container, editEventFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        mapButton.setOnClickListener(v -> {
+            if (context instanceof AppCompatActivity) {
+                AppCompatActivity activity = (AppCompatActivity) context;
+
+                MapFragment mapFragment = new MapFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                mapFragment.setArguments(bundle);
+
+                activity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.organizer_events_container, mapFragment)
                         .addToBackStack(null)
                         .commit();
             }
