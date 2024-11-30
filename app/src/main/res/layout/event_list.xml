@@ -7,6 +7,7 @@
     android:background="@color/header">
 
     <!-- Top Image Section -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
 
             <TextView
                 android:id="@+id/event_name"
-                android:layout_width="301dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Event Name"
                 android:textColor="@android:color/white"
@@ -38,7 +39,7 @@
 
             <TextView
                 android:id="@+id/event_description"
-                android:layout_width="299dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:text="@string/event_description"
@@ -59,20 +60,30 @@
         android:textColor="@android:color/black"
         android:textSize="12sp" />
 
-    <ImageButton
-        android:id="@+id/edit_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="8dp"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_action_name" />
-    <ImageButton
-        android:id="@+id/map_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="8dp"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_action_name" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/waitlist_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/lightButton"
+            android:text="Waitlist"
+            android:textSize="10sp" />
+
+        <ImageButton
+            android:id="@+id/edit_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_action_name" />
+
+    </LinearLayout>
+
 </FrameLayout>

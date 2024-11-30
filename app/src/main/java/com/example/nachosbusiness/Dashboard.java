@@ -4,8 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +19,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.admin_browse.Browse;
+import com.example.nachosbusiness.events.Event;
+import com.example.nachosbusiness.events.EventDBManager;
 import com.example.nachosbusiness.events.EventRegistration;
+import com.example.nachosbusiness.events.ListManager;
+import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
@@ -26,17 +32,25 @@ import com.example.nachosbusiness.users.ShowProfile;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This Activity is the main dashboard activity for user's to navigate through the functionality
- * of the app.
+ * of the app. Allows user's so see the event's that they are signed up for (waitlist, invited list,
+ * accepted list). User's can navigate to all portions of this app from this activity. Will load
+ * onto this screen after you register.
  *
- * TODO: connect remaining navigations up, set up the view event list
  */
 
 public class Dashboard extends AppCompatActivity {
 
     private String androidID;
     private String userName;
+    private ListView eventListView;
+    private DashboardArrayAdapter eventAdapter;
+    private ArrayList<Event> eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +63,11 @@ public class Dashboard extends AppCompatActivity {
         if (args != null && args.containsKey("name")) {
             userName = args.getString("name");
         } else {
-            userName = "Guest";
+            userName = "";
         }
 
+        EventDBManager eventDBManager = new EventDBManager();
+        ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
         facilityManager.queryOrganizerFacility(androidID, new FacilityDBManager.FacilityCallback() {
             @Override
@@ -75,6 +91,55 @@ public class Dashboard extends AppCompatActivity {
         } else {
             userID.setText("Welcome Back!");
         }
+
+        eventListView = findViewById(R.id.dashboard_event_listview);
+        eventList = new ArrayList<>();
+        eventAdapter = new DashboardArrayAdapter(this, eventList);
+        eventListView.setAdapter(eventAdapter);
+
+        listManagerDBManager.queryListsByUserID(androidID, new ListManagerDBManager.ListManagerCallback() {
+            @Override
+            public void onSingleListFound(List<String> eventIDs) {
+                if (!eventIDs.isEmpty()) {
+                    String eventID = eventIDs.get(0);
+                    eventIDs.remove(0);
+
+                    boolean isAlreadyInList = eventList.stream()
+                            .anyMatch(event -> event.getEventID().equals(eventID));
+
+                    if (!isAlreadyInList) {
+                        eventDBManager.queryEvent(eventID, new EventDBManager.EventCallback() {
+                            @Override
+                            public void onEventReceived(Event event) {
+                                if (event != null) {
+                                    Event newEvent = new Event();
+                                    newEvent.setEventID(event.getEventID());
+                                    newEvent.setName(event.getName());
+                                    newEvent.setFrequency(event.getFrequency());
+                                    newEvent.setStartDateTime(event.getStartDateTime());
+                                    newEvent.setEndDateTime(event.getEndDateTime());
+                                    newEvent.setWaitListOpenDate(event.getWaitListOpenDate());
+                                    newEvent.setWaitListCloseDate(event.getWaitListCloseDate());
+                                    boolean isAlreadyInList = eventList.stream()
+                                            .anyMatch(existingEvent -> existingEvent.getEventID().equals(newEvent.getEventID()));
+
+                                    if (!isAlreadyInList) {
+                                        eventList.add(newEvent);
+                                        eventAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            @Override
+            public void onListManagerReceived(ListManager listManager) {
+                // not applicable here...
+            }
+
+        });
+
 
         notificationSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -164,19 +229,28 @@ public class Dashboard extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // Handle null or unexpected data early
+        if (data == null) {
+            // Log the issue or notify the user
+            Log.e("onActivityResult", "Received null data");
+            return;
+        }
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
+
+        // Check if the result is valid and contains expected data
+        if (result != null && result.getContents() != null && result.getContents().contains("nachos-business://event/")) {
             String scannedData = result.getContents();
+
+            // Navigate to EventRegistration activity
             Intent intent = new Intent(Dashboard.this, EventRegistration.class);
             intent.putExtra("eventID", scannedData);
             intent.putExtra("androidID", androidID);
             startActivity(intent);
-        }
-        else{
-            Intent intent = new Intent(Dashboard.this, Dashboard.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
+        } else {
+            // Provide feedback instead of restarting the Dashboard
+            Toast.makeText(this, "Invalid QR code or action canceled", Toast.LENGTH_SHORT).show();
         }
     }
 
