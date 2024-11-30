@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * WaitlistFragment displays the entrants in the waitlist of an activity. Entrants can be displayed based on status (waitlist, invited, accepted, canceled).
+ * Sampling entrants and resampling entrant functionality is included.
+ */
 public class WaitlistFragment extends Fragment {
 
     private Event event;

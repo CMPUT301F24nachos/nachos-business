@@ -288,6 +288,10 @@ public class ListManager {
         return true;
     }
 
+    /**
+     * moves all entrants in the invited list to the canceled list
+     * @return true if transfer is successful
+     */
     public boolean moveAllToCanceledList() {
         canceledList.addAll(invitedList);
         invitedList.clear();
@@ -367,6 +371,10 @@ public class ListManager {
         return userEntry != null;
     }
 
+    /**
+     * sets the listManager and dbManager to be used for the queries
+     * @param eventID ID of the event which the listManager belongs to
+     */
     public void initializeManagers(String eventID) {
         this.listManagerID = eventID;
         this.dbManager = new DBManager("lists");

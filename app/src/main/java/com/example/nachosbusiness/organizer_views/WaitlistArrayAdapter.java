@@ -25,12 +25,20 @@ import com.example.nachosbusiness.users.User;
 
 import java.util.ArrayList;
 
+/**
+ * ArrayAdapter for the waitlist. Displays an entrant's profile image, username, and status in the corresponding event.
+ */
 public class WaitlistArrayAdapter extends ArrayAdapter<User> {
 
     private ArrayList<User> users;
     private Context context;
     private Event event;
 
+    /**
+     * constructor for WaitlistArrayAdapter
+     * @param context context of view
+     * @param users the list of users being displayed
+     */
     public WaitlistArrayAdapter(Context context, ArrayList<User> users) {
         super(context, 0, users);
         this.context = context;
@@ -75,10 +83,19 @@ public class WaitlistArrayAdapter extends ArrayAdapter<User> {
         return view;
     }
 
+    /**
+     * sets event that is currently being displayed
+     * @param event event the user is an entrant of
+     */
     public void setEvent(Event event) {
         this.event = event;
     }
 
+    /**
+     * Sets the style of the user status button based on the user's current status in the displayed event
+     * @param user displayed user
+     * @param userStatusButton the button to set
+     */
     private void setUserStatusButton(User user, Button userStatusButton) {
         ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
         listManagerDBManager.queryEventDetails(event.getEventID(), user.getAndroid_id(), new ListManagerDBManager.EventDetailsCallback() {
