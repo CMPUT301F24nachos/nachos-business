@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * WaitlistFragment displays the entrants in the waitlist of an activity. Entrants can be displayed based on status (waitlist, invited, accepted, canceled).
+ * Sampling entrants and resampling entrant functionality is included.
+ */
 public class WaitlistFragment extends Fragment {
 
     private Event event;
@@ -98,13 +101,7 @@ public class WaitlistFragment extends Fragment {
             popupMenu.getMenuInflater().inflate(R.menu.event_waitlist_menu, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_nav_event) {
-                    Intent intent = new Intent(getActivity(), EventRegistration.class);
-                    intent.putExtra("eventID", event.getEventID());
-                    intent.putExtra("androidID", event.getOrganizerID());
-                    startActivity(intent);
-                    return true;
-                } else if (item.getItemId() == R.id.action_nav_map) {
+                if (item.getItemId() == R.id.action_nav_map) {
                     // TODO: Add navigation to map
                     return true;
                 } else if (item.getItemId() == R.id.action_send_invites) {
