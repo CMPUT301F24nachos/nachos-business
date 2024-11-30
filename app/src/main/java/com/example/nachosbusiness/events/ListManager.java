@@ -228,9 +228,6 @@ public class ListManager {
         acceptedList.add(user);
 
         if (!testMode) {
-            /* TODO: This probably won't work because to remove an element from an array in firebase the exact value must be given, however foundEntry is likely not the exact value.
-                A possible solution is to retrieve the value from the db, then use the retrieved value to remove it. (this also applies to moveToCanceledList())
-             */
             dbManager.getCollectionReference().document(listManagerID).update("invitedList", FieldValue.arrayRemove(foundEntry))
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -291,6 +288,10 @@ public class ListManager {
         return true;
     }
 
+    /**
+     * moves all entrants in the invited list to the canceled list
+     * @return true if transfer is successful
+     */
     public boolean moveAllToCanceledList() {
         canceledList.addAll(invitedList);
         invitedList.clear();
@@ -370,6 +371,10 @@ public class ListManager {
         return userEntry != null;
     }
 
+    /**
+     * sets the listManager and dbManager to be used for the queries
+     * @param eventID ID of the event which the listManager belongs to
+     */
     public void initializeManagers(String eventID) {
         this.listManagerID = eventID;
         this.dbManager = new DBManager("lists");
