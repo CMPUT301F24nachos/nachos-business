@@ -213,6 +213,9 @@ public class EventDBManager extends DBManager implements Serializable {
                             Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
                             Long attendeeSpotsLong = doc.getLong("attendeeSpots");
                             String eventID = doc.getString("eventID");
+                            Timestamp creationDate = doc.getTimestamp("creationDate");
+                            Long constSpots = doc.getLong("waitListSpots");
+
 
 
                             Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
@@ -237,7 +240,10 @@ public class EventDBManager extends DBManager implements Serializable {
                                 event.setWaitListCloseDate(waitListCloseDate);
                                 event.setHasGeolocation(hasGeolocation);
                                 event.setAttendeeSpots(attendeeSpotsLong.intValue());
+                                event.setWaitListSpots(constSpots.intValue());
+                                event.setCreationDate(creationDate);
                                 eventsList.add(event);
+                                event.setCost(costLong.intValue());
                             }
                         }
                     }

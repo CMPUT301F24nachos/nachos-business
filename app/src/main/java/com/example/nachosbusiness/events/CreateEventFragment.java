@@ -40,6 +40,7 @@ import com.example.nachosbusiness.facilities.Facility;
 import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.utils.TimePickerFragment;
+import com.google.firebase.Timestamp;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -346,6 +347,15 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
+        String priceStr = editPrice.getText().toString();
+        if (!TextUtils.isEmpty(priceStr)) {
+            int price = Integer.parseInt(priceStr);
+            if (price <= 0 || price > 1000) {
+                Toast.makeText(getActivity(), "Invalid price", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         //if (uploadedPosterPath == null || uploadedPosterPath.isEmpty()) {
         //    Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
         //    return;
@@ -357,18 +367,24 @@ public class CreateEventFragment extends Fragment {
             if (attendees <= 0) {
                 Toast.makeText(getActivity(), "Invalid number of attendees", Toast.LENGTH_SHORT).show();
                 return;
+            } else if(attendees > 10000) {
+                Toast.makeText(getActivity(), "Attendee limit can't exceed 10000", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
-        else {
+        } else {
             Toast.makeText(getActivity(), "Please limit the number of attendees", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String waitlistStr = editMaxWaitlist.getText().toString();
         if (!TextUtils.isEmpty(waitlistStr)) {
-            int waitlist = Integer.parseInt(attendeesStr);
-            if (waitlist <= 0) {
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) <= 0) {
                 Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) > 50000) {
+                Toast.makeText(getActivity(), "Waitlist input cannot exceed 50000", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "For an unlimited waitlist input no value", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
@@ -388,6 +404,8 @@ public class CreateEventFragment extends Fragment {
             Date openDateParsed = dateFormat.parse(openDate);
             Date closeDateParsed = dateFormat.parse(closeDate);
 
+
+
             if (startDateParsed.before(currentDate)) {
                 Toast.makeText(getActivity(), "Start date cannot be before today", Toast.LENGTH_SHORT).show();
                 return;
@@ -400,6 +418,11 @@ public class CreateEventFragment extends Fragment {
 
             if (closeDateParsed.before(openDateParsed)) {
                 Toast.makeText(getActivity(), "Close date cannot be before open date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (openDateParsed.before(currentDate)) {
+                Toast.makeText(getActivity(), "Sign-up date cannot be before today", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -485,9 +508,9 @@ public class CreateEventFragment extends Fragment {
 
         Event event;
         if (waitlist > 0) {
-            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist);
+            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist, Timestamp.now());
         } else {
-            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees);
+            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, 0, Timestamp.now());
         }
         dbManager.setEntry(event.getEventID(), event);
         if (selectedImageUri != null) {

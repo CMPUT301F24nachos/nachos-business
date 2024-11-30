@@ -49,8 +49,8 @@ public class EditEventFragment extends Fragment {
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton, deleteButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID, androidID;
-    private Date startTimeDate, endTimeDate, oDate, cDate;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID, androidID, creationDate, creationTime;
+    private Date startTimeDate, endTimeDate, oDate, cDate, creationTimeDate;
     private int eventCost, attendeeSpots, waitlistSpots;
     private Boolean hasGeolocation;
     private Facility facility;
@@ -81,6 +81,8 @@ public class EditEventFragment extends Fragment {
             endTime = getArguments().getString("END_TIME");
             openDate = getArguments().getString("EVENT_SIGNUPOPEN");
             closeDate = getArguments().getString("EVENT_SIGNUPCLOSE");
+            creationDate = getArguments().getString("CREATION_DATE");
+            creationTime = getArguments().getString("CREATION_TIME");
             organizerID = getArguments().getString("ORGANIZERID");
             uploadedPosterPath = getArguments().getString("EVENT_POSTER");
             eventCost = getArguments().getInt("EVENT_COST");
@@ -336,18 +338,34 @@ public class EditEventFragment extends Fragment {
             if (attendees <= 0) {
                 Toast.makeText(getActivity(), "Invalid number of attendees", Toast.LENGTH_SHORT).show();
                 return;
+            } else if(attendees > 10000) {
+                Toast.makeText(getActivity(), "Attendee limit can't exceed 10000", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
-        else {
+        } else {
             Toast.makeText(getActivity(), "Please limit the number of attendees", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        String priceStr = editPrice.getText().toString();
+        if (!TextUtils.isEmpty(priceStr)) {
+            int price = Integer.parseInt(priceStr);
+            if (price <= 0 || price > 1000) {
+                Toast.makeText(getActivity(), "Invalid price, please chosse a value between 0 and 1000", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+
         String waitlistStr = editMaxWaitlist.getText().toString();
         if (!TextUtils.isEmpty(waitlistStr)) {
-            int waitlist = Integer.parseInt(attendeesStr);
-            if (waitlist <= 0) {
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) <= 0) {
                 Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) > 50000) {
+                Toast.makeText(getActivity(), "Waitlist input cannot exceed 50000", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "For an unlimited waitlist input no value", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
@@ -362,6 +380,8 @@ public class EditEventFragment extends Fragment {
 
         Date currentDate = new Date();
         try {
+            Date creationDateParsed = dateFormat.parse(creationDate);
+
             Date startDateParsed = dateFormat.parse(startDate);
             Date endDateParsed = dateFormat.parse(endDate);
 
@@ -380,6 +400,16 @@ public class EditEventFragment extends Fragment {
 
             if (closeDateParsed.before(openDateParsed)) {
                 Toast.makeText(getActivity(), "Close date cannot be before open date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(startDateParsed.before(creationDateParsed)) {
+                Toast.makeText(getActivity(), "Start date cannot be before creation date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(openDateParsed.before(creationDateParsed)) {
+                Toast.makeText(getActivity(), "Sign up open date cannot be before creation date" , Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -403,7 +433,6 @@ public class EditEventFragment extends Fragment {
             Toast.makeText(getActivity(), "Invalid time selection", Toast.LENGTH_SHORT).show();
             return;
         }
-
 
         saveEvent();
 
@@ -495,6 +524,8 @@ public class EditEventFragment extends Fragment {
             startTimeDate = dateTimeFormat.parse(startDate + ", " + startTime);
             endTimeDate = dateTimeFormat.parse(endDate + ", " + endTime);
 
+            creationTimeDate = dateTimeFormat.parse(creationDate + ", " + creationTime);
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             oDate = dateFormat.parse(openDate);
             cDate = dateFormat.parse(closeDate);
@@ -522,7 +553,8 @@ public class EditEventFragment extends Fragment {
                     price,
                     isGeolocationEnabled,
                     attendees,
-                    waitlist
+                    waitlist,
+                    creationTimeDate
             );
 
         } else {
@@ -539,7 +571,8 @@ public class EditEventFragment extends Fragment {
                     new Timestamp(cDate), // Convert Date to Timestamp
                     price,
                     isGeolocationEnabled,
-                    attendees
+                    attendees,
+                    creationTimeDate
             );
 
         }
