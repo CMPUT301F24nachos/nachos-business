@@ -25,6 +25,9 @@ import com.example.nachosbusiness.R;
 
 import java.io.IOException;
 
+/**
+ * Fragment used to show the fragment for editing the event posters (removing or replacing)
+ */
 public class EditEventImageFragment extends Fragment {
     private DBManager dbManager;
 
@@ -38,6 +41,15 @@ public class EditEventImageFragment extends Fragment {
     private boolean isImageMarkedForDeletion = false;
     private boolean isImageMarkedForUpload = false;
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * Inflates the layout for this fragment and returns the root view.
+     *
+     * @param inflater LayoutInflater to inflate the view for the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState The saved instance state from the previous instance.
+     * @return The root view for the fragment's UI.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,6 +57,14 @@ public class EditEventImageFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_event_image, container, false);
     }
 
+    /**
+     * Called when the fragment's view has been created.
+     * Initializes the UI elements, sets up event handlers, and performs any necessary operations,
+     * such as loading data for the fragment and setting up listeners.
+     *
+     * @param view The root view for the fragment's UI.
+     * @param savedInstanceState A Bundle containing saved instance state (if any).
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,6 +129,10 @@ public class EditEventImageFragment extends Fragment {
         });
     }
 
+    /**
+     * Registers an activity result launcher to handle image selection for the event image.
+     * If an image is successfully selected, it is displayed in the event image view.
+     */
     ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -133,6 +157,10 @@ public class EditEventImageFragment extends Fragment {
                 }
             });
 
+
+    /**
+     * Opens the image chooser activity to allow the user to select an image from their device.
+     */
     private void imageChooser() {
         Intent i = new Intent();
         i.setType("image/*");
