@@ -104,8 +104,14 @@ public class WaitlistFragment extends Fragment {
                 if (item.getItemId() == R.id.action_nav_map) {
                     // TODO: Add navigation to map
                     return true;
+                } else if (item.getItemId() == R.id.action_send_waitlist) {
+
+                    return true;
                 } else if (item.getItemId() == R.id.action_send_invites) {
                     // TODO: Add send invites (Do we need this?)
+                    return true;
+                } else if (item.getItemId() == R.id.action_send_canceled) {
+
                     return true;
                 } else {
                     return false;
