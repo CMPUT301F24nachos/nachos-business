@@ -6,6 +6,7 @@ import android.net.Uri;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.nachosbusiness.notifications.Notification;
 
 public class User {
     private String android_id;
@@ -17,11 +18,12 @@ public class User {
     private Uri profileImage;
     private List<String> events;
 
+    private List<Notification> notifications;
+
     /**
      * Empty constructor for firebase adapting
      */
     public User(){
-
     }
 
     public User(String android_id, String username, String email, String phone) {
@@ -31,6 +33,7 @@ public class User {
         this.phone = (phone != null && !phone.isEmpty()) ? phone : "";
         this.admin = false;
         this.events = new ArrayList<>();
+        this.notifications = new ArrayList<>();
     }
 
 
@@ -49,7 +52,6 @@ public class User {
     public void setEvents(List<String> events) {
         this.events = events;
     }
-
 
     public String getAndroid_id() {
         return android_id;
@@ -89,5 +91,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public void addNotification(Notification notification) {
+        this.notifications.add(notification);
+    }
+
+    public List<Notification> getNotificationList() {
+        return notifications;
     }
 }

@@ -21,7 +21,6 @@ import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.RegistrationActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -88,36 +87,6 @@ public class MainActivity extends AppCompatActivity {
         eventIntent.putExtra("name", userName);
         startActivity(eventIntent);
     }
-
-//    private void initializeNotifications() {
-//        // Create notification channel (if applicable)
-//        NotificationHandler.createNotificationChannel(this);
-//
-//        String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-//        NotificationHelper.registerForNotifications(androidID);
-//        // Retrieve the FCM token
-//        FirebaseMessaging.getInstance().getToken()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        String token = task.getResult();
-//                        Log.d("MainActivity", "FCM Token: " + token);
-//                        // You can send this token to your server for user management
-//                    } else {
-//                        Log.e("MainActivity", "Failed to retrieve FCM token", task.getException());
-//                    }
-//                });
-//    }
-//
-//    private void requestNotificationPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-//                    != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-//                        REQUEST_NOTIFICATION_PERMISSION);
-//            }
-//        }
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
