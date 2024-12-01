@@ -63,7 +63,10 @@ public class WaitlistFragment extends Fragment {
         entrants = new ArrayList<>();
         listManagerDBManager = new ListManagerDBManager();
         loadEntrants("all");
-
+//        listManager = new ListManager(event.getEventID());
+//        User users = new User("d5e6264f81200652", "Ryan1", "ryan1@gmail.ca","");
+//        GeoPoint geoPoint = new GeoPoint(10, 10);
+//        listManager.addToWaitList(users, geoPoint);
 
         FloatingActionButton menuFab = view.findViewById(R.id.sample_fab);
         menuFab.setOnClickListener(v -> {
@@ -137,7 +140,7 @@ public class WaitlistFragment extends Fragment {
                                     "Waitlist Update",
                                     "You are currently on the waitlist for the event: " + event.getName() + ". Stay tuned for updates.",
                                     Timestamp.now(),
-                                    "event_details:" + event.getEventID()
+                                    "nachos-business://event/" + event.getEventID()
                             );
 
                             notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
@@ -173,7 +176,7 @@ public class WaitlistFragment extends Fragment {
                                 "Event Invitation",
                                 "You have been invited to the event: " + event.getName() + ". Please confirm your participation.",
                                 Timestamp.now(),
-                                "event_details:" + event.getEventID()
+                                "nachos-business://event/" + event.getEventID()
                         );
                         notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
                     }
@@ -205,7 +208,7 @@ public class WaitlistFragment extends Fragment {
                                 "Event Update",
                                 "Your participation in the event '" + event.getName() + "' has been canceled.",
                                 Timestamp.now(),
-                                "event_details:" + event.getEventID()
+                                "nachos-business://event/" + event.getEventID()
                         );
 
                         notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
