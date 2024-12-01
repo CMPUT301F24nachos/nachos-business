@@ -91,7 +91,9 @@ public class EventRegistration extends AppCompatActivity {
                                             listManagerDBManager.listManager.setInvitedList(listManager.getInvitedList());
                                             listManagerDBManager.listManager.setAcceptedList(listManager.getAcceptedList());
                                             listManagerDBManager.listManager.setCanceledList(listManager.getCanceledList());
-                                            currentWaitListCount = listManagerDBManager.listManager.getWaitList().size();
+                                            if (listManagerDBManager.listManager != null & listManagerDBManager.listManager.getWaitList() != null){
+                                                currentWaitListCount = listManagerDBManager.listManager.getWaitList().size();
+                                            }
                                             switch (status) {
                                                 case WAITLIST:
                                                     updateWaitListStatusUI();
