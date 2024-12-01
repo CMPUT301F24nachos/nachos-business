@@ -107,12 +107,8 @@ public class WaitlistFragment extends Fragment {
             popupMenu.getMenuInflater().inflate(R.menu.event_waitlist_menu, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_nav_map) {
-                    // TODO: Add navigation to map
-                    return true;
-                }
 
-                else if (item.getItemId() == R.id.action_send_waitlist) {
+                if (item.getItemId() == R.id.action_send_waitlist) {
                     if (listManager == null) {
                         Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
 
