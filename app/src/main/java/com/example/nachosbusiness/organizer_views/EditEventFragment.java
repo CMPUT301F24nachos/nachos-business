@@ -24,6 +24,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.events.ListManager;
+import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.utils.TimePickerFragment;
@@ -35,6 +38,7 @@ import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -54,6 +58,8 @@ public class EditEventFragment extends Fragment {
     private int eventCost, attendeeSpots, waitlistSpots;
     private Boolean hasGeolocation;
     private Facility facility;
+    private ListManager listManager;
+    private ListManagerDBManager listManagerDBManager;
 
 
     DBManager dbManager = new DBManager("events");
@@ -91,6 +97,19 @@ public class EditEventFragment extends Fragment {
             hasGeolocation = getArguments().getBoolean("GEOLOCATION");
 
         }
+
+        listManagerDBManager = new ListManagerDBManager();
+        listManagerDBManager.queryLists(eventId, new ListManagerDBManager.ListManagerCallback() {
+            @Override
+            public void onListManagerReceived(ListManager listManager1) {
+                listManager = listManager1;
+            }
+
+            @Override
+            public void onSingleListFound(List<String> eventIDs) {
+                // pass
+            }
+        });
 
         Log.d("waitlist", "This value" + waitlistSpots);
         preloadEvent();
@@ -267,6 +286,7 @@ public class EditEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 validateAndCreateEvent();
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
@@ -288,6 +308,7 @@ public class EditEventFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dbManager.deleteEntry(eventId);
+                                listManagerDBManager.deleteEntry(eventId);
                                 requireActivity().getSupportFragmentManager().popBackStack();
                             }
                         })
@@ -436,7 +457,7 @@ public class EditEventFragment extends Fragment {
 
         saveEvent();
 
-        requireActivity().getSupportFragmentManager().popBackStack();
+        //requireActivity().getSupportFragmentManager().popBackStack();
     }
 
     private void preloadEvent() {
@@ -577,6 +598,7 @@ public class EditEventFragment extends Fragment {
 
         }
         dbManager.setEntry(eventId, event);
+
     }
 
     private void navigateToUpdateProfile() {

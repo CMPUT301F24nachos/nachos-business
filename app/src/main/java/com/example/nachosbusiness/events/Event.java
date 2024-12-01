@@ -79,8 +79,6 @@ public class Event implements Serializable {
         this.waitListSpots = -1;
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
-        listManager = new ListManager(eventID);
-
         this.creationDate = new Timestamp(creationDate);
     }
 
@@ -118,8 +116,6 @@ public class Event implements Serializable {
         this.attendeeSpots = attendeeSpots;
         this.waitListSpots = waitListSpots;
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
-
-        listManager = new ListManager(eventID, waitListSpots);
 
         this.creationDate = new Timestamp(creationDate);
     }
