@@ -22,8 +22,11 @@ import com.example.nachosbusiness.events.Event;
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
+import com.example.nachosbusiness.notifications.Notification;
+import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Timestamp;
 
 
 import java.util.ArrayList;
@@ -104,16 +107,116 @@ public class WaitlistFragment extends Fragment {
                 if (item.getItemId() == R.id.action_nav_map) {
                     // TODO: Add navigation to map
                     return true;
-                } else if (item.getItemId() == R.id.action_send_waitlist) {
+                }
+
+                else if (item.getItemId() == R.id.action_send_waitlist) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Get all users from the waitlist
+                    ArrayList<Map<Object, Object>> waitList = listManager.getWaitList();
+
+                    if (waitList.isEmpty()) {
+                        Toast.makeText(getContext(), "No users in the waitlist to notify!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the waitlist
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (Map<Object, Object> entry : waitList) {
+                        Object userObject = entry.get("user");
+
+                        if (userObject instanceof User) {
+                            User user = (User) userObject;
+
+                            Notification notification = new Notification(
+                                    "Waitlist Update",
+                                    "You are currently on the waitlist for the event: " + event.getName() + ". Stay tuned for updates.",
+                                    Timestamp.now(),
+                                    "event_details:" + event.getEventID()
+                            );
+
+                            notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                        }
+                    }
+
+                    Toast.makeText(getContext(), "Notifications sent to all users in the waitlist!", Toast.LENGTH_SHORT).show();
 
                     return true;
-                } else if (item.getItemId() == R.id.action_send_invites) {
+                }
+
+                else if (item.getItemId() == R.id.action_send_invites) {
                     // TODO: Add send invites (Do we need this?)
-                    return true;
-                } else if (item.getItemId() == R.id.action_send_canceled) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Get all users from the invited list
+                    ArrayList<User> invitedUsers = listManager.getInvitedList();
+
+                    if (invitedUsers.isEmpty()) {
+                        Toast.makeText(getContext(), "No users to notify in the invited list!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the invited list
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (User user : invitedUsers) {
+                        Notification notification = new Notification(
+                                "Event Invitation",
+                                "You have been invited to the event: " + event.getName() + ". Please confirm your participation.",
+                                Timestamp.now(),
+                                "event_details:" + event.getEventID()
+                        );
+                        notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                    }
+
+                    Toast.makeText(getContext(), "Invites sent to all users in the invited list!", Toast.LENGTH_SHORT).show();
 
                     return true;
-                } else {
+                }
+
+                else if (item.getItemId() == R.id.action_send_canceled) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+
+                    // Get all users from the canceled list
+                    ArrayList<User> canceledUsers = listManager.getCanceledList();
+
+                    if (canceledUsers.isEmpty()) {
+                        Toast.makeText(getContext(), "No users in the canceled list to notify!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the canceled list
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (User user : canceledUsers) {
+                        Notification notification = new Notification(
+                                "Event Update",
+                                "Your participation in the event '" + event.getName() + "' has been canceled.",
+                                Timestamp.now(),
+                                "event_details:" + event.getEventID()
+                        );
+
+                        notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                    }
+
+                    Toast.makeText(getContext(), "Notifications sent to all canceled entrants!", Toast.LENGTH_SHORT).show();
+
+                    return true;
+                }
+
+                else {
                     return false;
                 }
             });
