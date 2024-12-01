@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.notifications.NotificationHandler;
-import com.example.nachosbusiness.notifications.NotificationHelper;
 import com.example.nachosbusiness.users.RegistrationActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
         DBManager dbManager = new DBManager("entrants");
         String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        // Register the device for notifications and save the FCM token
-        NotificationHelper.registerForNotifications(androidID);
 
         Intent intent = getIntent();
         Uri data = intent.getData();
