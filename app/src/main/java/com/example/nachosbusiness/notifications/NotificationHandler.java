@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.example.nachosbusiness.DBManager;
 import com.example.nachosbusiness.users.ShowProfile;
+import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -20,7 +21,7 @@ public class NotificationHandler {
     private static final String TAG = "NotificationHandler";
     private static final String CHANNEL_ID = "default_channel_id";
 
-    private DBManager dbManager;
+    private DBManager dbManager = new DBManager("entrants");
 
     /**
      * Creates a notification channel for Android 8.0 (Oreo) and higher.
@@ -45,21 +46,34 @@ public class NotificationHandler {
 
     /**
      * Saves a notification to the user's list in Firebase.
-     *
      * @param userId  The ID of the user to save the notification for.
      * @param notification Notification to be sent to the user
      */
-    public static void saveNotificationToFirebase(String userId, Notification notification) {
+    public void saveNotificationToFirebase(String userId, Notification notification) {
+        dbManager.getUser(userId, new DBManager.EntryRetrievalCallback() {
+            @Override
+            public void onEntryRetrieved(String name, String emailAddress, String phone) {
+                User user = new User();
+            }
 
+            @Override
+            public void onEntryNotFound() {
+                // Do nothing
+            }
+
+            @Override
+            public void onError(String error) {
+                // Do nothing
+            }
+        });
     }
-
     /**
      * Queries notifications from Firebase and displays them as OS notifications.
      *
      * @param context The application context.
      * @param userId  The ID of the user to query notifications for.
      */
-    public static void queryAndDisplayNotifications(Context context, String userId) {
+    public void queryAndDisplayNotifications(Context context, String userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     }
