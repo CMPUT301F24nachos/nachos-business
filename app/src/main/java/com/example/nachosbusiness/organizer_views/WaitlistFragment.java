@@ -208,6 +208,10 @@ public class WaitlistFragment extends Fragment {
         listManagerDBManager.queryLists(event.getEventID(), new ListManagerDBManager.ListManagerCallback() {
             @Override
             public void onListManagerReceived(ListManager newListManager) {
+                if (!isAdded() || !isVisible()) {
+                    return;
+                }
+
                 if (newListManager!= null) {
                     listManager = newListManager;
                     listManager.initializeManagers(event.getEventID());
