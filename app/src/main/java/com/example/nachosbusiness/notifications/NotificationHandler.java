@@ -1,16 +1,31 @@
 package com.example.nachosbusiness.notifications;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.nachosbusiness.DBManager;
+import com.example.nachosbusiness.MainActivity;
+import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.users.ShowProfile;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 
 /**
@@ -44,37 +59,83 @@ public class NotificationHandler {
         }
     }
 
+
+    /**
+     * Displays a local notification.
+     *
+     * @param context The application context.
+
+     */
+    public static void displayNotification(Context context,Notification notification) {
+        createNotificationChannel(context);
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        // Check if the permission is granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                Log.w(TAG, "Permission not granted to post notifications.");
+                return; // Exit if permission is not granted
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(notification.getTitle())
+                .setContentText(notification.getContent())
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+
     /**
      * Saves a notification to the user's list in Firebase.
      * @param userId  The ID of the user to save the notification for.
      * @param notification Notification to be sent to the user
      */
     public void saveNotificationToFirebase(String userId, Notification notification) {
-        dbManager.getUser(userId, new DBManager.EntryRetrievalCallback() {
+        Log.d("HELP", "This is a debug message");
+        dbManager.getUserClass(userId, new DBManager.UserClassRetrievalCallback() {
+
             @Override
-            public void onEntryRetrieved(String name, String emailAddress, String phone) {
-                User user = new User();
+            public void onSuccess(User user) {
+                Log.d("onSuccess", "This is a debug message");
+                user.addNotification(notification);
+                dbManager.setEntry(userId, user, "entrants");
             }
 
             @Override
-            public void onEntryNotFound() {
-                // Do nothing
-            }
-
-            @Override
-            public void onError(String error) {
-                // Do nothing
+            public void onFailure(Exception e) {
+                Log.d("onFailure", "This is a debug message");
             }
         });
     }
     /**
      * Queries notifications from Firebase and displays them as OS notifications.
-     *
-     * @param context The application context.
      * @param userId  The ID of the user to query notifications for.
      */
     public void queryAndDisplayNotifications(Context context, String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        dbManager.getUserClass(userId, new DBManager.UserClassRetrievalCallback() {
+
+            @Override
+            public void onSuccess(User user) {
+                if(!user.getNotifications().isEmpty()) {
+                    List<Notification> notifications = user.getNotifications();
+                    for (Notification notification : notifications) {
+                        displayNotification(context, notification);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
 
     }
 }

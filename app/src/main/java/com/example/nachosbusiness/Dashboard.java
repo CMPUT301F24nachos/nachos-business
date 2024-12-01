@@ -29,6 +29,8 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
+import com.example.nachosbusiness.notifications.NotificationHandler;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -37,6 +39,8 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.example.nachosbusiness.notifications.Notification;
 
 /**
  * This Activity is the main dashboard activity for user's to navigate through the functionality
@@ -67,7 +71,7 @@ public class Dashboard extends AppCompatActivity {
         } else {
             userName = "";
         }
-
+        NotificationHandler notificationHandler = new NotificationHandler();
         EventDBManager eventDBManager = new EventDBManager();
         ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
@@ -77,6 +81,7 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
+        notificationHandler.queryAndDisplayNotifications(Dashboard.this, androidID);
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
         // Set the initial state of the switch from Firestore
@@ -236,7 +241,8 @@ public class Dashboard extends AppCompatActivity {
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 {
-                    Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
+                    Notification notification = new Notification("Cool title", "Funny stuff", Timestamp.now(), getIntent().toString());
+                    notificationHandler.saveNotificationToFirebase(androidID,notification);
                 }
             }
         });

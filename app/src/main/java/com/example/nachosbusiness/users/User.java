@@ -172,7 +172,7 @@ public class User {
     }
 
     /**
-     * removes all notifications from the list 
+     * removes all notifications from the list
      */
     public void clearNotifications() {
         notifications.clear();

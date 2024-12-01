@@ -5,12 +5,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.nachosbusiness.users.ShowProfile;
+import com.example.nachosbusiness.users.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -196,8 +198,17 @@ public class DBManager {
         });
     }
 
-    public void getNotifications(String android_id, EntryRetrievalCallback callback) {
-
+    public void getUserClass(String android_id, UserClassRetrievalCallback callback) {
+        Log.d("getUserClass", "Android id " + android_id);
+        DocumentReference docRef = db.collection("entrant").document(android_id);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User user = documentSnapshot.toObject(User.class);
+                Log.d("Onsuccess", "Username " + user.getUsername());
+                callback.onSuccess(user);
+            }
+        });
     }
 
     public static void uploadProfileImage(Context context, String imageName, Uri selectedImageUri) {
@@ -408,6 +419,11 @@ public class DBManager {
         void onEntryRetrieved(String name, String email, String phone);
         void onEntryNotFound();
         void onError(String error);
+    }
+
+    public interface UserClassRetrievalCallback {
+        void onSuccess(User user);
+        void onFailure(Exception e);
     }
 
     public interface ProfileImageCallback {
