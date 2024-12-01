@@ -150,6 +150,7 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
             }
         });
 
+
         // show event waitlist upon event click
         waitlistButton.setOnClickListener(v -> {
             if (context instanceof AppCompatActivity) {

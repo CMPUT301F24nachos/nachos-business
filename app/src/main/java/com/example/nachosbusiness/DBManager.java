@@ -197,29 +197,9 @@ public class DBManager {
     }
 
     public void getNotifications(String android_id, EntryRetrievalCallback callback) {
-        DocumentReference docRef = collectionReference.document(android_id);
-
-        docRef.get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Retrieve the list from the "notifications" field in the document
-                        List<Map<String, Object>> notifications = (List<Map<String, Object>>) documentSnapshot.get("notifications");
-
-                        if (notifications != null) {
-                            // Pass the list of notifications to the listener
-                            callback.onEntryRetrieved(notifications);
-                        } else {
-                            callback.onEntryNotFound();("No notifications found.");
-                        }
-                    } else {
-                        callback.onEntryNotFound();("Document does not exist.");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    callback.onError(task.getException() != null ? task.getException().getMessage() : "Unknown error");
-                });
 
     }
+
     public static void uploadProfileImage(Context context, String imageName, Uri selectedImageUri) {
         if (selectedImageUri != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
