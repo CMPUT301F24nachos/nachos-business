@@ -595,7 +595,7 @@ public class EditEventFragment extends Fragment {
         requireActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, eventImageFragment) // Ensure the ID matches your layout
+                .replace(R.id.organizer_events_container, eventImageFragment) // Ensure the ID matches your layout
                 .addToBackStack(null)
                 .commit();
 
