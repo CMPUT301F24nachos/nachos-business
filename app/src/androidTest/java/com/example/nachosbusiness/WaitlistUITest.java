@@ -8,31 +8,24 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.example.nachosbusiness.events.Event;
-import com.example.nachosbusiness.events.EventRegistration;
-import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.facilities.Facility;
-import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.organizer_views.WaitlistFragment;
 import com.example.nachosbusiness.users.User;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Date;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -51,7 +44,7 @@ public class WaitlistUITest {
         this.mockFacility.setName("test");
 
         // create event
-        event = new Event("testeventID", "test event", "1234", mockFacility, "event description", new Timestamp(1000, 0), new Timestamp(2000, 0), "one-time", new Timestamp(1000, 0), new Timestamp(2000, 0), 60, false, 10);
+        event = new Event("testeventID", "test event", "1234", mockFacility, "event description", new Timestamp(1000, 0), new Timestamp(2000, 0), "one-time", new Timestamp(1000, 0), new Timestamp(2000, 0), 60, false, 10, new Date());
         event.getListManager().addToWaitList(mockUser, geoPoint);
     }
 
