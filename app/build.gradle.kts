@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.rules)
     implementation(libs.firebase.messaging)
 
@@ -69,4 +70,7 @@ dependencies {
 
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
 }

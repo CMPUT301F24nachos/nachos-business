@@ -22,6 +22,14 @@ import com.example.nachosbusiness.users.RegistrationActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+/**
+ * Main activity for the app. This activity queries the DB to determine if a user is registered in the
+ * system. If they are not, navigate to the registration page where user's can sign up. If the user
+ * is registered in the system upon opening, this page will take them to the dashboard. If a user
+ * uses an external qr scanner, the main activity will also redirect them to the relevant event page
+ *
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private String userName;

@@ -1,6 +1,9 @@
 package com.example.nachosbusiness.events;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -12,6 +15,9 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -176,6 +182,11 @@ public class EventDBManager extends DBManager implements Serializable {
         });
     }
 
+    /**
+     * Fetches all of the events asociated with a user id.
+     * @param androidID the android id of the user which you are querying
+     * @param callback call back to deal with async firebase timing
+     */
     public void fetchAllUserEvents(String androidID, EventDBManager.EventsCallback callback) {
         getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -236,6 +247,10 @@ public class EventDBManager extends DBManager implements Serializable {
         });
     }
 
+    /**
+     * Get all of the events in the db. Used only for admins.
+     * @param callback callback function to deal with async nature of querying firebase.
+     */
     public void getAdminEvents(EventDBManager.AdminEventListCallback callback) {
         getCollectionReference().addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -259,6 +274,7 @@ public class EventDBManager extends DBManager implements Serializable {
                         Long costLong = doc.getLong("cost");
                         Boolean hasGeolocation = doc.getBoolean("hasGeolocation");
                         Long attendeeSpotsLong = doc.getLong("attendeeSpots");
+                        String qrCode = doc.getString("qrCode");
 
                         Map<String, String> facilityMap = (Map<String, String>) doc.get("facility");
                         Facility facility = new Facility();
@@ -281,6 +297,8 @@ public class EventDBManager extends DBManager implements Serializable {
                             event.setHasGeolocation(hasGeolocation);
                             event.setAttendeeSpots(attendeeSpotsLong.intValue());
                             event.setCost(costLong.intValue());
+                            event.setOrganizerID(organizerID);
+                            event.setQrCode(qrCode);
 
                             adminEventList.add(event);
                     }

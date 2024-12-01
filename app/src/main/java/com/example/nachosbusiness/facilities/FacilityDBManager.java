@@ -85,9 +85,6 @@ public class FacilityDBManager extends DBManager implements Serializable{
             }
         });
     }
-
-
-
 }
 
 

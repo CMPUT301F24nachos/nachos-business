@@ -31,6 +31,16 @@
         app:layout_constraintVertical_bias="0.079"
         app:srcCompat="@drawable/ic_action_name" />
 
+    <TextView
+        android:id="@+id/editmode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Mode"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.079" />
+
     <ImageButton
         android:id="@+id/back"
         android:layout_width="25dp"
@@ -57,11 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Event Organizer -->
-
-    <!-- Event Date -->
-
-    <!-- Facility Name -->
     <TextView
         android:id="@+id/event_description"
         android:layout_width="0dp"
@@ -86,7 +91,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_name" />
 
-    <!-- Facility Location -->
     <TextView
         android:id="@+id/facility_name"
         android:layout_width="290dp"
@@ -99,7 +103,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_date" />
 
-    <!-- QR Code ImageView -->
     <TextView
         android:id="@+id/facility_location"
         android:layout_width="290dp"
@@ -116,7 +119,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginBottom="88dp"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@drawable/noqr"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -154,5 +157,7 @@
         app:layout_constraintStart_toEndOf="@+id/facility_name"
         app:layout_constraintTop_toTopOf="@+id/event_date"
         app:srcCompat="@android:drawable/ic_menu_delete" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
