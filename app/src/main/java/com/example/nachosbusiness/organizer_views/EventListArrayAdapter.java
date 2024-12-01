@@ -9,19 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
@@ -116,15 +112,19 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
                 args.putString("EVENT_POSTER", event.getQrCode());
 
                 // Format the date and time portions for start and end timestamps
-                SimpleDateFormat dateFormatsend = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat dateFormatSend = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-                String startDateStr = dateFormatsend.format(event.getStartDateTime().toDate());
+                String startDateStr = dateFormatSend.format(event.getStartDateTime().toDate());
                 String startTimeStr = timeFormat.format(event.getStartDateTime().toDate());
-                String endDateStr = dateFormatsend.format(event.getEndDateTime().toDate());
+                String endDateStr = dateFormatSend.format(event.getEndDateTime().toDate());
                 String endTimeStr = timeFormat.format(event.getEndDateTime().toDate());
-                String waitlistOpen = dateFormatsend.format(event.getWaitListOpenDate().toDate());
-                String waitlistClose = dateFormatsend.format(event.getWaitListCloseDate().toDate());
+                String waitlistOpen = dateFormatSend.format(event.getWaitListOpenDate().toDate());
+                String waitlistClose = dateFormatSend.format(event.getWaitListCloseDate().toDate());
+
+                String creationDateStr = dateFormatSend.format(event.getCreationDate().toDate());
+                String creationTimeStr = timeFormat.format(event.getCreationDate().toDate());
+                Log.d("DEBUG", "creationDateString: " + creationDateStr);
                 // Add dates and times separately
 
                 args.putString("START_DATE", startDateStr);
@@ -133,9 +133,12 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
                 args.putString("END_TIME", endTimeStr);
                 args.putString("EVENT_SIGNUPOPEN",waitlistOpen);
                 args.putString("EVENT_SIGNUPCLOSE",waitlistClose);
+                args.putString("CREATION_DATE", creationDateStr);
+                args.putString("CREATION_TIME", creationTimeStr);
 
                 // Add cost, attendee spots, and waitlist spots
                 args.putInt("EVENT_COST", event.getCost());
+                Log.d("DEBUG", "price: " + event.getCost());
                 args.putInt("ATTENDEE_SPOTS", event.getAttendeeSpots());
                 args.putInt("WAITLIST_SPOTS", event.getWaitListSpots());
 
