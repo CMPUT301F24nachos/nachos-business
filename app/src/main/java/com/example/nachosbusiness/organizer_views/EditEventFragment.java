@@ -24,8 +24,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.DBManager;
-import com.example.nachosbusiness.Dashboard;
-import com.example.nachosbusiness.users.UpdateProfile;
 import com.example.nachosbusiness.utils.DatePickerFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.utils.TimePickerFragment;
@@ -37,6 +35,7 @@ import com.google.firebase.Timestamp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Fragment to edit events. Utilizes
@@ -50,8 +49,8 @@ public class EditEventFragment extends Fragment {
     private Button editStartTime, editEndTime, editStartDate, editEndDate, editOpenDate, editCloseDate, saveButton, cancelButton, deleteButton;
     private TextView textViewSelectedStartDate, textViewSelectedEndDate, textViewSelectedStartTime, textViewSelectedEndTime, textViewSelectedOpenDate, getTextViewSelectedCloseDate, createEventText;
     private String uploadedPosterPath = null;
-    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID, androidID;
-    private Date startTimeDate, endTimeDate, oDate, cDate;
+    private String startTime, endTime, startDate, endDate, openDate, closeDate, eventDescription, eventId, eventName, eventFrequency, organizerID, androidID, creationDate, creationTime;
+    private Date startTimeDate, endTimeDate, oDate, cDate, creationTimeDate;
     private int eventCost, attendeeSpots, waitlistSpots;
     private Boolean hasGeolocation;
     private Facility facility;
@@ -71,7 +70,6 @@ public class EditEventFragment extends Fragment {
 
         setupListeners();
 
-        Bundle args = getArguments();
         if (getArguments() != null) {
             eventId = getArguments().getString("EVENT_ID");
             eventName = getArguments().getString("EVENT_NAME");
@@ -83,17 +81,18 @@ public class EditEventFragment extends Fragment {
             endTime = getArguments().getString("END_TIME");
             openDate = getArguments().getString("EVENT_SIGNUPOPEN");
             closeDate = getArguments().getString("EVENT_SIGNUPCLOSE");
+            creationDate = getArguments().getString("CREATION_DATE");
+            creationTime = getArguments().getString("CREATION_TIME");
             organizerID = getArguments().getString("ORGANIZERID");
             uploadedPosterPath = getArguments().getString("EVENT_POSTER");
             eventCost = getArguments().getInt("EVENT_COST");
             attendeeSpots = getArguments().getInt("ATTENDEE_SPOTS");
             waitlistSpots = getArguments().getInt("WAITLIST_SPOTS");
-
             hasGeolocation = getArguments().getBoolean("GEOLOCATION");
-
 
         }
 
+        Log.d("waitlist", "This value" + waitlistSpots);
         preloadEvent();
 
         return view;
@@ -328,10 +327,10 @@ public class EditEventFragment extends Fragment {
             return;
         }
 
-        if (uploadedPosterPath == null) {
-            Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        //if (uploadedPosterPath == null || uploadedPosterPath.isEmpty()) {
+        //    Toast.makeText(getActivity(), "Please upload a poster", Toast.LENGTH_SHORT).show();
+        //    return;
+        //}
 
         String attendeesStr = editMaxAttendees.getText().toString();
         if (!TextUtils.isEmpty(attendeesStr)) {
@@ -339,24 +338,100 @@ public class EditEventFragment extends Fragment {
             if (attendees <= 0) {
                 Toast.makeText(getActivity(), "Invalid number of attendees", Toast.LENGTH_SHORT).show();
                 return;
+            } else if(attendees > 10000) {
+                Toast.makeText(getActivity(), "Attendee limit can't exceed 10000", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
-        else {
+        } else {
             Toast.makeText(getActivity(), "Please limit the number of attendees", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        String priceStr = editPrice.getText().toString();
+        if (!TextUtils.isEmpty(priceStr)) {
+            int price = Integer.parseInt(priceStr);
+            if (price <= 0 || price > 1000) {
+                Toast.makeText(getActivity(), "Invalid price, please chosse a value between 0 and 1000", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+
         String waitlistStr = editMaxWaitlist.getText().toString();
         if (!TextUtils.isEmpty(waitlistStr)) {
-            int waitlist = Integer.parseInt(attendeesStr);
-            if (waitlist <= 0) {
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) <= 0) {
                 Toast.makeText(getActivity(), "Invalid limit on the waitlist", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (Integer.parseInt(editMaxWaitlist.getText().toString()) > 50000) {
+                Toast.makeText(getActivity(), "Waitlist input cannot exceed 50000", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "For an unlimited waitlist input no value", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (Integer.parseInt(editMaxWaitlist.getText().toString()) < Integer.parseInt(editMaxAttendees.getText().toString())) {
                 Toast.makeText(getActivity(), "Attendees cannot be greater than waitlist limit", Toast.LENGTH_SHORT).show();
                 return;
             }
+        }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+
+        Date currentDate = new Date();
+        try {
+            Date creationDateParsed = dateFormat.parse(creationDate);
+
+            Date startDateParsed = dateFormat.parse(startDate);
+            Date endDateParsed = dateFormat.parse(endDate);
+
+            Date openDateParsed = dateFormat.parse(openDate);
+            Date closeDateParsed = dateFormat.parse(closeDate);
+
+            if (startDateParsed.before(currentDate)) {
+                Toast.makeText(getActivity(), "Start date cannot be before today", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (endDateParsed.before(startDateParsed)) {
+                Toast.makeText(getActivity(), "End date cannot be before start date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (closeDateParsed.before(openDateParsed)) {
+                Toast.makeText(getActivity(), "Close date cannot be before open date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(startDateParsed.before(creationDateParsed)) {
+                Toast.makeText(getActivity(), "Start date cannot be before creation date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(openDateParsed.before(creationDateParsed)) {
+                Toast.makeText(getActivity(), "Sign up open date cannot be before creation date" , Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Invalid date selection", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Date startTimeParsed = timeFormat.parse(startTime);
+            Date endTimeParsed = timeFormat.parse(endTime);
+
+            if (startDate.equals(endDate)) {
+                if (endTimeParsed.before(startTimeParsed)) {
+                    Toast.makeText(getActivity(), "End time must be after start time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Invalid time selection", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         saveEvent();
@@ -370,7 +445,7 @@ public class EditEventFragment extends Fragment {
         editEventDescription.setText(eventDescription);
         editPrice.setText(String.valueOf(eventCost));
         editMaxAttendees.setText(String.valueOf(attendeeSpots));
-        if(waitlistSpots < 0) {
+        if(waitlistSpots <= 0) {
             //do nothing
         }
         else {
@@ -378,7 +453,6 @@ public class EditEventFragment extends Fragment {
         }
         editGeolocation.setChecked(hasGeolocation);
 
-        // Set frequency in spinner
         String[] frequencies = getResources().getStringArray(R.array.event_frequencies);
         for (int i = 0; i < frequencies.length; i++) {
             if (frequencies[i].equals(eventFrequency)) {
@@ -387,29 +461,24 @@ public class EditEventFragment extends Fragment {
             }
         }
 
-        // Start Date and Time
         if (startDate != null && startTime != null) {
             textViewSelectedStartDate.setText(startDate);
             textViewSelectedStartTime.setText(startTime);
         }
 
-        // End Date and Time
         if (endDate != null && endTime != null) {
             textViewSelectedEndDate.setText(endDate);
             textViewSelectedEndTime.setText(endTime);
         }
 
-        // Open Date
         if (openDate != null) {
             textViewSelectedOpenDate.setText(openDate);
         }
 
-        // Close Date
         if (closeDate != null) {
             getTextViewSelectedCloseDate.setText(closeDate);
         }
 
-        // Poster Path (if applicable)
         if (uploadedPosterPath != null) {
             Toast.makeText(getActivity(), "Poster loaded", Toast.LENGTH_SHORT).show();
         }
@@ -455,6 +524,8 @@ public class EditEventFragment extends Fragment {
             startTimeDate = dateTimeFormat.parse(startDate + ", " + startTime);
             endTimeDate = dateTimeFormat.parse(endDate + ", " + endTime);
 
+            creationTimeDate = dateTimeFormat.parse(creationDate + ", " + creationTime);
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             oDate = dateFormat.parse(openDate);
             cDate = dateFormat.parse(closeDate);
@@ -465,9 +536,9 @@ public class EditEventFragment extends Fragment {
             return;
         }
 
-
         Event event;
         if (waitlist > 0) {
+            //Log.d("edited waitlist", "The value: " + waitlist);
             event = new Event(
                     eventId,
                     eventName,
@@ -482,7 +553,8 @@ public class EditEventFragment extends Fragment {
                     price,
                     isGeolocationEnabled,
                     attendees,
-                    waitlist
+                    waitlist,
+                    creationTimeDate
             );
 
         } else {
@@ -499,7 +571,8 @@ public class EditEventFragment extends Fragment {
                     new Timestamp(cDate), // Convert Date to Timestamp
                     price,
                     isGeolocationEnabled,
-                    attendees
+                    attendees,
+                    creationTimeDate
             );
 
         }

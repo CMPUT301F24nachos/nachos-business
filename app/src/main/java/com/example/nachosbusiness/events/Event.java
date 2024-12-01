@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.events;
 
+import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.utils.QRUtil;
 import com.example.nachosbusiness.facilities.Facility;
 import com.google.firebase.Timestamp;
@@ -22,6 +23,7 @@ public class Event implements Serializable {
     private Timestamp endDateTime;
     private Timestamp waitListOpenDate;
     private Timestamp waitListCloseDate;
+    private Timestamp creationDate;
 
     private String frequency;
 
@@ -58,7 +60,7 @@ public class Event implements Serializable {
      * @param attendeeSpots number of users to accept
      * @param hasGeolocation true if event has a geolocation
      */
-    public Event(String eventID, String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, Date creationDate)
     {
         this.eventID = eventID;
 
@@ -78,6 +80,8 @@ public class Event implements Serializable {
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID);
+
+        this.creationDate = new Timestamp(creationDate);
     }
 
     /**
@@ -96,7 +100,7 @@ public class Event implements Serializable {
      * @param attendeeSpots number of users to accept
      * @param waitListSpots number of spots in waitlist
      */
-    public Event(String eventID,String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
+    public Event(String eventID,String name, String organizerID, Facility facility, String description, Timestamp startDateTime, Timestamp endDateTime, String frequency, Timestamp waitListOpenDate, Timestamp waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots, Date creationDate)
     {
         this.eventID = eventID;
 
@@ -116,6 +120,8 @@ public class Event implements Serializable {
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID, waitListSpots);
+
+        this.creationDate = new Timestamp(creationDate);
     }
 
     /**
@@ -132,8 +138,9 @@ public class Event implements Serializable {
      * @param cost cost of event
      * @param hasGeolocation true if event has a geolocation
      * @param attendeeSpots number of users to accept
+     * @param creationDate creation date of event
      */
-    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, Timestamp creationDate)
     {
         this.eventID = eventID;
 
@@ -153,6 +160,8 @@ public class Event implements Serializable {
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID);
+
+        this.creationDate = creationDate;
     }
 
     /**
@@ -170,8 +179,9 @@ public class Event implements Serializable {
      * @param hasGeolocation true if event has a geolocation
      * @param attendeeSpots number of users to accept
      * @param waitListSpots number of spots in waitlist
+     * @param creationDate creation date of event
      */
-    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots)
+    public Event(String eventID, String name, String organizerID, Facility facility, String description, Date startDateTime, Date endDateTime, String frequency, Date waitListOpenDate, Date waitListCloseDate, int cost, Boolean hasGeolocation, int attendeeSpots, int waitListSpots, Timestamp creationDate)
     {
         this.eventID = eventID;
 
@@ -191,6 +201,8 @@ public class Event implements Serializable {
         this.qrCode = this.qrUtil.hashQRCodeData(this.eventID);
 
         listManager = new ListManager(eventID, waitListSpots);
+
+        this.creationDate = creationDate;
     }
 
     /**
@@ -406,4 +418,22 @@ public class Event implements Serializable {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
     }
+
+    /**
+     * getter for creation Date
+     * @return timeStamp creationDate
+     */
+    public Timestamp getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * setter for creation date, only call on event creation
+     * @param creationDate Timestamp of creation date
+     */
+    public void setCreationDate(Timestamp creationDate) {
+        this.creationDate = creationDate;
+    }
+
+
 }
