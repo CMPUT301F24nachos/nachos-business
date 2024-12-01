@@ -99,13 +99,15 @@ public class NotificationHandler {
      */
     public void saveNotificationToFirebase(String userId, Notification notification) {
         Log.d("HELP", "This is a debug message");
-        dbManager.getUserClass(userId, new DBManager.UserClassRetrievalCallback() {
+        dbManager.getUserClass(userId, User.class, new DBManager.UserClassRetrievalCallback() {
 
             @Override
-            public void onSuccess(User user) {
-                Log.d("onSuccess", "This is a debug message");
-                user.addNotification(notification);
-                dbManager.setEntry(userId, user, "entrants");
+            public void onCallback(Object result) {
+                if (result instanceof User) {
+                    User user = (User) result;
+                    user.addNotification(notification);
+                    dbManager.setEntry(userId, user, "entrants");
+                }
             }
 
             @Override
@@ -119,14 +121,19 @@ public class NotificationHandler {
      * @param userId  The ID of the user to query notifications for.
      */
     public void queryAndDisplayNotifications(Context context, String userId) {
-        dbManager.getUserClass(userId, new DBManager.UserClassRetrievalCallback() {
+        dbManager.getUserClass(userId, User.class, new DBManager.UserClassRetrievalCallback() {
 
             @Override
-            public void onSuccess(User user) {
-                if(!user.getNotifications().isEmpty()) {
-                    List<Notification> notifications = user.getNotifications();
-                    for (Notification notification : notifications) {
-                        displayNotification(context, notification);
+            public void onCallback(Object result) {
+                if (result instanceof User) {
+                    User user = (User) result;
+                    if (!user.getNotifications().isEmpty()) {
+                        List<Notification> notifications = user.getNotifications();
+                        for (Notification notification : notifications) {
+                            displayNotification(context, notification);
+                        }
+                        user.clearNotifications();
+                        dbManager.setEntry(userId, user, "entrants");
                     }
                 }
             }

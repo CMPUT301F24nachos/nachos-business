@@ -198,17 +198,25 @@ public class DBManager {
         });
     }
 
-    public void getUserClass(String android_id, UserClassRetrievalCallback callback) {
-        Log.d("getUserClass", "Android id " + android_id);
-        DocumentReference docRef = db.collection("entrant").document(android_id);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User user = documentSnapshot.toObject(User.class);
-                Log.d("Onsuccess", "Username " + user.getUsername());
-                callback.onSuccess(user);
-            }
-        });
+    public void getUserClass(String android_id, Class<?> user, UserClassRetrievalCallback callback) {
+        db.collection("entrants").document(android_id).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Object object = documentSnapshot.toObject(user);
+                            callback.onCallback(object);
+                        } else {
+                            callback.onFailure(new Exception("Document does not exist."));
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
     }
 
     public static void uploadProfileImage(Context context, String imageName, Uri selectedImageUri) {
@@ -422,7 +430,7 @@ public class DBManager {
     }
 
     public interface UserClassRetrievalCallback {
-        void onSuccess(User user);
+        void onCallback(Object result);
         void onFailure(Exception e);
     }
 
