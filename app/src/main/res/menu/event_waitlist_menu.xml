@@ -4,12 +4,6 @@
         android:id="@+id/action_nav_map"
         android:title="View Map of Entrants" />
     <item
-        android:id="@+id/action_send_waitlist"
-        android:title="Notify entrants on waitlist" />
-    <item
         android:id="@+id/action_send_invites"
-        android:title="Notify invited entrants" />
-    <item
-        android:id="@+id/action_send_canceled"
-        android:title="Notify canceled entrants" />
+        android:title="Send the Invites" />
 </menu>
