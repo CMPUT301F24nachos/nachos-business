@@ -71,6 +71,8 @@ public class ProfileDetailFragment extends Fragment {
         TextView profileName = view.findViewById(R.id.Username);
         TextView email = view.findViewById(R.id.EmailValue);
         TextView phonenum = view.findViewById(R.id.PhoneValue);
+        TextView EditMode = view.findViewById(R.id.editmode);
+        EditMode.setVisibility(GONE);
 
         removeProfileImage.setVisibility(GONE);
         removeProfile.setVisibility(GONE);
@@ -105,6 +107,8 @@ public class ProfileDetailFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             removeProfileImage.setVisibility(View.VISIBLE);
                             removeProfile.setVisibility(View.VISIBLE);
+                            EditMode.setVisibility(View.VISIBLE);
+                            editButton.setVisibility(GONE);
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -120,7 +124,7 @@ public class ProfileDetailFragment extends Fragment {
         removeProfileImage.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Remove Profile Image")
-                    .setMessage("Do you want to remove ths users profile image?")
+                    .setMessage("Do you want to remove the users profile image?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             removeProfileImageFromFirebase(profile.getAndroid_id());
@@ -128,13 +132,13 @@ public class ProfileDetailFragment extends Fragment {
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss(); // Close the dialog without action
+                            dialog.dismiss();
                         }
                     })
                     .show();
         });
 
-        // Remove Profile Image
+        // Remove Profile
         removeProfile.setOnClickListener(v -> {
             new AlertDialog.Builder(getActivity())
                     .setTitle("Remove Profile ")
@@ -164,7 +168,7 @@ public class ProfileDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.view_profile, container, false);
+        View view = inflater.inflate(R.layout.admin_edit_profile, container, false);
 
 
         ImageView profileImage = view.findViewById(R.id.profile);
