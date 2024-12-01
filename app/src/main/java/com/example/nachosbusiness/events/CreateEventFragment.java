@@ -510,11 +510,11 @@ public class CreateEventFragment extends Fragment {
         if (waitlist > 0) {
             event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, waitlist, Timestamp.now());
         } else {
-            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, 0, Timestamp.now());
+            event = new Event(UUID.randomUUID().toString(), eventName, androidID, facility, eventDescription, startTimeDate, endTimeDate, frequency, oDate, cDate, price, isGeolocationEnabled, attendees, Timestamp.now());
         }
         dbManager.setEntry(event.getEventID(), event);
         if (selectedImageUri != null) {
-            dbManager.uploadEventImage(getContext(), uploadedPosterPath, selectedImageUri);
+            dbManager.uploadEventImage(getContext(), event.getEventID(), selectedImageUri);
         }
     }
 }
