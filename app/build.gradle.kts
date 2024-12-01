@@ -1,11 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
+
 
 android {
     namespace = "com.example.nachosbusiness"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+        // ...
+    }
 
     defaultConfig {
         applicationId = "com.example.nachosbusiness"
@@ -45,6 +52,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
@@ -67,10 +75,23 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
-
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+}
 
-    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
-    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
+secrets {
+    // To add your Maps API key to this project:
+    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+
+    // Configure which keys should be ignored by the plugin by providing regular expressions.
+    // "sdk.dir" is ignored by default.
+    ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+    ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
 }
