@@ -117,11 +117,8 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
     }
 
     private void showDefaultImage(ImageView imageView, Exception e, String Name) {
-        // Check if the username exists and generate the default image based on it
-        // Get the username from the profile (or any other source if needed)
         String username = Name; // You might need to pass this to the method if it's available
 
-        // Generate a default image based on the first character of the username
         char firstChar = Character.toLowerCase(username.charAt(0));
         StorageReference defaultImageRef;
 
