@@ -70,7 +70,8 @@
     <string name="event_frequency">Event Frequency</string>
     <string name="not_set">Not set</string>
     <string name="add_a_poster_for_this_event">Add a poster for this event</string>
-
     <string name="delete_button">Delete Event</string>
+    <string name="edit_event_button_save">Edit Event</string>
+    <string name="edit_event_button_cancel">Cancel Edit Event</string>
 
 </resources>
