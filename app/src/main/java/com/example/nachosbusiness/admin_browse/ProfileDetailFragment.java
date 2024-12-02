@@ -206,6 +206,7 @@ public class ProfileDetailFragment extends Fragment {
      *
      * @param androidId The unique ID for the profile
      * @param imageView ImageView for profile image
+     * @param Name Users username
      */
     private void loadProfileImage(String androidId, ImageView imageView, String Name) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -231,6 +232,13 @@ public class ProfileDetailFragment extends Fragment {
         });
     }
 
+    /**
+     * Show autogen iamge
+     *
+     *
+     * @param imageView ImageView for profile image
+     * @param Name Users username
+     */
     private void showDefaultImage(ImageView imageView, Exception e, String Name) {
 
         String username = Name;

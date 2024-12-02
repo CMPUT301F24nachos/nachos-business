@@ -91,6 +91,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
      *
      * @param androidId   The unique Android ID for each user profile.
      * @param imageView   The ImageView to display the profile image.
+     * @param Name         The users username for image gen
      */
     private void loadProfileImage(String androidId, ImageView imageView, String Name) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -116,8 +117,15 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         });
     }
 
+    /**
+     * Shows profile Image
+     *
+     *
+     * @param imageView   The ImageView to display the profile image.
+     * @param Name         The users username for image gen
+     */
     private void showDefaultImage(ImageView imageView, Exception e, String Name) {
-        String username = Name; // You might need to pass this to the method if it's available
+        String username = Name;
 
         char firstChar = Character.toLowerCase(username.charAt(0));
         StorageReference defaultImageRef;
