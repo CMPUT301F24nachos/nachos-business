@@ -76,7 +76,8 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         profileName.setText(profile.getName());
 
         String androidId = profile.getAndroid_id(); // Make sure this method exists to retrieve the ID
-        loadProfileImage(androidId, profileImage);
+        String Name = profile.getName();
+        loadProfileImage(androidId, profileImage, Name);
 
         editProfile.setOnClickListener(v -> {
             // When the edit button is clicked, open the profile fragment
@@ -90,8 +91,9 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
      *
      * @param androidId   The unique Android ID for each user profile.
      * @param imageView   The ImageView to display the profile image.
+     * @param Name         The users username for image gen
      */
-    private void loadProfileImage(String androidId, ImageView imageView) {
+    private void loadProfileImage(String androidId, ImageView imageView, String Name) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
@@ -104,14 +106,60 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
                     ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
                 } catch (IOException e) {
                     e.printStackTrace();
+                    // In case of an error, handle it by showing a default image
+                    showDefaultImage(imageView, null, Name);
                 }
             }).start();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
-            ((Activity) context).runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
+            // In case of failure, handle it by showing a default image
+            showDefaultImage(imageView, e, Name);
         });
     }
 
+    /**
+     * Shows profile Image
+     *
+     *
+     * @param imageView   The ImageView to display the profile image.
+     * @param Name         The users username for image gen
+     */
+    private void showDefaultImage(ImageView imageView, Exception e, String Name) {
+        String username = Name;
+
+        char firstChar = Character.toLowerCase(username.charAt(0));
+        StorageReference defaultImageRef;
+
+        if ("abcdefghi".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/abcdefghi.jpg");
+        } else if ("jklmnopqr".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/jklmnopqr.jpg");
+        } else if ("stuvwxyz".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/stuvwxyz.jpg");
+        } else {
+            // If the username doesn't match any known range, use a fallback default image
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/default.jpg");
+        }
+
+        defaultImageRef.getDownloadUrl().addOnSuccessListener(defaultUri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(defaultUri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    // Set the default image to the ImageView
+                    ((Activity) context).runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    ((Activity) context).runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
+                }
+            }).start();
+        }).addOnFailureListener(defaultError -> {
+            defaultError.printStackTrace();
+            // Fallback to a basic default resource image if all else fails
+            ((Activity) context).runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
+        });
+    }
     /**
      * Opens the ProfileDetailFragment and with the profile
      * Replaces the current fragment with the ProfileDetailFragment
@@ -124,7 +172,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         ProfileDetailFragment detailFragment = ProfileDetailFragment.newInstance(profile);
 
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);
+        transaction.replace(R.id.profilefragment_container, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

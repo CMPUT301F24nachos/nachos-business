@@ -166,7 +166,15 @@ public class EventDetailFragment extends Fragment {
                     .setTitle("Remove Event Image")
                     .setMessage("Do you want to remove the event image?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
                         public void onClick(DialogInterface dialog, int which) {
+
+                            ImageView eventImage = view.findViewById(R.id.Image);
+                            if (eventImage.getDrawable() != null && eventImage.getDrawable().getConstantState().equals(
+                                    getResources().getDrawable(R.drawable.emptyevent).getConstantState())) {
+                                Toast.makeText(getActivity(), "No Image to Remove.", Toast.LENGTH_SHORT).show();
+                            }
+
                             removeEventImageFromFirebase(event.getEventID());
                         }
                     })

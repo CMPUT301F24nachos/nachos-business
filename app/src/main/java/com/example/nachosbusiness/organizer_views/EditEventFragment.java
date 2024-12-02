@@ -621,7 +621,7 @@ public class EditEventFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
 
-        View fragmentContainer = getView().findViewById(R.id.fragment_container);
+        View fragmentContainer = getView().findViewById(R.id.oeventfragment_container);
         if (fragmentContainer != null) {
             fragmentContainer.setVisibility(View.VISIBLE);
         }

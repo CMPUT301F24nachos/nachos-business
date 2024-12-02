@@ -2,6 +2,7 @@ package com.example.nachosbusiness.admin_browse;
 
 import static android.view.View.GONE;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -37,6 +38,8 @@ import java.io.InputStream;
 public class ProfileDetailFragment extends Fragment {
 
     private Profile profile;
+    private Boolean ImageGen;
+
 
 
     public ProfileDetailFragment() {
@@ -105,6 +108,7 @@ public class ProfileDetailFragment extends Fragment {
                     .setMessage("Do you want to enter edit mode?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+
                             removeProfileImage.setVisibility(View.VISIBLE);
                             removeProfile.setVisibility(View.VISIBLE);
                             EditMode.setVisibility(View.VISIBLE);
@@ -127,7 +131,12 @@ public class ProfileDetailFragment extends Fragment {
                     .setMessage("Do you want to remove the users profile image?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            removeProfileImageFromFirebase(profile.getAndroid_id());
+                            if(ImageGen){
+                                Toast.makeText(getActivity(), "Cannot Remove - Auto Generated", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                removeProfileImageFromFirebase(profile.getAndroid_id());
+                            }
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -179,7 +188,8 @@ public class ProfileDetailFragment extends Fragment {
 
         if (profile != null) {
             profileName.setText(profile.getName());
-            loadProfileImage(profile.getAndroid_id(), profileImage);
+            String Name = profile.getName();
+            loadProfileImage(profile.getAndroid_id(), profileImage, Name);
             email.setText(profile.getEmail());
             if (profile.getPhonenum() != null && !profile.getPhonenum().isEmpty()) {
                 phonenum.setText(profile.getPhonenum());
@@ -196,8 +206,9 @@ public class ProfileDetailFragment extends Fragment {
      *
      * @param androidId The unique ID for the profile
      * @param imageView ImageView for profile image
+     * @param Name Users username
      */
-    private void loadProfileImage(String androidId, ImageView imageView) {
+    private void loadProfileImage(String androidId, ImageView imageView, String Name) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference profileImageRef = storageRef.child("profile_images/" + androidId + ".jpg");
 
@@ -207,21 +218,66 @@ public class ProfileDetailFragment extends Fragment {
                     InputStream inputStream = new java.net.URL(uri.toString()).openStream();
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     getActivity().runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                    ImageGen = false;
                 } catch (IOException e) {
                     e.printStackTrace();
-
+                    // In case of an error, handle it by showing a default image
+                    showDefaultImage(imageView, null,Name);
                 }
             }).start();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
-            getActivity().runOnUiThread(() -> {
-                imageView.setImageResource(R.drawable.profile_picture_drawable); // Placeholder image
-                Toast.makeText(getActivity(), "No profile image found", Toast.LENGTH_SHORT).show();
-            });
+            // In case of failure, handle it by showing a default image
+            showDefaultImage(imageView, e, Name);
         });
     }
 
+    /**
+     * Show autogen iamge
+     *
+     *
+     * @param imageView ImageView for profile image
+     * @param Name Users username
+     */
+    private void showDefaultImage(ImageView imageView, Exception e, String Name) {
 
+        String username = Name;
+        char firstChar = Character.toLowerCase(username.charAt(0));
+        StorageReference defaultImageRef;
+
+        if ("abcdefghi".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/abcdefghi.jpg");
+            ImageGen = true;
+        } else if ("jklmnopqr".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/jklmnopqr.jpg");
+            ImageGen = true;
+        } else if ("stuvwxyz".indexOf(firstChar) != -1) {
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/stuvwxyz.jpg");
+            ImageGen = true;
+        } else {
+            // If the username doesn't match any known range, use a fallback default image
+            defaultImageRef = FirebaseStorage.getInstance().getReference().child("profile_images/default.jpg");
+        }
+
+        defaultImageRef.getDownloadUrl().addOnSuccessListener(defaultUri -> {
+            new Thread(() -> {
+                try {
+                    InputStream inputStream = new java.net.URL(defaultUri.toString()).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    // Set the default image to the ImageView
+                    getActivity().runOnUiThread(() -> imageView.setImageBitmap(bitmap));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    getActivity().runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
+                }
+            }).start();
+        }).addOnFailureListener(defaultError -> {
+            defaultError.printStackTrace();
+            // Fallback to a basic default resource image if all else fails
+            getActivity().runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
+        });
+    }
     /**
      * New ProfileDetailFragment
      *
