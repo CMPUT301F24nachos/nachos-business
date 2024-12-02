@@ -14,7 +14,7 @@
         android:layout_height="155dp"
         android:contentDescription="Profile image"
         android:scaleType="fitCenter"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/profile_picture_drawable" />
 
     <TextView
         android:id="@+id/profile_name"

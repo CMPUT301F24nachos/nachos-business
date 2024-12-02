@@ -58,7 +58,7 @@
         android:id="@+id/event_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="236dp"
         android:text="Event Name"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -71,11 +71,10 @@
         android:id="@+id/event_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="300dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="148dp"
         android:text="Event Description"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_name" />
 
@@ -83,7 +82,7 @@
         android:id="@+id/event_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="39dp"
+        android:layout_marginTop="12dp"
         android:text="Event Date"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,11 +94,11 @@
         android:id="@+id/facility_name"
         android:layout_width="290dp"
         android:layout_height="24dp"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="48dp"
         android:text="Facility Name"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.371"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_date" />
 
@@ -107,10 +106,11 @@
         android:id="@+id/facility_location"
         android:layout_width="290dp"
         android:layout_height="25dp"
+        android:layout_marginTop="8dp"
         android:text="Facility Location"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.371"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/facility_name" />
 
@@ -151,13 +151,36 @@
         android:id="@+id/trash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="185dp"
+        android:layout_marginTop="92dp"
         android:background="@color/zxing_transparent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.636"
         app:layout_constraintStart_toEndOf="@+id/facility_name"
         app:layout_constraintTop_toTopOf="@+id/event_date"
         app:srcCompat="@android:drawable/ic_menu_delete" />
 
+    <ImageView
+        android:id="@+id/Image"
+        android:layout_width="404dp"
+        android:layout_height="132dp"
+        app:layout_constraintBottom_toTopOf="@+id/event_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editmode"
+        app:srcCompat="@drawable/emptyevent" />
+
+    <Button
+        android:id="@+id/removeImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="53dp"
+        android:layout_marginBottom="45dp"
+        android:backgroundTint="@color/redButton"
+        android:text="Remove Image"
+        app:layout_constraintBottom_toTopOf="@+id/event_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/Image" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

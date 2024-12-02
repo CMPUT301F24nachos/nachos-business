@@ -108,6 +108,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
             }).start();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
+            ((Activity) context).runOnUiThread(() -> imageView.setImageResource(R.drawable.profile_picture_drawable));
         });
     }
 

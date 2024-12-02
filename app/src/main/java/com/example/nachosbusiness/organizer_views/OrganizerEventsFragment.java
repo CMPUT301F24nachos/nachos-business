@@ -1,5 +1,6 @@
 package com.example.nachosbusiness.organizer_views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.nachosbusiness.Dashboard;
+import com.example.nachosbusiness.admin_browse.Browse;
 import com.example.nachosbusiness.events.CreateEventFragment;
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
@@ -86,7 +89,8 @@ public class OrganizerEventsFragment extends Fragment {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requireActivity().getSupportFragmentManager().popBackStack();
+                Intent intent = new Intent(getContext(), Dashboard.class);
+                startActivity(intent);
             }
         });
     }
