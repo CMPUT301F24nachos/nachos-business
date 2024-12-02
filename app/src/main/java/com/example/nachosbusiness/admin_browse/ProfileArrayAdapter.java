@@ -124,7 +124,7 @@ public class ProfileArrayAdapter extends ArrayAdapter<Profile> {
         ProfileDetailFragment detailFragment = ProfileDetailFragment.newInstance(profile);
 
         FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, detailFragment);
+        transaction.replace(R.id.profilefragment_container, detailFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

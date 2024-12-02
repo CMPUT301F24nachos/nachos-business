@@ -66,23 +66,23 @@
         android:layout_gravity="bottom|right"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/waitlist_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/lightButton"
-            android:text="Waitlist"
-            android:textSize="10sp" />
+        <!--        <Button-->
+        <!--            android:id="@+id/waitlist_button"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:backgroundTint="@color/lightButton"-->
+        <!--            android:text="Waitlist"-->
+        <!--            android:textSize="10sp" />-->
 
-        <Button
-            android:id="@+id/map_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/lightButton"
-            android:text="Map"
-            android:textSize="10sp" />
+        <!--        <Button-->
+        <!--            android:id="@+id/map_button"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:backgroundTint="@color/lightButton"-->
+        <!--            android:text="Map"-->
+        <!--            android:textSize="10sp" />-->
 
         <ImageButton
             android:id="@+id/edit_icon"
