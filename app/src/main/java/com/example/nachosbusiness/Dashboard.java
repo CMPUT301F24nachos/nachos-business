@@ -83,8 +83,6 @@ public class Dashboard extends AppCompatActivity {
 
         notificationHandler.queryAndDisplayNotifications(Dashboard.this, androidID);
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
-        boolean areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
-        notificationSwitch.setChecked(areNotificationsEnabled);
 
         TextView userID = findViewById(R.id.dashboard_user_id);
 
@@ -151,29 +149,23 @@ public class Dashboard extends AppCompatActivity {
 
 
         notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                if (!NotificationManagerCompat.from(Dashboard.this).areNotificationsEnabled()) {
-                    Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Notifications are enabled.", Toast.LENGTH_SHORT).show();
-                }
-            }
+            boolean areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
 
-            else {
-                if (NotificationManagerCompat.from(Dashboard.this).areNotificationsEnabled()) {
-                    Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                    startActivity(intent);
-                }
+            if (isChecked && !areNotificationsEnabled) {
+                // Redirect to system settings to enable notifications
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                startActivity(intent);
 
-                else {
-                    Toast.makeText(getApplicationContext(), "Notifications are disabled.", Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(getApplicationContext(), "Enable notifications in system settings.", Toast.LENGTH_SHORT).show();
+            } else if (!isChecked && areNotificationsEnabled) {
+                // Redirect to system settings to disable notifications
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                startActivity(intent);
+                Toast.makeText(getApplicationContext(), "Disable notifications in system settings.", Toast.LENGTH_SHORT).show();
             }
         });
-
 
         yourEventsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -329,4 +321,23 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_join_events).setEnabled(true);
         findViewById(R.id.notification_switch).setEnabled(true);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check system notification settings
+        SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
+        boolean areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
+
+        // Update the toggle state without additional redirection
+        if (notificationSwitch.isChecked() != areNotificationsEnabled) {
+            notificationSwitch.setChecked(areNotificationsEnabled);
+        }
+            if (notificationSwitch.isChecked() == areNotificationsEnabled) {
+                Toast.makeText(this, "Notification setting updated.", Toast.LENGTH_SHORT).show();
+            }
+    }
+
+
 }
