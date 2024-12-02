@@ -2,8 +2,8 @@ package com.example.nachosbusiness.organizer_views;
 
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +19,17 @@ import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
-import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
+import com.example.nachosbusiness.notifications.Notification;
+import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +63,10 @@ public class WaitlistFragment extends Fragment {
         entrants = new ArrayList<>();
         listManagerDBManager = new ListManagerDBManager();
         loadEntrants("all");
-
+//        listManager = new ListManager(event.getEventID());
+//        User users = new User("d5e6264f81200652", "Ryan1", "ryan1@gmail.ca","");
+//        GeoPoint geoPoint = new GeoPoint(10, 10);
+//        listManager.addToWaitList(users, geoPoint);
 
         FloatingActionButton menuFab = view.findViewById(R.id.sample_fab);
         menuFab.setOnClickListener(v -> {
@@ -101,16 +107,134 @@ public class WaitlistFragment extends Fragment {
             popupMenu.getMenuInflater().inflate(R.menu.event_waitlist_menu, popupMenu.getMenu());
 
             popupMenu.setOnMenuItemClickListener(item -> {
+
                 if (item.getItemId() == R.id.action_send_waitlist) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Get all users from the waitlist
+                    ArrayList<Map<Object, Object>> waitList = listManager.getWaitList();
+
+                    if (waitList.isEmpty()) {
+                        Toast.makeText(getContext(), "No users in the waitlist to notify!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the waitlist
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (Map<Object, Object> entry : waitList) {
+                        Object userObject = entry.get("user");
+                        if (userObject instanceof HashMap) {
+                            HashMap<String, Object> userMap = (HashMap<String, Object>) userObject;
+
+                            Log.d("User Object", "Username " + userMap.get("username"));
+
+                            Notification notification = new Notification(
+                                    "Waitlist Update",
+                                    "You are currently on the waitlist for the event: " + event.getName() + ". Stay tuned for updates.",
+                                    Timestamp.now(),
+                                    "nachos-business://event/" + event.getEventID()
+                            );
+
+                            notificationHandler.saveNotificationToFirebase((String) userMap.get("android_id"), notification);
+                        }
+                    }
+
+                    Toast.makeText(getContext(), "Notifications sent to all users in the waitlist!", Toast.LENGTH_SHORT).show();
 
                     return true;
-                } else if (item.getItemId() == R.id.action_send_invites) {
+                }
+
+                else if (item.getItemId() == R.id.action_send_invites) {
                     // TODO: Add send invites (Do we need this?)
-                    return true;
-                } else if (item.getItemId() == R.id.action_send_canceled) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Get all users from the invited list
+                    ArrayList<User> invitedUsers = listManager.getInvitedList();
+                    ArrayList<Map<Object, Object>> waitList = listManager.getWaitList();
+
+                    if (invitedUsers.isEmpty()) {
+                        Toast.makeText(getContext(), "No users to notify in the invited list!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the invited list
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (User user : invitedUsers) {
+                        Notification notification = new Notification(
+                                "Event Invitation",
+                                "You have been invited to the event: " + event.getName() + ". Please confirm your participation.",
+                                Timestamp.now(),
+                                "nachos-business://event/" + event.getEventID()
+                        );
+                        notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                    }
+
+                    for (Map<Object, Object> entry : waitList) {
+                        Object userObject = entry.get("user");
+                        if (userObject instanceof HashMap) {
+                            HashMap<String, Object> userMap = (HashMap<String, Object>) userObject;
+
+                            Notification notification = new Notification(
+                                    "Waitlist Update",
+                                    "You have not been invited to the event: " + event.getName() + ". Don't worry because there is still a chance.",
+                                    Timestamp.now(),
+                                    "nachos-business://event/" + event.getEventID()
+                            );
+
+                            notificationHandler.saveNotificationToFirebase((String) userMap.get("android_id"), notification);
+                        }
+                    }
+
+
+                    Toast.makeText(getContext(), "Invites sent to all users in the invited list!", Toast.LENGTH_SHORT).show();
 
                     return true;
-                } else {
+                }
+
+                else if (item.getItemId() == R.id.action_send_canceled) {
+                    if (listManager == null) {
+                        Toast.makeText(getContext(), "Error retrieving lists", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+
+                    // Get all users from the canceled list
+                    ArrayList<User> canceledUsers = listManager.getCanceledList();
+
+                    if (canceledUsers.isEmpty()) {
+                        Toast.makeText(getContext(), "No users in the canceled list to notify!", Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+
+                    // Notify all users in the canceled list
+                    NotificationHandler notificationHandler = new NotificationHandler();
+                    for (User user : canceledUsers) {
+                        Notification notification = new Notification(
+                                "Event Update",
+                                "Your participation in the event '" + event.getName() + "' has been canceled.",
+                                Timestamp.now(),
+                                "nachos-business://event/" + event.getEventID()
+                        );
+
+                        notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                    }
+
+                    Toast.makeText(getContext(), "Notifications sent to all canceled entrants!", Toast.LENGTH_SHORT).show();
+
+                    return true;
+                }
+
+                else {
                     return false;
                 }
             });

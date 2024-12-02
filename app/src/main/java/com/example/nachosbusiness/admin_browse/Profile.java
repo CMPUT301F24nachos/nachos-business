@@ -109,4 +109,3 @@ public class Profile implements Serializable {
         this.android_id = android_id;
     }
 }
-

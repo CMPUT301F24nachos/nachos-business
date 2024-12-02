@@ -125,6 +125,3 @@ public class UserManager {
         void onAdminFound(boolean isAdmin);
     }
 }
-
-
-

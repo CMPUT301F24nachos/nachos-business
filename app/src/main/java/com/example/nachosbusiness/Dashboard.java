@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -29,13 +30,14 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
+import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.UserManager;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * This Activity is the main dashboard activity for user's to navigate through the functionality
@@ -67,6 +69,7 @@ public class Dashboard extends AppCompatActivity {
             userName = "";
         }
 
+        NotificationHandler notificationHandler = new NotificationHandler();
         UserManager userManager = new UserManager();
         EventDBManager eventDBManager = new EventDBManager();
         ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
@@ -153,9 +156,25 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-        notificationSwitch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "notification toggle!", Toast.LENGTH_SHORT).show();
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            boolean areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
+
+            if (isChecked && !areNotificationsEnabled) {
+                // Redirect to system settings to enable notifications
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                startActivity(intent);
+
+                Toast.makeText(getApplicationContext(), "Enable notifications in system settings.", Toast.LENGTH_SHORT).show();
+            }
+
+            else if (!isChecked && areNotificationsEnabled) {
+                // Redirect to system settings to disable notifications
+                Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                startActivity(intent);
+
+                Toast.makeText(getApplicationContext(), "Disable notifications in system settings.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -216,7 +235,7 @@ public class Dashboard extends AppCompatActivity {
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 {
-                    Toast.makeText(getApplicationContext(), "event update button", Toast.LENGTH_SHORT).show();
+                    notificationHandler.queryAndDisplayNotifications(Dashboard.this, androidID);
                 }
             }
         });
@@ -311,5 +330,27 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.button_event_updates).setEnabled(true);
         findViewById(R.id.button_join_events).setEnabled(true);
         findViewById(R.id.notification_switch).setEnabled(true);
+    }
+
+    /**
+     * Synchronizes the notification switch state with the system notification settings.
+     * Updates the toggle state to match the current system settings and displays a
+     * toast message if the settings are successfully updated.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check system notification settings
+        SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
+        boolean areNotificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled();
+
+        // Update the toggle state without additional redirection
+        if (notificationSwitch.isChecked() != areNotificationsEnabled) {
+            notificationSwitch.setChecked(areNotificationsEnabled);
+        }
+            if (notificationSwitch.isChecked() == areNotificationsEnabled) {
+                Toast.makeText(this, "Notification setting updated.", Toast.LENGTH_SHORT).show();
+            }
     }
 }
