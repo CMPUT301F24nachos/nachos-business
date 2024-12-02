@@ -25,6 +25,10 @@ import com.example.nachosbusiness.R;
 
 import java.io.IOException;
 
+/**
+ * A fragment that allows the user to edit the event's image. The user can upload a new image, delete the current one, or cancel the changes.
+ * This fragment interacts with the database to fetch and update the event image and provides an interface for selecting and saving the image.
+ */
 public class EditEventImageFragment extends Fragment {
     private DBManager dbManager;
 
@@ -38,6 +42,14 @@ public class EditEventImageFragment extends Fragment {
     private boolean isImageMarkedForDeletion = false;
     private boolean isImageMarkedForUpload = false;
 
+    /**
+     * Called to inflate the fragment's view. Sets up the layout for the event image editing.
+     * 
+     * @param inflater The LayoutInflater object to inflate the view.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState A Bundle containing the previous state of the fragment.
+     * @return The root view for the fragment's UI.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,6 +57,13 @@ public class EditEventImageFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_event_image, container, false);
     }
 
+    /**
+     * Called after the view has been created. This method initializes UI elements and sets up listeners for user interactions.
+     * It also handles retrieving the event ID and fetching the current event image from the database.
+     * 
+     * @param view The root view for this fragment.
+     * @param savedInstanceState A Bundle containing the previous state of the fragment.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -109,6 +128,10 @@ public class EditEventImageFragment extends Fragment {
         });
     }
 
+    /**
+     * Activity result launcher for selecting an image from the gallery.
+     * Handles the result when the user picks an image, and displays it in the ImageView.
+     */
     ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -133,6 +156,10 @@ public class EditEventImageFragment extends Fragment {
                 }
             });
 
+    /**
+     * Opens the image chooser to allow the user to select an image from their device.
+     * This method launches an intent to pick an image from the gallery.
+     */
     private void imageChooser() {
         Intent i = new Intent();
         i.setType("image/*");
