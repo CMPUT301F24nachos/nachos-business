@@ -31,15 +31,12 @@ import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
 import com.example.nachosbusiness.notifications.NotificationHandler;
-import com.google.firebase.Timestamp;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.example.nachosbusiness.notifications.Notification;
 
 /**
  * This Activity is the main dashboard activity for user's to navigate through the functionality
@@ -157,11 +154,14 @@ public class Dashboard extends AppCompatActivity {
                 startActivity(intent);
 
                 Toast.makeText(getApplicationContext(), "Enable notifications in system settings.", Toast.LENGTH_SHORT).show();
-            } else if (!isChecked && areNotificationsEnabled) {
+            }
+
+            else if (!isChecked && areNotificationsEnabled) {
                 // Redirect to system settings to disable notifications
                 Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
                 startActivity(intent);
+
                 Toast.makeText(getApplicationContext(), "Disable notifications in system settings.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -320,6 +320,11 @@ public class Dashboard extends AppCompatActivity {
         findViewById(R.id.notification_switch).setEnabled(true);
     }
 
+    /**
+     * Synchronizes the notification switch state with the system notification settings.
+     * Updates the toggle state to match the current system settings and displays a
+     * toast message if the settings are successfully updated.
+     */
     @Override
     protected void onResume() {
         super.onResume();

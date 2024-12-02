@@ -2,7 +2,6 @@ package com.example.nachosbusiness.organizer_views;
 
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.nachosbusiness.R;
 import com.example.nachosbusiness.events.Event;
-import com.example.nachosbusiness.events.EventRegistration;
 import com.example.nachosbusiness.events.ListManager;
 import com.example.nachosbusiness.events.ListManagerDBManager;
 import com.example.nachosbusiness.notifications.Notification;
@@ -28,8 +26,6 @@ import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.GeoPoint;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
