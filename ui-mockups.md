@@ -110,7 +110,7 @@ The organizer can see all Entrants who have joined the Waiting List.
 
 ![](ui-mockups/OrganizerWaitlistOptions.png?raw=true)
 
-The organizer can choose to notify the Entrants from this screen, or send out the Invites.
+The organizer can choose to notify Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
 
 -----------------------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ The Organizer can view the Entrants who have been invited, including their statu
 
 ![](ui-mockups/OrganizerAcceptedList.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListFilteredDeclined.png?raw=true)
+![](ui-mockups/OrganizerInviteList.png?raw=true)
 
 ![](ui-mockups/OrganizerCanceledList.png?raw=true)
 
@@ -130,19 +130,14 @@ The Organizer can filter the invite list to easily view the invited Entrants and
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerInviteListRedraw.png?raw=true)
+![](ui-mockups/OrganizerSampleEntrants.png?raw=true)
 
-The Organizer can select to remove Entrants who have Declined and redraw Entrants who are still on the waiting list to get an invitation.
+The Organizer can select to sample Entrants and invite them from the waitlist.
 
 -----------------------------------------------------------------------------------------
+![](ui-mockups/OrganizerResampleEntrants.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListNotifyOptions.png?raw=true)
-
-![](ui-mockups/OrganizerInviteListNotifySelectedEntrant.png?raw=true)
-
-![](ui-mockups/OrganizerSendNotification.png?raw=true)
-
-The Organizer can message Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
+The Organizer can select to remove Entrants who have Declined and redraw Entrants who are still on the waiting list to get an invitation.
 
 -----------------------------------------------------------------------------------------
 
