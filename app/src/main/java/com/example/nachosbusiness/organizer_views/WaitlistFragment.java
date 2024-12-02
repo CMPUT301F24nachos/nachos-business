@@ -4,6 +4,7 @@ package com.example.nachosbusiness.organizer_views;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +28,11 @@ import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,11 +129,15 @@ public class WaitlistFragment extends Fragment {
 
                     // Notify all users in the waitlist
                     NotificationHandler notificationHandler = new NotificationHandler();
+                    Log.d("Test 2", "This is a test 2");
                     for (Map<Object, Object> entry : waitList) {
                         Object userObject = entry.get("user");
+                        Log.d("Test 1", "This is a test 1 " + userObject);
+                        Log.d("Test 3", "Class of userObject: " + (userObject != null ? userObject.getClass().getName() : "null"));
+                        if (userObject instanceof HashMap) {
+                            HashMap<String, Object> userMap = (HashMap<String, Object>) userObject;
 
-                        if (userObject instanceof User) {
-                            User user = (User) userObject;
+                            Log.d("User Object", "Username " + userMap.get("username"));
 
                             Notification notification = new Notification(
                                     "Waitlist Update",
@@ -139,7 +146,7 @@ public class WaitlistFragment extends Fragment {
                                     "nachos-business://event/" + event.getEventID()
                             );
 
-                            notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
+                            notificationHandler.saveNotificationToFirebase((String) userMap.get("android_id"), notification);
                         }
                     }
 
