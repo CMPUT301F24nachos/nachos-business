@@ -67,7 +67,6 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.rules)
-    implementation(libs.firebase.messaging)
 
     testImplementation(libs.junit)
     testImplementation("org.mockito:mockito-core:3.+")
