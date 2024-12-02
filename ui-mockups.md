@@ -108,15 +108,9 @@ The organizer can see all Entrants who have joined the Waiting List.
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerWaitListOptions.png?raw=true)
+![](ui-mockups/OrganizerWaitlistOptions.png?raw=true)
 
 The organizer can choose to notify the Entrants from this screen, or send out the Invites.
-
------------------------------------------------------------------------------------------
-
-![](ui-mockups/OrganizerSendInvites.png?raw=true)
-
-The Organizer can set the number of invites they want to send out for the lottery system to select Entrants to be invited.
 
 -----------------------------------------------------------------------------------------
 
@@ -126,7 +120,7 @@ The Organizer can view the Entrants who have been invited, including their statu
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerInviteListFilteredAccepted.png?raw=true)
+![](ui-mockups/OrganizerAcceptedList.png?raw=true)
 
 ![](ui-mockups/OrganizerInviteListFilteredDeclined.png?raw=true)
 
