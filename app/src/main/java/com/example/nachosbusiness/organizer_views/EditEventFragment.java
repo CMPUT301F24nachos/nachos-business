@@ -371,8 +371,8 @@ public class EditEventFragment extends Fragment {
         String priceStr = editPrice.getText().toString();
         if (!TextUtils.isEmpty(priceStr)) {
             int price = Integer.parseInt(priceStr);
-            if (price <= 0 || price > 1000) {
-                Toast.makeText(getActivity(), "Invalid price, please chosse a value between 0 and 1000", Toast.LENGTH_SHORT).show();
+            if (price < 0 || price > 1000) {
+                Toast.makeText(getActivity(), "Invalid price, please chose a value between 0 and 1000", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -464,7 +464,9 @@ public class EditEventFragment extends Fragment {
         // Populate fields with existing event details from bundled values
         editTextEventName.setText(eventName);
         editEventDescription.setText(eventDescription);
-        editPrice.setText(String.valueOf(eventCost));
+        if ( eventCost >= 0) {
+            editPrice.setText(String.valueOf(eventCost));
+        }
         editMaxAttendees.setText(String.valueOf(attendeeSpots));
         if(waitlistSpots <= 0) {
             //do nothing
