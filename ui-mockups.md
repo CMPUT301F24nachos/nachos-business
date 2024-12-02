@@ -102,7 +102,7 @@ Allow the Organizer to create a new event, specify event details, add a poster, 
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerWaitList.png?raw=true)
+![](ui-mockups/OrganizerWaitlist.png?raw=true)
 
 The organizer can see all Entrants who have joined the Waiting List.
 
