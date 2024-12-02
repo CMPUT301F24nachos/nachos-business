@@ -26,6 +26,7 @@ import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,11 +126,8 @@ public class WaitlistFragment extends Fragment {
 
                     // Notify all users in the waitlist
                     NotificationHandler notificationHandler = new NotificationHandler();
-                    Log.d("Test 2", "This is a test 2");
                     for (Map<Object, Object> entry : waitList) {
                         Object userObject = entry.get("user");
-                        Log.d("Test 1", "This is a test 1 " + userObject);
-                        Log.d("Test 3", "Class of userObject: " + (userObject != null ? userObject.getClass().getName() : "null"));
                         if (userObject instanceof HashMap) {
                             HashMap<String, Object> userMap = (HashMap<String, Object>) userObject;
 
@@ -161,6 +159,7 @@ public class WaitlistFragment extends Fragment {
 
                     // Get all users from the invited list
                     ArrayList<User> invitedUsers = listManager.getInvitedList();
+                    ArrayList<Map<Object, Object>> waitList = listManager.getWaitList();
 
                     if (invitedUsers.isEmpty()) {
                         Toast.makeText(getContext(), "No users to notify in the invited list!", Toast.LENGTH_SHORT).show();
@@ -179,6 +178,23 @@ public class WaitlistFragment extends Fragment {
                         );
                         notificationHandler.saveNotificationToFirebase(user.getAndroid_id(), notification);
                     }
+
+                    for (Map<Object, Object> entry : waitList) {
+                        Object userObject = entry.get("user");
+                        if (userObject instanceof HashMap) {
+                            HashMap<String, Object> userMap = (HashMap<String, Object>) userObject;
+
+                            Notification notification = new Notification(
+                                    "Waitlist Update",
+                                    "You have not been invited to the event: " + event.getName() + ". Don't worry because there is still a chance.",
+                                    Timestamp.now(),
+                                    "nachos-business://event/" + event.getEventID()
+                            );
+
+                            notificationHandler.saveNotificationToFirebase((String) userMap.get("android_id"), notification);
+                        }
+                    }
+
 
                     Toast.makeText(getContext(), "Invites sent to all users in the invited list!", Toast.LENGTH_SHORT).show();
 
