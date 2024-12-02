@@ -157,14 +157,14 @@ public class User {
 
     /**
      * Returns a list of notifications
-     * @return
+     * @return notification
      */
     public List<Notification> getNotifications() {
         return notifications;
     }
 
     /**
-     * Adds a notification to the lsit
+     * Adds a notification to the list
      * @param notification notification
      */
     public void addNotification(Notification notification) {

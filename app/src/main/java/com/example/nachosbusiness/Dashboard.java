@@ -32,8 +32,6 @@ import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
 import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 

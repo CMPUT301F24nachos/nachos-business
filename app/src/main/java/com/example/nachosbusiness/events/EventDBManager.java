@@ -314,5 +314,3 @@ public class EventDBManager extends DBManager implements Serializable {
         }
     });
 }}
-
-

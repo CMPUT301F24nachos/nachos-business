@@ -3,24 +3,16 @@ package com.example.nachosbusiness;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.Manifest;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.example.nachosbusiness.events.EventRegistration;
-import com.example.nachosbusiness.notifications.NotificationHandler;
 import com.example.nachosbusiness.users.RegistrationActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 /**
  * Main activity for the app. This activity queries the DB to determine if a user is registered in the
@@ -40,14 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-//        initializeNotifications();
-//
-//        // Request notification permission
-//        requestNotificationPermission();
-
         DBManager dbManager = new DBManager("entrants");
         String androidID = Settings.Secure.getString(MainActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID);
-
 
         Intent intent = getIntent();
         Uri data = intent.getData();
