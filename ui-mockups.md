@@ -157,3 +157,9 @@ The Organizer can message Accepted Entrants, Declined Entrants, All Invited Entr
 Organizer can view map of where entrants joined the event from.
 
 -----------------------------------------------------------------------------------------
+
+![](ui-mockups/EditEventPoster.png?raw=true)
+
+Organizer can edit event poster (delete current/previous or upload a new one).
+
+-----------------------------------------------------------------------------------------
