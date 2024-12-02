@@ -122,6 +122,7 @@ public class Event implements Serializable {
 
     /**
      * Constructor with date/time as Date datatype
+     * @param eventID event id
      * @param name event name
      * @param organizerID event organizer
      * @param facility event facility
