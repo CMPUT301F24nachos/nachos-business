@@ -163,3 +163,9 @@ Organizer can view map of where entrants joined the event from.
 Organizer can edit event poster (delete current/previous or upload a new one).
 
 -----------------------------------------------------------------------------------------
+
+![](ui-mockups/map.png?raw=true)
+
+Map showing locations (as markers) for users that join from waitlist.
+
+-----------------------------------------------------------------------------------------
