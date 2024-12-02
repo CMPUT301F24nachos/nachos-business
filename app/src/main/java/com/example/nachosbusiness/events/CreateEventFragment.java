@@ -350,7 +350,7 @@ public class CreateEventFragment extends Fragment {
         String priceStr = editPrice.getText().toString();
         if (!TextUtils.isEmpty(priceStr)) {
             int price = Integer.parseInt(priceStr);
-            if (price <= 0 || price > 1000) {
+            if (price < 0 || price > 1000) {
                 Toast.makeText(getActivity(), "Invalid price", Toast.LENGTH_SHORT).show();
                 return;
             }
