@@ -81,7 +81,6 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        notificationHandler.queryAndDisplayNotifications(Dashboard.this, androidID);
         SwitchCompat notificationSwitch = findViewById(R.id.notification_switch);
 
         TextView userID = findViewById(R.id.dashboard_user_id);
@@ -224,8 +223,7 @@ public class Dashboard extends AppCompatActivity {
         eventUpdatesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 {
-                    Notification notification = new Notification("Cool title", "Funny stuff", Timestamp.now(), getIntent().toString());
-                    notificationHandler.saveNotificationToFirebase(androidID,notification);
+                    notificationHandler.queryAndDisplayNotifications(Dashboard.this, androidID);
                 }
             }
         });
