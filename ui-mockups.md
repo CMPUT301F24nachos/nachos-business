@@ -102,7 +102,7 @@ Allow the Organizer to create a new event, specify event details, add a poster, 
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerWaitlist.png?raw=true)
+![](ui-mockups/OrganizerWaitlistOptions.png?raw=true)
 
 The organizer can see all Entrants who have joined the Waiting List.
 
@@ -124,7 +124,7 @@ The Organizer can view the Entrants who have been invited, including their statu
 
 ![](ui-mockups/OrganizerInviteListFilteredDeclined.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListFilteredNotReplied.png?raw=true)
+![](ui-mockups/OrganizerCanceledList.png?raw=true)
 
 The Organizer can filter the invite list to easily view the invited Entrants and their status.
 
