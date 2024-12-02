@@ -30,10 +30,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * This fragment is where user's can edit their profile information, update their user profile,
- * or navigate back to the view page. Any changes will be updated in the DB.
+ * A fragment that allows the user to update their profile information, including their username, email, phone number,
+ * and profile image. The user can select a new profile image, update their details, and save or cancel the changes.
+ * The profile information is validated before being submitted.
  */
-
 public class UpdateProfile extends Fragment {
     private DBManager dbManager;
     private EditText phoneNumber;
@@ -46,7 +46,15 @@ public class UpdateProfile extends Fragment {
     private boolean isImageMarkedForDeletion = false;
     private boolean isImageMarkedForUpload = false;
 
-
+    /**
+     * Called when the fragment's view is created. This method initializes the UI components and sets up the necessary listeners
+     * for user interactions such as saving changes, cancelling, and choosing a profile image.
+     * 
+     * @param inflater The LayoutInflater object used to inflate the fragment's view.
+     * @param container The container (if any) that will hold the fragment's view.
+     * @param savedInstanceState A bundle containing the saved instance state of the fragment (if any).
+     * @return The inflated view for the fragment.
+     */
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -55,6 +63,14 @@ public class UpdateProfile extends Fragment {
         return inflater.inflate(R.layout.activity_update_profile_final, container, false);
     }
 
+    /**
+     * Called after the fragment's view has been created. This method retrieves the data from the arguments bundle,
+     * initializes the UI components, and sets up the listeners for saving or cancelling changes, selecting a profile image,
+     * and removing the current profile image.
+     * 
+     * @param view The root view of the fragment.
+     * @param savedInstanceState A bundle containing the saved instance state of the fragment (if any).
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -142,10 +158,12 @@ public class UpdateProfile extends Fragment {
     }
 
     /**
-     * Verifies the required fields have values in them. A toast showing the missing value error.
-     * @param inputText the TextEditInputText value to check
-     * @param e error message that will be shown in the toast
-     * @return True if the inputText is not empty, returns False if is empty
+     * Verifies that the provided username is not empty and starts with a letter.
+     * If the validation fails, a Toast is displayed with an error message.
+     * 
+     * @param inputText The EditText input field containing the username.
+     * @param errorMessage The error message to display if the validation fails.
+     * @return True if the username is valid, otherwise False.
      */
     private boolean isValidUsername(EditText inputText, String e){
         String text = Objects.requireNonNull(inputText.getText()).toString().trim();
@@ -160,6 +178,13 @@ public class UpdateProfile extends Fragment {
         return true;
     }
 
+    /**
+     * Verifies that the provided phone number is valid according to the Canadian phone number format.
+     * If the phone number is invalid, a Toast is displayed with an error message.
+     * 
+     * @param inputText The EditText input field containing the phone number.
+     * @return True if the phone number is valid, otherwise False.
+     */
     private boolean isValidPhoneNumber(EditText inputText){
         String text = Objects.requireNonNull(inputText.getText()).toString().trim();
         if (!inputText.getText().toString().isEmpty())
@@ -174,6 +199,13 @@ public class UpdateProfile extends Fragment {
         return true;
     }
 
+    /**
+     * Verifies that the provided email address is valid according to a regular expression pattern.
+     * If the email is invalid, a Toast is displayed with an error message.
+     * 
+     * @param email The EditText input field containing the email address.
+     * @return True if the email is valid, otherwise False.
+     */
     private boolean isValidEmail(EditText email) {
         if (email == null || email.getText().toString().trim().isEmpty()) {
             Toast.makeText(requireContext(), "Enter an email", Toast.LENGTH_SHORT).show();
@@ -188,6 +220,10 @@ public class UpdateProfile extends Fragment {
         return true;
     }
 
+    /**
+     * ActivityResultLauncher to handle the result of the image selection activity.
+     * This updates the profile image with the selected image and displays it in the profile image view.
+     */
     ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -212,6 +248,10 @@ public class UpdateProfile extends Fragment {
                 }
             });
 
+    /**
+     * Launches an activity to choose an image from the device's storage.
+     * The selected image is then displayed in the profile image view.
+     */
     private void imageChooser() {
         Intent i = new Intent();
         i.setType("image/*");

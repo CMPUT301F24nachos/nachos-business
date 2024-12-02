@@ -18,8 +18,12 @@ import com.example.nachosbusiness.Dashboard;
 import com.example.nachosbusiness.R;
 
 /**
- * Displays the profile for the user. From this activity, user's can navigate to edit their profile,
- * or navigate back to the dashboard. This is just to hold the edit fragment!
+ * This activity displays the user's profile information, including their name, email, phone number, and profile image.
+ * Users can navigate to the profile update section or return to the dashboard. The profile update section is implemented
+ * as a fragment and is shown within this activity when the user chooses to update their profile.
+ * 
+ * The activity retrieves the user's profile information from a database using the DBManager and displays it to the user.
+ * If the user chooses to update their profile, the corresponding fragment is displayed.
  */
 public class ShowProfile extends AppCompatActivity {
 
@@ -31,6 +35,12 @@ public class ShowProfile extends AppCompatActivity {
     private Bundle userProfileBundle;
     private ImageButton buttonHome;
 
+    /**
+     * Called when the activity is first created. This method sets up the layout and initializes all the UI components.
+     * It retrieves the user's profile data from the database and displays it, along with the user's profile image.
+     * 
+     * @param savedInstanceState A Bundle containing the previous state of the activity, if it exists.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,7 +119,10 @@ public class ShowProfile extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Navigates to the profile update section by replacing the current view with the UpdateProfile fragment.
+     * The user's profile data is passed to the fragment using a Bundle.
+     */
     private void navigateToUpdateProfile() {
         if (userProfileBundle == null) {
             Log.e("ShowProfile", "User profile bundle is null.");
@@ -128,6 +141,10 @@ public class ShowProfile extends AppCompatActivity {
         findViewById(R.id.organizer_events_container).setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Sets default values for the user's profile information in case no data is available.
+     * This method is used to populate the profile fields when the data is not yet fetched or unavailable.
+     */
     private void setDefaultValues() {
         String defaultUserName = "Name not set";
         String defaultEmail = "Email not set";
