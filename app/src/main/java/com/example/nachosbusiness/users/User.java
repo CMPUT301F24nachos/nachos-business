@@ -34,7 +34,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.phone = (phone != null && !phone.isEmpty()) ? phone : "";
-        this.admin = false;
+        this.admin = true;
         this.events = new ArrayList<>();
     }
 

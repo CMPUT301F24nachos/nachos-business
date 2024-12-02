@@ -29,6 +29,7 @@ import com.example.nachosbusiness.facilities.FacilityDBManager;
 import com.example.nachosbusiness.facilities.FacilityFragment;
 import com.example.nachosbusiness.organizer_views.OrganizerEventsFragment;
 import com.example.nachosbusiness.users.ShowProfile;
+import com.example.nachosbusiness.users.UserManager;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -66,6 +67,7 @@ public class Dashboard extends AppCompatActivity {
             userName = "";
         }
 
+        UserManager userManager = new UserManager();
         EventDBManager eventDBManager = new EventDBManager();
         ListManagerDBManager listManagerDBManager = new ListManagerDBManager();
         FacilityDBManager facilityManager = new FacilityDBManager("facilities");
@@ -92,6 +94,16 @@ public class Dashboard extends AppCompatActivity {
             userID.setText("Welcome Back!");
         }
 
+        userManager.checkIfUserIsAdmin(androidID, new UserManager.AdminCallback() {
+            @Override
+            public void onAdminFound(boolean isAdmin) {
+                if (isAdmin) {
+                    browseButton.setVisibility(View.VISIBLE);
+                } else {
+                    browseButton.setVisibility(View.GONE);
+                }
+            }
+        });
         eventListView = findViewById(R.id.dashboard_event_listview);
         eventList = new ArrayList<>();
         eventAdapter = new DashboardArrayAdapter(this, eventList);
