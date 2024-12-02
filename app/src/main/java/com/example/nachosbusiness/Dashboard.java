@@ -349,8 +349,8 @@ public class Dashboard extends AppCompatActivity {
         if (notificationSwitch.isChecked() != areNotificationsEnabled) {
             notificationSwitch.setChecked(areNotificationsEnabled);
         }
-            if (notificationSwitch.isChecked() == areNotificationsEnabled) {
-                Toast.makeText(this, "Notification setting updated.", Toast.LENGTH_SHORT).show();
-            }
+//            if (notificationSwitch.isChecked() == areNotificationsEnabled) {
+//                //Toast.makeText(this, "Notification setting updated.", Toast.LENGTH_SHORT).show();
+//            }
     }
 }
