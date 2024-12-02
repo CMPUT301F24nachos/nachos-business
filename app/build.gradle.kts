@@ -76,6 +76,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
 }
 
 secrets {

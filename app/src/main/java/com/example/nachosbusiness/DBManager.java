@@ -194,6 +194,27 @@ public class DBManager {
         });
     }
 
+    public void getUserClass(String android_id, Class<?> user, UserClassRetrievalCallback callback) {
+        db.collection("entrants").document(android_id).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Object object = documentSnapshot.toObject(user);
+                            callback.onCallback(object);
+                        } else {
+                            callback.onFailure(new Exception("Document does not exist."));
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+    }
+
     public static void uploadProfileImage(Context context, String imageName, Uri selectedImageUri) {
         if (selectedImageUri != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -402,6 +423,11 @@ public class DBManager {
         void onEntryRetrieved(String name, String email, String phone);
         void onEntryNotFound();
         void onError(String error);
+    }
+
+    public interface UserClassRetrievalCallback {
+        void onCallback(Object result);
+        void onFailure(Exception e);
     }
 
     public interface ProfileImageCallback {

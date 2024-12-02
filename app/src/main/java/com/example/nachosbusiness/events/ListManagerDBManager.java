@@ -254,7 +254,3 @@ public class ListManagerDBManager extends DBManager implements Serializable {
         return false;
     }
 }
-
-
-
-

@@ -7,6 +7,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.nachosbusiness.notifications.Notification;
+
 /**
  * User is a user! like me or you! Someone who interacts with the app who can sign up for, create new
  * or edit events. User's are associated with their android ID as a unique identifier in the system.
@@ -22,6 +24,7 @@ public class User {
     private Uri profileImage;
     private List<String> events;
 
+    private List<Notification> notifications;
     /**
      * Empty constructor for firebase adapting
      */
@@ -34,8 +37,9 @@ public class User {
         this.username = username;
         this.email = email;
         this.phone = (phone != null && !phone.isEmpty()) ? phone : "";
-        this.admin = false;
+        this.admin = true;
         this.events = new ArrayList<>();
+        this.notifications = new ArrayList<>();
     }
 
     /**
@@ -145,9 +149,32 @@ public class User {
 
     /**
      * setter for phone number
-     * @param phone phone nnumber
+     * @param phone phone number
      */
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * Returns a list of notifications
+     * @return notification
+     */
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    /**
+     * Adds a notification to the list
+     * @param notification notification
+     */
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+    }
+
+    /**
+     * removes all notifications from the list
+     */
+    public void clearNotifications() {
+        notifications.clear();
     }
 }

@@ -1,11 +1,14 @@
 package com.example.nachosbusiness;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nachosbusiness.events.EventRegistration;
@@ -22,6 +25,7 @@ import com.example.nachosbusiness.users.RegistrationActivity;
 public class MainActivity extends AppCompatActivity {
 
     private String userName;
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,5 +80,17 @@ public class MainActivity extends AppCompatActivity {
         Intent eventIntent = new Intent(MainActivity.this, Dashboard.class);
         eventIntent.putExtra("name", userName);
         startActivity(eventIntent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Notification permission granted.");
+            } else {
+                Log.w("MainActivity", "Notification permission denied.");
+            }
+        }
     }
 }

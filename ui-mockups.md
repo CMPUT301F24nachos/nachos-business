@@ -102,21 +102,15 @@ Allow the Organizer to create a new event, specify event details, add a poster, 
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerWaitList.png?raw=true)
+![](ui-mockups/OrganizerWaitlistOptions.png?raw=true)
 
 The organizer can see all Entrants who have joined the Waiting List.
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerWaitListOptions.png?raw=true)
+![](ui-mockups/OrganizerWaitlistOptions.png?raw=true)
 
-The organizer can choose to notify the Entrants from this screen, or send out the Invites.
-
------------------------------------------------------------------------------------------
-
-![](ui-mockups/OrganizerSendInvites.png?raw=true)
-
-The Organizer can set the number of invites they want to send out for the lottery system to select Entrants to be invited.
+The organizer can choose to notify Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
 
 -----------------------------------------------------------------------------------------
 
@@ -126,34 +120,41 @@ The Organizer can view the Entrants who have been invited, including their statu
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerInviteListFilteredAccepted.png?raw=true)
+![](ui-mockups/OrganizerAcceptedList.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListFilteredDeclined.png?raw=true)
+![](ui-mockups/OrganizerInviteList.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListFilteredNotReplied.png?raw=true)
+![](ui-mockups/OrganizerCanceledList.png?raw=true)
 
 The Organizer can filter the invite list to easily view the invited Entrants and their status.
 
 -----------------------------------------------------------------------------------------
 
-![](ui-mockups/OrganizerInviteListRedraw.png?raw=true)
+![](ui-mockups/OrganizerSampleEntrants.png?raw=true)
 
-The Organizer can select to remove Entrants who have Declined and redraw Entrants who are still on the waiting list to get an invitation.
+The Organizer can select to sample Entrants and invite them from the waitlist.
 
 -----------------------------------------------------------------------------------------
+![](ui-mockups/OrganizerResampleEntrants.png?raw=true)
 
-![](ui-mockups/OrganizerInviteListNotifyOptions.png?raw=true)
-
-![](ui-mockups/OrganizerInviteListNotifySelectedEntrant.png?raw=true)
-
-![](ui-mockups/OrganizerSendNotification.png?raw=true)
-
-The Organizer can message Accepted Entrants, Declined Entrants, All Invited Entrants, or Selected Entrants.
+The Organizer can select to remove Entrants who have Declined and redraw Entrants who are still on the waiting list to get an invitation.
 
 -----------------------------------------------------------------------------------------
 
 ![](ui-mockups/Map.png?raw=true)
 
 Organizer can view map of where entrants joined the event from.
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/EditEventPoster.png?raw=true)
+
+Organizer can edit event poster (delete current/previous or upload a new one).
+
+-----------------------------------------------------------------------------------------
+
+![](ui-mockups/map.png?raw=true)
+
+Map showing locations (as markers) for users that join from waitlist.
 
 -----------------------------------------------------------------------------------------

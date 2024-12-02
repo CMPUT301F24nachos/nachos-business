@@ -92,6 +92,13 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
         ImageButton editEvent = view.findViewById(R.id.edit_icon);
         Button waitlistButton = view.findViewById(R.id.waitlist_button);
         Button mapButton = view.findViewById(R.id.map_button);
+
+        if (event.getHasGeolocation()) {
+            mapButton.setVisibility(View.VISIBLE);
+        } else {
+            mapButton.setVisibility(View.GONE);
+        }
+
         TextView eventDescription = view.findViewById(R.id.event_description);
         TextView eventDate = view.findViewById(R.id.event_date);
 
@@ -199,7 +206,6 @@ public class EventListArrayAdapter extends ArrayAdapter<Event> {
             }
 
         });
-
 
         return view;
     }
