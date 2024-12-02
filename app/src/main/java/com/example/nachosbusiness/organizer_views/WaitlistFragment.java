@@ -321,6 +321,7 @@ public class WaitlistFragment extends Fragment {
                 Toast.makeText(getContext(), "There are no entrants in the waitlist remaining!", Toast.LENGTH_SHORT).show();
             } else if (listManager.sampleWaitList(Math.min(event.getAttendeeSpots() - listManager.getAcceptedList().size(), listManager.getWaitList().size())) != null) {
                 adapter.notifyDataSetChanged();
+                Toast.makeText(getContext(), "Make sure to resend out invitations", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getContext(), "Failed to resample entrants", Toast.LENGTH_SHORT).show();
